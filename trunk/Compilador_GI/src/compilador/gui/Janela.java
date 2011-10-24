@@ -33,7 +33,7 @@ public class Janela extends javax.swing.JFrame {
     /** Creates new form Janela */
     public Janela() {
         initComponents();
-        setTitle("Analisador Léxico GI - Gabriel e Ítalo");
+        setTitle("Analisador Léxico GI - Gabriel e Italo");
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
     }
 
@@ -378,7 +378,7 @@ public class Janela extends javax.swing.JFrame {
 
    private void abrirArquivo()
     {
-        JFileChooser fileChooser = getFileChooser();
+        JFileChooser fileChooser = getFileChooser("Abrir");
         int opcao = fileChooser.showOpenDialog(this);
 
         if (opcao == JFileChooser.APPROVE_OPTION) {
@@ -413,7 +413,7 @@ public class Janela extends javax.swing.JFrame {
 
     private void salvarArquivo()
     {
-        JFileChooser fileChooser = getFileChooser();
+        JFileChooser fileChooser = getFileChooser("Salvar");
 
         int opcao = fileChooser.showSaveDialog(this);
 
@@ -458,10 +458,10 @@ public class Janela extends javax.swing.JFrame {
         limparFrameDeErros();
     }
 
-     private JFileChooser getFileChooser()
+     private JFileChooser getFileChooser(String titulo)
     {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Abrir Código");
+        fileChooser.setDialogTitle(titulo);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Arquivos textos", "txt", "dat", "java"));
 
