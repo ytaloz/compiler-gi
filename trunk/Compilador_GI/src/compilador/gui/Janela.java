@@ -65,7 +65,7 @@ public class Janela extends javax.swing.JFrame {
         jTableTokens = new javax.swing.JTable();
         jTabbedPaneCodigoFonte = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaCodigoFonte = new javax.swing.JTextArea();
+        jTextAreaCodigoFonte = new javax.swing.JEditorPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemNovo = new javax.swing.JMenuItem();
@@ -211,9 +211,6 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setColumns(20);
-        jTextAreaCodigoFonte.setRows(5);
-        jTextAreaCodigoFonte.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
@@ -560,7 +557,7 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPaneErros;
     private javax.swing.JTabbedPane jTabbedPaneTokens;
     private javax.swing.JTable jTableTokens;
-    private javax.swing.JTextArea jTextAreaCodigoFonte;
+    private javax.swing.JEditorPane jTextAreaCodigoFonte;
     private javax.swing.JTextArea jTextAreaErros;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
