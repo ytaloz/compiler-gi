@@ -35,14 +35,7 @@ public class Janela extends javax.swing.JFrame {
     /** Creates new form Janela */
     public Janela() {
         initComponents();
-        setTitle("Analisador Léxico GI - Gabriel e Italo");
-        addWindowListener(new WindowAdapter() {
-
-            public void windowOpened(WindowEvent e) {
-                jTextAreaCodigoFonte.requestFocus();
-            }
-        });
-        jTextAreaCodigoFonte.setBorder(new NumberedBorder());
+        configurarJanela();
     }
 
     /** This method is called from within the constructor to
@@ -88,10 +81,10 @@ public class Janela extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuAjuda = new javax.swing.JMenu();
         jMenuItemAjuda = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItemSobre = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Analisador Léxico Ecompilator 1.0");
+        setTitle("Analisador Léxico GI - Gabriel e Italo");
 
         jToolBar1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         jToolBar1.setRollover(true);
@@ -304,13 +297,13 @@ public class Janela extends javax.swing.JFrame {
         });
         jMenuAjuda.add(jMenuItemAjuda);
 
-        jMenuItem1.setText("Sobre");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemSobre.setText("Sobre");
+        jMenuItemSobre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jMenuItemSobreActionPerformed(evt);
             }
         });
-        jMenuAjuda.add(jMenuItem1);
+        jMenuAjuda.add(jMenuItemSobre);
 
         jMenuBar1.add(jMenuAjuda);
 
@@ -333,7 +326,7 @@ public class Janela extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
         );
 
         pack();
@@ -387,22 +380,58 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemLimparActionPerformed
 
     private void jButtonAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjudaActionPerformed
-        new Ajuda().setVisible(true);
+        criarJanelaAjuda();
     }//GEN-LAST:event_jButtonAjudaActionPerformed
 
     private void jMenuItemAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAjudaActionPerformed
-        new Ajuda().setVisible(true);        
+        criarJanelaAjuda();
     }//GEN-LAST:event_jMenuItemAjudaActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        new Sobre().setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
+        criarJanelaSobre();
+    }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
-private void configComponents()
+    private void configComponents()
     {
         jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
     }
 
+    private void configurarJanela()
+    {
+        focalizarFrameDeCodigoFonte();
+        jTextAreaCodigoFonte.setBorder(new NumberedBorder());
+        centralizarJanela();
+    }
+
+    private void criarJanelaAjuda()
+    {
+        Ajuda ajuda = new Ajuda();
+        ajuda.setLocationRelativeTo(this);
+        ajuda.setVisible(true);
+    }
+
+    private void criarJanelaSobre()
+    {
+        Sobre sobre = new Sobre();
+        sobre.setLocationRelativeTo(this);
+        sobre.setVisible(true);
+    }
+
+    private void focalizarFrameDeCodigoFonte()
+    {
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                jTextAreaCodigoFonte.requestFocus();
+            }
+        });
+    }
+
+    private void centralizarJanela()
+    {
+        setLocationRelativeTo(null);
+    }
 
 
 //----- MÉTODOS DE AÇÃO -----------------------------------------------------
@@ -573,7 +602,6 @@ private void configComponents()
     private javax.swing.JMenu jMenuArquivo;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuExecutar;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItemAbrir;
     private javax.swing.JMenuItem jMenuItemAjuda;
     private javax.swing.JMenuItem jMenuItemCancelar;
@@ -582,6 +610,7 @@ private void configComponents()
     private javax.swing.JMenuItem jMenuItemNovo;
     private javax.swing.JMenuItem jMenuItemSair;
     private javax.swing.JMenuItem jMenuItemSalvar;
+    private javax.swing.JMenuItem jMenuItemSobre;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
