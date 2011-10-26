@@ -13,6 +13,8 @@ package compilador.gui;
 
 
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +36,12 @@ public class Janela extends javax.swing.JFrame {
     public Janela() {
         initComponents();
         setTitle("Analisador Léxico GI - Gabriel e Italo");
+        addWindowListener(new WindowAdapter() {
+
+            public void windowOpened(WindowEvent e) {
+                jTextAreaCodigoFonte.requestFocus();
+            }
+        });
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
     }
 
