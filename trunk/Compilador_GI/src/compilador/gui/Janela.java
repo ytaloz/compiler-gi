@@ -67,18 +67,20 @@ public class Janela extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaCodigoFonte = new javax.swing.JEditorPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jMenuArquivo = new javax.swing.JMenu();
         jMenuItemNovo = new javax.swing.JMenuItem();
         jMenuItemAbrir = new javax.swing.JMenuItem();
         jMenuItemSalvar = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItemSair = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jMenuExecutar = new javax.swing.JMenu();
         jMenuItemExecutar = new javax.swing.JMenuItem();
         jMenuItemCancelar = new javax.swing.JMenuItem();
         jMenuItemLimpar = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuAjuda = new javax.swing.JMenu();
         jMenuItemAjuda = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Analisador Léxico Ecompilator 1.0");
@@ -193,7 +195,7 @@ public class Janela extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Linha", "Token", "Tipo", "Valor"
+                "Token", "Lexema", "Categoria", "Linha"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -217,7 +219,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setRightComponent(jTabbedPaneCodigoFonte);
 
-        jMenu1.setText("Arquivo");
+        jMenuArquivo.setText("Arquivo");
 
         jMenuItemNovo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/paper_48_menor.png"))); // NOI18N
@@ -227,7 +229,7 @@ public class Janela extends javax.swing.JFrame {
                 jMenuItemNovoActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemNovo);
+        jMenuArquivo.add(jMenuItemNovo);
 
         jMenuItemAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemAbrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/folder_48_menor.png"))); // NOI18N
@@ -237,7 +239,7 @@ public class Janela extends javax.swing.JFrame {
                 jMenuItemAbrirActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemAbrir);
+        jMenuArquivo.add(jMenuItemAbrir);
 
         jMenuItemSalvar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/floppy_disk_48_menor.png"))); // NOI18N
@@ -247,8 +249,8 @@ public class Janela extends javax.swing.JFrame {
                 jMenuItemSalvarActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemSalvar);
-        jMenu1.add(jSeparator2);
+        jMenuArquivo.add(jMenuItemSalvar);
+        jMenuArquivo.add(jSeparator2);
 
         jMenuItemSair.setText("Sair");
         jMenuItemSair.addActionListener(new java.awt.event.ActionListener() {
@@ -256,29 +258,34 @@ public class Janela extends javax.swing.JFrame {
                 jMenuItemSairActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItemSair);
+        jMenuArquivo.add(jMenuItemSair);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenuArquivo);
 
-        jMenu2.setText("Executar");
+        jMenuExecutar.setText("Executar");
 
         jMenuItemExecutar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/spanner_48_menor.png"))); // NOI18N
         jMenuItemExecutar.setText("Análise Léxica");
-        jMenu2.add(jMenuItemExecutar);
+        jMenuExecutar.add(jMenuItemExecutar);
 
         jMenuItemCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/cancel_48_menor.png"))); // NOI18N
         jMenuItemCancelar.setText("Cancelar");
-        jMenu2.add(jMenuItemCancelar);
+        jMenuExecutar.add(jMenuItemCancelar);
 
+        jMenuItemLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/refresh_48_menor.png"))); // NOI18N
         jMenuItemLimpar.setText("Limpar");
         jMenuItemLimpar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemLimparActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItemLimpar);
-        jMenu2.add(jSeparator1);
+        jMenuExecutar.add(jMenuItemLimpar);
+        jMenuExecutar.add(jSeparator1);
+
+        jMenuBar1.add(jMenuExecutar);
+
+        jMenuAjuda.setText("Ajuda");
 
         jMenuItemAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/questionmark_48_menor.png"))); // NOI18N
         jMenuItemAjuda.setText("Ajuda");
@@ -287,9 +294,17 @@ public class Janela extends javax.swing.JFrame {
                 jMenuItemAjudaActionPerformed(evt);
             }
         });
-        jMenu2.add(jMenuItemAjuda);
+        jMenuAjuda.add(jMenuItemAjuda);
 
-        jMenuBar1.add(jMenu2);
+        jMenuItem1.setText("Sobre");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenuAjuda.add(jMenuItem1);
+
+        jMenuBar1.add(jMenuAjuda);
 
         setJMenuBar(jMenuBar1);
 
@@ -308,7 +323,7 @@ public class Janela extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -370,6 +385,17 @@ public class Janela extends javax.swing.JFrame {
     private void jMenuItemAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAjudaActionPerformed
         new Ajuda().setVisible(true);        
     }//GEN-LAST:event_jMenuItemAjudaActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new Sobre().setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+private void configComponents()
+    {
+        jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
+    }
+
+
 
 //----- MÉTODOS DE AÇÃO -----------------------------------------------------
 
@@ -485,7 +511,7 @@ public class Janela extends javax.swing.JFrame {
         jTableTokens.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                    "Linha", "Token", "Tipo", "Valor"
+                    "Token", "Lexema", "Categoria", "Linha"
                 }) {
 
             boolean[] canEdit = new boolean[]{
@@ -501,14 +527,14 @@ public class Janela extends javax.swing.JFrame {
 
       }
 
-    public void imprimirToken (String token, String tipo, String valor, int linha) {
+    public void imprimirToken (String token, String lexema, String categoria, int linha) {
 
        DefaultTableModel modelo = (DefaultTableModel) jTableTokens.getModel();
 
-       String line = null;
-       line = String.valueOf(linha);
+       String linhaString = null;
+       linhaString = String.valueOf(linha);
 
-       String[] dados = {line,token,tipo,valor};
+       String[] dados = {token,lexema,categoria,linhaString};
 
        modelo.addRow(dados);
 
@@ -535,9 +561,11 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JButton jButtonNovo;
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenuAjuda;
+    private javax.swing.JMenu jMenuArquivo;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuExecutar;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItemAbrir;
     private javax.swing.JMenuItem jMenuItemAjuda;
     private javax.swing.JMenuItem jMenuItemCancelar;
