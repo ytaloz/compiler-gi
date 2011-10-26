@@ -6,7 +6,6 @@
 package compilador.lexico;
 
 import compilador.gui.Janela;
-import compilador.gui.Janela2;
 
 /**
  *
@@ -14,11 +13,11 @@ import compilador.gui.Janela2;
  */
 public class AnalisadorLexico {
 
-    Janela2 janela;
+    Janela janela;
 
     public AnalisadorLexico()
     {
-        janela = new Janela2();
+        janela = new Janela();
         janela.setVisible(true);
     }
 }
