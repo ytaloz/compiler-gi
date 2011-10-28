@@ -57,6 +57,10 @@ public class Automato {
                     reconhecerDelimitador();
                     break;
                 }
+                case EM_CADEIACONSTANTE: {
+                    reconhecerCadeiaConstante();
+                    break;
+                }
                 default: {
                     criarTokenErro();
                     break;
@@ -76,7 +80,6 @@ public class Automato {
         else if (ehDigito(caracter))
         {
             estado = Estado.EM_NUM;
-            //consumirProxCaracter();
         } 
         else if (ehEspaco(caracter))
         {
@@ -94,6 +97,10 @@ public class Automato {
         else if (ehDelimitador(caracter))
         {
             estado = Estado.EM_DELIMITADOR;
+        }
+        else if (ehAspa(caracter))
+        {
+            estado = Estado.EM_CADEIACONSTANTE;
         }
         else {
             criarTokenErro();
@@ -231,6 +238,16 @@ public class Automato {
         estado = Estado.FIM;
     }
 
+    private void reconhecerCadeiaConstante() {
+        consumirCadeiaConstante();
+        if (ehAspa(caracter)) {
+            tokenAtual = new Token(TokenType.LITERAL, TokenCategory.CADEIA_CONSTANTE, lexemaAtual, linhaAtual);
+        } else {
+            criarTokenErro();
+        }
+        estado = Estado.FIM;
+        
+    }
 
 
 
@@ -288,6 +305,14 @@ public class Automato {
         }
     }
 
+    private void consumirCadeiaConstante() {
+        consumirProxCaracter();
+        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspa(caracter)) {
+            consumirProxCaracter();
+        }
+        if(caracter == '\n') linhaAtual++;
+    }
+
     private boolean ehDigito(char c) {
         return Character.isDigit(c);
     }
@@ -313,6 +338,9 @@ public class Automato {
         return c == '_';
     }
 
+    private boolean ehAspa(char c) {
+        return c=='\"';
+    }
     private boolean ehCaracterDeIdentificador(char c) {
         return (ehLetra(c) || ehDigito(c) || ehUnderline(c));
     }
