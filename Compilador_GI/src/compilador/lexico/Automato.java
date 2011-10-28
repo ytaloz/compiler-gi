@@ -48,6 +48,8 @@ public class Automato {
                     break;
                 }
                 case EM_NUM: {
+                    reconhecerNumero();
+                    break;
                 }
                 case EM_OPERADOR: {
                     reconhecerOperador();
@@ -115,6 +117,28 @@ public class Automato {
         retrocederUmCaracter();
         tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
         estado = Estado.FIM;
+    }
+
+    private void reconhecerNumero()
+    {
+        while( ehDigito(caracter) ) {
+            consumirProxCaracter();
+        }
+
+        if (caracter == '.') {
+            consumirProxCaracter();
+            if (ehDigito(caracter)) {
+                while (ehDigito(caracter)) {
+                    consumirProxCaracter();
+                }
+            } else {
+                criarTokenErro();
+            }
+        } else {
+            retrocederUmCaracter();
+            tokenAtual = new Token(TokenType.NUM, TokenCategory.NUMERO, lexemaAtual, linhaAtual);
+            estado = Estado.FIM;
+        }
     }
 
     private void reconhecerOperador()
