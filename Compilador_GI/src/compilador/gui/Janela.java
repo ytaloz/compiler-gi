@@ -12,6 +12,8 @@
 package compilador.gui;
 
 
+import compilador.lexico.AnalisadorLexico;
+import compilador.token.Token;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -32,10 +34,25 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Janela extends javax.swing.JFrame {
 
+    AnalisadorLexico anaLex;
+    private Thread analise;
+
     /** Creates new form Janela */
-    public Janela() {
+    public Janela(AnalisadorLexico anaLex) {
         initComponents();
         configurarJanela();
+        this.anaLex = anaLex;
+    }
+
+    public String getCodigoFonte()
+    {
+        return jTextAreaCodigoFonte.getText();
+    }
+
+    public void pararAnálise()
+    {
+        analise.interrupt();
+        analise = null;
     }
 
     /** This method is called from within the constructor to
@@ -362,7 +379,13 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemSairActionPerformed
 
     private void jButtonExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExecutarActionPerformed
-
+        limparTabelaDeTokens();
+        limparFrameDeErros();
+        if (analise != null) {
+            pararAnálise();
+        }
+        analise = new Thread(anaLex);
+        analise.start();
     }//GEN-LAST:event_jButtonExecutarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
@@ -391,15 +414,11 @@ public class Janela extends javax.swing.JFrame {
         criarJanelaSobre();
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
-    private void configComponents()
-    {
-        jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
-    }
-
     private void configurarJanela()
     {
         focalizarFrameDeCodigoFonte();
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
+        jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
         centralizarJanela();
     }
 
@@ -563,6 +582,11 @@ public class Janela extends javax.swing.JFrame {
         jTextAreaErros.setForeground(Color.red);
 
       }
+
+    public void imprimirToken(Token token)
+    {
+        imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString(), token.getLinha());
+    }
 
     public void imprimirToken (String token, String lexema, String categoria, int linha) {
 

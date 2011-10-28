@@ -33,6 +33,13 @@ public class CellRenderer extends DefaultTableCellRenderer {
             component.setFont(component.getFont());
         }
 
+
+        if (column == 1) {
+            component.setForeground(Color.blue);
+        } else {
+            component.setForeground(Color.black);
+        }
+
         return component;
     }
 }

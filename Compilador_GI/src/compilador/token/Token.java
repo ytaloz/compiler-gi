@@ -14,12 +14,14 @@ public class Token {
     private TokenType tipo;
     private TokenCategory categoria;
     private String lexema;
+    private int linha;
 
-    public Token(TokenType tipo, TokenCategory categoria, String lexema)
+    public Token(TokenType tipo, TokenCategory categoria, String lexema, int linha)
     {
         this.tipo = tipo;
         this.categoria = categoria;
         this.lexema = lexema;
+        this.linha = linha;
     }
 
     public TokenCategory getCategoria() {
@@ -46,4 +48,13 @@ public class Token {
         this.tipo = tipo;
     }
 
+    public int getLinha() {
+        return linha;
+    }
+
+    public void setLinha(int linha) {
+        this.linha = linha;
+    }
+
+    
 }

@@ -43,6 +43,9 @@ public enum TokenType {
 
     //COMENTARIOS
     COMENTBLOCO,
-    COMENTLINHA
+    COMENTLINHA,
+
+    ERRO,
+    EOF
 
 }

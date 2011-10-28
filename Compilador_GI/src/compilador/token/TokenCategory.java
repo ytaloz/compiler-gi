@@ -17,6 +17,8 @@ public enum TokenCategory {
     NUMERO,
     OPERADOR,
     DELIMITADOR,
-    COMENTARIO
+    COMENTARIO,
+    ERRO,
+    EOF
             
 }
