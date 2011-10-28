@@ -11,6 +11,8 @@ package compilador.token;
  */
 public enum TokenType {
 
+
+    PALAVRA_RESERVADA,
     ID,
     NUM,
     LITERAL,

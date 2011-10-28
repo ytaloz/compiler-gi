@@ -5,6 +5,7 @@
 
 package compilador.lexico;
 
+import compilador.TabelaDeSimbolos;
 import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenType;
@@ -19,8 +20,8 @@ public class AnalisadorLexico implements Runnable{
 
     Janela janela;
 
-    //Automato automato;
     List<Token> tokens = new ArrayList<Token>();
+    TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
 
     public AnalisadorLexico()
     {
@@ -30,7 +31,7 @@ public class AnalisadorLexico implements Runnable{
 
     public void analisarTokens()
     {
-        Automato automato = new Automato(janela.getCodigoFonte());
+        Automato automato = new Automato(janela.getCodigoFonte(), tabelaDeSimbolos);
         Token token;
 
         do {
@@ -39,19 +40,11 @@ public class AnalisadorLexico implements Runnable{
             janela.imprimirToken(token);
         } while (token.getTipo() != TokenType.EOF);
 
-        janela.pararAnálise();
-    }
-
-    private void testeImpressao()
-    {
-        janela.imprimirToken("teste", "teste", "teste", 1);
-        janela.imprimirToken("teste", "teste", "teste", 2);
-        janela.imprimirToken("teste", "teste", "teste", 3);
+        janela.pararAnalise();
     }
 
     public void run() {
         analisarTokens();
-        //testeImpressao();
     }
 
     
