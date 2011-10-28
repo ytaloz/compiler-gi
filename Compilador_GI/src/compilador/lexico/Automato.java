@@ -69,24 +69,31 @@ public class Automato {
     }
 
     private void estadoInicial() {
-        if (ehLetra(caracter)) {
+        if (ehLetra(caracter))
+        {
             estado = Estado.EM_ID;
-            consumirProxCaracter();
-        } else if (ehDigito(caracter)) {
+        } 
+        else if (ehDigito(caracter))
+        {
             estado = Estado.EM_NUM;
-            consumirProxCaracter();
-        } else if (ehEspaco(caracter)) {
+            //consumirProxCaracter();
+        } 
+        else if (ehEspaco(caracter))
+        {
             consumirEspacos();
-        } else if (ehFinalDeArquivo()) {
+        } 
+        else if (ehFinalDeArquivo())
+        {
             estado = Estado.FIM;
             criarTokenFinalDeArquivo();
-        } else if(ehOperador(caracter)) {
+        } 
+        else if (ehOperador(caracter))
+        {
             estado = Estado.EM_OPERADOR;
-            consumirProxCaracter();
-        }
-        else if(ehDelimitador(caracter)) {
+        } 
+        else if (ehDelimitador(caracter))
+        {
             estado = Estado.EM_DELIMITADOR;
-            consumirProxCaracter();
         }
         else {
             criarTokenErro();
@@ -127,8 +134,18 @@ public class Automato {
         if(caracter=='*') {
             tokenAtual = new Token(TokenType.MULT, TokenCategory.OPERADOR, "*", linhaAtual);
         }
-        if(caracter=='/') {
-            tokenAtual = new Token(TokenType.DIV, TokenCategory.OPERADOR, "/", linhaAtual);
+        if (caracter == '/') {
+            consumirProxCaracter();
+            if (caracter == '/') {
+                while (caracter != '\n' && !ehFinalDeArquivo()) {
+                    consumirProxCaracter();
+                    System.out.println("no while!!!");
+                }
+                tokenAtual = new Token(TokenType.COMENTLINHA, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.DIV, TokenCategory.OPERADOR, "/", linhaAtual);
+            }
         }
         if(caracter=='=') {
             consumirProxCaracter();
@@ -245,7 +262,16 @@ public class Automato {
                 criarTokenFinalDeArquivo();
             }
         }
-        ponteiro--;
+        lexemaAtual = lexemaAtual + caracter;
+        //ponteiro--;
+    }
+
+    private void consumirComentarioLinha()
+    {
+        while (caracter != '\n') {
+            consumirProxCaracter();
+        }
+        tokenAtual = new Token(TokenType.COMENTLINHA, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
     }
 
     private boolean ehDigito(char c) {
