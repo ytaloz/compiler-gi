@@ -5,6 +5,7 @@
 
 package compilador.lexico;
 
+import compilador.TabelaDeSimbolos;
 import compilador.token.Token;
 import compilador.token.TokenCategory;
 import compilador.token.TokenType;
@@ -15,8 +16,10 @@ import compilador.token.TokenType;
  */
 public class Automato {
 
+    TabelaDeSimbolos simbolos;
+
     char[] codigoFonte;
-    char caracter;        //caractere atual lido
+    char caracter;                //caractere atual lido
     String lexemaAtual = "" ;
 
     int ponteiro = -1;           //indice do vetor de caracteres (à frente)
@@ -26,10 +29,11 @@ public class Automato {
     Token tokenAtual;
 
 
-    public Automato(String codigoFonte)
+    public Automato(String codigoFonte, TabelaDeSimbolos simbolos)
     {
         codigoFonte = codigoFonte + " ";
         this.codigoFonte = codigoFonte.toCharArray();
+        this.simbolos = simbolos;
     }
 
     public Token getToken() {
@@ -111,11 +115,16 @@ public class Automato {
 
     private void reconhecerIdentificador()
     {
-        while( ehCaracterDeIdentificador(caracter) ) {
+        while (ehCaracterDeIdentificador(caracter)) {
             consumirProxCaracter();
         }
         retrocederUmCaracter();
-        tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
+        
+        if (simbolos.getSimbolo(lexemaAtual.trim()) != null) {
+            tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual, linhaAtual);
+        } else {
+            tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
+        }
         estado = Estado.FIM;
     }
 
@@ -347,7 +356,6 @@ public class Automato {
 
     private boolean ehEspaco(char c) {
         return (Character.isSpaceChar(c) || c == '\r' || c == '\n');
-        //return !ehLetra(c);
     }
 
     private boolean ehDelimitador(char c) {

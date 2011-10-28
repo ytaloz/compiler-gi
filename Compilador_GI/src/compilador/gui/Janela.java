@@ -49,7 +49,7 @@ public class Janela extends javax.swing.JFrame {
         return jTextAreaCodigoFonte.getText();
     }
 
-    public void pararAnálise()
+    public void pararAnalise()
     {
         analise.interrupt();
         analise = null;
@@ -382,7 +382,7 @@ public class Janela extends javax.swing.JFrame {
         limparTabelaDeTokens();
         limparFrameDeErros();
         if (analise != null) {
-            pararAnálise();
+            pararAnalise();
         }
         analise = new Thread(anaLex);
         analise.start();
