@@ -137,11 +137,9 @@ public class Automato {
         if (caracter == '/') {
             consumirProxCaracter();
             if (caracter == '/') {
-                while (caracter != '\n' && !ehFinalDeArquivo()) {
-                    consumirProxCaracter();
-                    System.out.println("no while!!!");
-                }
+                consumirComentarioLinha();
                 tokenAtual = new Token(TokenType.COMENTLINHA, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
+                linhaAtual++;
             } else {
                 retrocederUmCaracter();
                 tokenAtual = new Token(TokenType.DIV, TokenCategory.OPERADOR, "/", linhaAtual);
@@ -263,15 +261,12 @@ public class Automato {
             }
         }
         lexemaAtual = lexemaAtual + caracter;
-        //ponteiro--;
     }
 
-    private void consumirComentarioLinha()
-    {
-        while (caracter != '\n') {
+    private void consumirComentarioLinha() {
+        while (caracter != '\n' && !ehFinalDeArquivo()) {
             consumirProxCaracter();
         }
-        tokenAtual = new Token(TokenType.COMENTLINHA, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
     }
 
     private boolean ehDigito(char c) {
@@ -314,6 +309,7 @@ public class Automato {
 
     private void criarTokenErro() {
         while(!ehEspaco(caracter)) {
+            if(caracter == '\n') linhaAtual++;
             consumirProxCaracter();
         }
         retrocederUmCaracter();
