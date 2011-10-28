@@ -140,6 +140,8 @@ public class Automato {
                 consumirComentarioLinha();
                 tokenAtual = new Token(TokenType.COMENTLINHA, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
                 linhaAtual++;
+            } else if (caracter == '*') {
+                consumirComentarioBloco();
             } else {
                 retrocederUmCaracter();
                 tokenAtual = new Token(TokenType.DIV, TokenCategory.OPERADOR, "/", linhaAtual);
@@ -266,6 +268,23 @@ public class Automato {
     private void consumirComentarioLinha() {
         while (caracter != '\n' && !ehFinalDeArquivo()) {
             consumirProxCaracter();
+        }
+    }
+
+    private void consumirComentarioBloco() {
+        while (caracter != '*' && !ehFinalDeArquivo()) {
+            if(caracter == '\n') linhaAtual++;
+            consumirProxCaracter();
+        }
+        if(caracter == '*') {
+            consumirProxCaracter();
+            if(caracter == '/') {
+                tokenAtual = new Token(TokenType.COMENTBLOCO, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
+            } else if(caracter != '*') {
+                consumirComentarioBloco();
+            }
+        } else {
+            criarTokenErro();
         }
     }
 
