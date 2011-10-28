@@ -14,6 +14,8 @@ public enum Estado {
     START,
     EM_ID,
     EM_NUM,
+    EM_OPERADOR,
+    EM_DELIMITADOR,
     FIM
 
 

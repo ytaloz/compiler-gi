@@ -49,8 +49,17 @@ public class Automato {
                 }
                 case EM_NUM: {
                 }
+                case EM_OPERADOR: {
+                    reconhecerOperador();
+                    break;
+                }
+                case EM_DELIMITADOR: {
+                    reconhecerDelimitador();
+                    break;
+                }
                 default: {
                     criarTokenErro();
+                    break;
                 }
                 
             }
@@ -63,17 +72,24 @@ public class Automato {
         if (ehLetra(caracter)) {
             estado = Estado.EM_ID;
             consumirProxCaracter();
-        }
-        if (ehDigito(caracter)) {
+        } else if (ehDigito(caracter)) {
             estado = Estado.EM_NUM;
             consumirProxCaracter();
-        }
-        if (ehEspaco(caracter)) {
+        } else if (ehEspaco(caracter)) {
             consumirEspacos();
-        }
-        if (ehFinalDeArquivo()) {
+        } else if (ehFinalDeArquivo()) {
             estado = Estado.FIM;
             criarTokenFinalDeArquivo();
+        } else if(ehOperador(caracter)) {
+            estado = Estado.EM_OPERADOR;
+            consumirProxCaracter();
+        }
+        else if(ehDelimitador(caracter)) {
+            estado = Estado.EM_DELIMITADOR;
+            consumirProxCaracter();
+        }
+        else {
+            criarTokenErro();
         }
     }
 
@@ -87,6 +103,116 @@ public class Automato {
         estado = Estado.FIM;
     }
 
+    private void reconhecerOperador()
+    {
+
+        if(caracter=='+') {
+            consumirProxCaracter();
+            if(caracter=='+') {
+                tokenAtual = new Token(TokenType.INCR, TokenCategory.OPERADOR, "++", linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.ADICAO, TokenCategory.OPERADOR, "+", linhaAtual);
+            }
+        }
+        if(caracter=='-') {
+            consumirProxCaracter();
+            if(caracter=='-') {
+                tokenAtual = new Token(TokenType.DECR, TokenCategory.OPERADOR, "--", linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.SUB, TokenCategory.OPERADOR, "-", linhaAtual);
+            }
+        }
+        if(caracter=='*') {
+            tokenAtual = new Token(TokenType.MULT, TokenCategory.OPERADOR, "*", linhaAtual);
+        }
+        if(caracter=='/') {
+            tokenAtual = new Token(TokenType.DIV, TokenCategory.OPERADOR, "/", linhaAtual);
+        }
+        if(caracter=='=') {
+            consumirProxCaracter();
+            if(caracter=='=') {
+                tokenAtual = new Token(TokenType.IGUAL, TokenCategory.OPERADOR, "==", linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.ATRIB, TokenCategory.OPERADOR, "=", linhaAtual);
+            }
+        }
+        if(caracter=='!') {
+            consumirProxCaracter();
+            if(caracter=='=') {
+                tokenAtual = new Token(TokenType.DIF, TokenCategory.OPERADOR, "!=", linhaAtual);
+            } else {
+                criarTokenErro();
+            }
+        }
+        if(caracter=='>') {
+            consumirProxCaracter();
+            if(caracter=='=') {
+                tokenAtual = new Token(TokenType.MAIORIGUAL, TokenCategory.OPERADOR, ">=", linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.MAIOR, TokenCategory.OPERADOR, ">", linhaAtual);
+            }
+        }
+        if(caracter=='<') {
+            consumirProxCaracter();
+            if(caracter=='=') {
+                tokenAtual = new Token(TokenType.MENORIGUAL, TokenCategory.OPERADOR, "<=", linhaAtual);
+            } else {
+                retrocederUmCaracter();
+                tokenAtual = new Token(TokenType.MENOR, TokenCategory.OPERADOR, "<", linhaAtual);
+            }
+        }
+        if(caracter=='&') {
+            consumirProxCaracter();
+            if(caracter=='&') {
+                tokenAtual = new Token(TokenType.E, TokenCategory.OPERADOR, "&&", linhaAtual);
+            } else {
+                criarTokenErro();
+            }
+        }
+        if(caracter=='|') {
+            consumirProxCaracter();
+            if(caracter=='|') {
+                tokenAtual = new Token(TokenType.OU, TokenCategory.OPERADOR, "||", linhaAtual);
+            } else {
+                criarTokenErro();
+            }
+        }
+        if(caracter=='.') {
+            tokenAtual = new Token(TokenType.PONTO, TokenCategory.OPERADOR, ".", linhaAtual);
+        }
+
+        estado = Estado.FIM;
+    }
+
+    private void reconhecerDelimitador() {
+        if (caracter == ';') {
+            tokenAtual = new Token(TokenType.PONTOVIRGULA, TokenCategory.DELIMITADOR, ";", linhaAtual);
+        }
+        if (caracter == '(') {
+            tokenAtual = new Token(TokenType.ABREPAR, TokenCategory.DELIMITADOR, "(", linhaAtual);
+        }
+        if (caracter == ')') {
+            tokenAtual = new Token(TokenType.FECHAPAR, TokenCategory.DELIMITADOR, ")", linhaAtual);
+        }
+        if (caracter == '{') {
+            tokenAtual = new Token(TokenType.ABRECHAVE, TokenCategory.DELIMITADOR, "{", linhaAtual);
+        }
+        if (caracter == '}') {
+            tokenAtual = new Token(TokenType.FECHACHAVE, TokenCategory.DELIMITADOR, "}", linhaAtual);
+        }
+        if (caracter == '[') {
+            tokenAtual = new Token(TokenType.ABRECOLCH, TokenCategory.DELIMITADOR, "[", linhaAtual);
+        }
+        if (caracter == ']') {
+            tokenAtual = new Token(TokenType.FECHACOLCH, TokenCategory.DELIMITADOR, "]", linhaAtual);
+        }
+
+        estado = Estado.FIM;
+    }
 
 
 
@@ -115,6 +241,8 @@ public class Automato {
             if (caracter == '\n') linhaAtual++;
             if (!ehFinalDeArquivo()) {
                 this.caracter = this.codigoFonte[ponteiro];
+            } else {
+                criarTokenFinalDeArquivo();
             }
         }
         ponteiro--;
@@ -138,7 +266,7 @@ public class Automato {
     }
 
     private boolean ehOperador(char c) {
-        return (c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '>' || c == '<' || c == '&' || c == '|');
+        return (c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '>' || c == '<' || c == '&' || c == '|' || c == '.');
     }
 
     private boolean ehUnderline(char c) {

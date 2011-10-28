@@ -31,6 +31,7 @@ public enum TokenType {
     ATRIB,
     INCR,
     DECR,
+    PONTO,
 
     //DELIMITADORES
     PONTOVIRGULA,
