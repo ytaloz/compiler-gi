@@ -24,7 +24,6 @@ public class AnalisadorLexico implements Runnable{
     List<Token> tokens = new ArrayList<Token>();
     TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
 
-    //contador de erros
     private int erros = 0;
 
     public AnalisadorLexico()
@@ -43,8 +42,6 @@ public class AnalisadorLexico implements Runnable{
             token = automato.getToken();
             tokens.add(token);
             janela.imprimirToken(token);
-
-            System.out.println("no while!!");
 
             if(token instanceof TokenErro) {
                 erros++;
