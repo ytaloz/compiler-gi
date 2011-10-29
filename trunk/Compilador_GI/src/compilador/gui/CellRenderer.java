@@ -36,6 +36,7 @@ public class CellRenderer extends DefaultTableCellRenderer {
 
         if (column == 1) {
             component.setForeground(Color.blue);
+            component.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         } else {
             component.setForeground(Color.black);
         }
