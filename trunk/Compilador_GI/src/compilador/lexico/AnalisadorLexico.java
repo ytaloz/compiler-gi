@@ -8,6 +8,7 @@ package compilador.lexico;
 import compilador.TabelaDeSimbolos;
 import compilador.gui.Janela;
 import compilador.token.Token;
+import compilador.token.TokenErro;
 import compilador.token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,9 @@ public class AnalisadorLexico implements Runnable{
     List<Token> tokens = new ArrayList<Token>();
     TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
 
+    //contador de erros
+    private int erros = 0;
+
     public AnalisadorLexico()
     {
         janela = new Janela(this);
@@ -31,6 +35,7 @@ public class AnalisadorLexico implements Runnable{
 
     public void analisarTokens()
     {
+        erros = 0;
         Automato automato = new Automato(janela.getCodigoFonte(), tabelaDeSimbolos);
         Token token;
 
@@ -38,9 +43,22 @@ public class AnalisadorLexico implements Runnable{
             token = automato.getToken();
             tokens.add(token);
             janela.imprimirToken(token);
+
+            System.out.println("no while!!");
+
+            if(token instanceof TokenErro) {
+                erros++;
+                janela.imprimirErro((TokenErro)token);
+            }
+            
         } while (token.getTipo() != TokenType.EOF);
 
+
+        if (erros == 0) {
+            janela.imprimirMensagemSucesso();
+        }
         janela.pararAnalise();
+        
     }
 
     public void run() {
