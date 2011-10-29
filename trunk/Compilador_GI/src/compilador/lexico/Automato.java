@@ -411,12 +411,12 @@ public class Automato {
     }
 
     private void criarTokenErro(String mensagem) {
-        while(!ehEspaco(caracter)) {
+        while(!ehEspaco(caracter) && !ehDelimitador(caracter)) {
             if(caracter == '\n') linhaAtual++;
             consumirProxCaracter();
         }
         retrocederUmCaracter();
-        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem + "\"" + lexemaAtual.trim() + "\"");
+        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, "#" + mensagem + "\"" + lexemaAtual.trim() + "\"", ponteiro);
         estado = Estado.FIM;
     }
 
