@@ -620,7 +620,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public void imprimirMensagemSucesso() {
-        jTextAreaErros.append("ANÁLISE REALIZADA COM SUCESSO!" + '\n');
+        jTextAreaErros.append(" ANÁLISE REALIZADA COM SUCESSO!" + '\n');
         jTextAreaErros.setForeground(new Color(35,142,35));
     }
 

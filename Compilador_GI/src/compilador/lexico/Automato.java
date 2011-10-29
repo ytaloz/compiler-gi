@@ -23,7 +23,7 @@ public class Automato {
     char caracter;                //caractere atual lido
     String lexemaAtual = "" ;
 
-    int ponteiro = -1;           //indice do vetor de caracteres (à frente)
+    int ponteiro = -1;           //indice do vetor de caracteres 
     int linhaAtual = 1;              //linha atual da leitura
 
     Estado estado = Estado.START;
@@ -324,6 +324,7 @@ public class Automato {
                 this.caracter = this.codigoFonte[ponteiro];
             } else {
                 criarTokenFinalDeArquivo();
+                break;
             }
         }
         lexemaAtual = lexemaAtual + caracter;
