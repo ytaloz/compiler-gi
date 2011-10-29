@@ -52,7 +52,7 @@ public class TabelaDeSimbolos {
         inserir("caractere");
         inserir("cadeia");
         inserir("verdadeiro");
-        inserir("false");
+        inserir("falso");
         inserir("herda_de");
     }
 
