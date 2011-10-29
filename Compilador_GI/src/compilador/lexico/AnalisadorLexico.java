@@ -43,9 +43,12 @@ public class AnalisadorLexico implements Runnable{
             tokens.add(token);
             janela.imprimirToken(token);
 
-            if(token instanceof TokenErro) {
+            if (token instanceof TokenErro) {
                 erros++;
-                janela.imprimirErro((TokenErro)token);
+                if (erros == 1) {
+                    janela.imprimirCabecalhoErros();
+                }
+                janela.imprimirErro((TokenErro) token);
             }
             
         } while (token.getTipo() != TokenType.EOF);

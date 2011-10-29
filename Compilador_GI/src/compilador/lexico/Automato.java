@@ -69,7 +69,7 @@ public class Automato {
                     break;
                 }
                 default: {
-                    criarTokenErro("Simbolo Inválido.");
+                    criarTokenErro("Simbolo Inválido: ");
                     break;
                 }
                 
@@ -110,7 +110,7 @@ public class Automato {
             estado = Estado.EM_CADEIACONSTANTE;
         }
         else {
-            criarTokenErro("Simbolo inválido");
+            criarTokenErro("Simbolo inválido: ");
         }
     }
 
@@ -121,7 +121,7 @@ public class Automato {
         }
 
         if (ehSimboloInvalido(caracter) || caracter=='!') {
-            criarTokenErro("Identificador Mal Formado");
+            criarTokenErro("Identificador Mal Formado: ");
         } else {
 
             retrocederUmCaracter();
@@ -141,7 +141,7 @@ public class Automato {
         }
 
         if (ehSimboloInvalido(caracter) || ehLetra(caracter)) {
-            criarTokenErro("Numero Mal Formado");
+            criarTokenErro("Numero Mal Formado: ");
         } else {
 
             if (caracter == '.') {
@@ -151,7 +151,7 @@ public class Automato {
                         consumirProxCaracter();
                     }
                 } else {
-                    criarTokenErro("Numero Mal Formado");
+                    criarTokenErro("Numero Mal Formado: ");
                 }
             } else {
                 retrocederUmCaracter();
@@ -213,7 +213,7 @@ public class Automato {
             if(caracter=='=') {
                 tokenAtual = new Token(TokenType.DIF, TokenCategory.OPERADOR, "!=", linhaAtual);
             } else {
-                criarTokenErro("Simbolo Inválido");
+                criarTokenErro("Simbolo Inválido: ");
             }
         }
         if(caracter=='>') {
@@ -239,7 +239,7 @@ public class Automato {
             if(caracter=='&') {
                 tokenAtual = new Token(TokenType.E, TokenCategory.OPERADOR, "&&", linhaAtual);
             } else {
-                criarTokenErro("Operador Mal Formado: esperava outro '&'");
+                criarTokenErro("Operador Mal Formado - esperava outro '&': ");
             }
         }
         if(caracter=='|') {
@@ -247,7 +247,7 @@ public class Automato {
             if(caracter=='|') {
                 tokenAtual = new Token(TokenType.OU, TokenCategory.OPERADOR, "||", linhaAtual);
             } else {
-                criarTokenErro("Operador Mal Formado: esperava outro '|'");
+                criarTokenErro("Operador Mal Formado - esperava outro '|': ");
             }
         }
         if(caracter=='.') {
@@ -288,7 +288,7 @@ public class Automato {
         if (ehAspa(caracter)) {
             tokenAtual = new Token(TokenType.LITERAL, TokenCategory.CADEIA_CONSTANTE, lexemaAtual, linhaAtual);
         } else {
-            criarTokenErro("String Não Fechada: esperava um '\"' ");
+            criarTokenErro("String Não Fechada - esperava um '\"': ");
         }
         estado = Estado.FIM;
         
@@ -348,7 +348,7 @@ public class Automato {
                 consumirComentarioBloco();
             }
         } else {
-            criarTokenErro("Fim Inesperado de Arquivo: necessário fechar o comentário de bloco ");
+            criarTokenErro("Fim Inesperado de Arquivo - necessário fechar o comentário de bloco: ");
         }
     }
 
@@ -416,7 +416,7 @@ public class Automato {
             consumirProxCaracter();
         }
         retrocederUmCaracter();
-        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem);
+        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem + "\"" + lexemaAtual.trim() + "\"");
         estado = Estado.FIM;
     }
 

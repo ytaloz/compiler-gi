@@ -590,9 +590,14 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
+    public void imprimirCabecalhoErros() {
+        jTextAreaErros.append("ERROS LÉXICOS\n");
+        //jTextAreaErros.setForeground(Color.red);
+    }
+
     private void imprimirErro(String erro) {
 
-        jTextAreaErros.append(erro + '\n');
+        jTextAreaErros.append("\t" + erro + '\n');
         jTextAreaErros.setForeground(Color.red);
 
     }
