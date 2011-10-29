@@ -8,9 +8,7 @@
  *
  * Created on 15/09/2010, 10:57:01
  */
-
 package compilador.gui;
-
 
 import compilador.lexico.AnalisadorLexico;
 import compilador.token.Token;
@@ -38,9 +36,11 @@ public class Janela extends javax.swing.JFrame {
 
     private AnalisadorLexico anaLex;
     private Thread analise;
-
     private boolean alteracoesNaoSalvas;
-    File ultimoDiretorioSalvo;
+    private File ultimoDiretorioSalvo;
+    private JFileChooser fileChooser;
+    private Sobre sobre;
+    private Ajuda ajuda;
 
     /** Creates new form Janela */
     public Janela(AnalisadorLexico anaLex) {
@@ -49,13 +49,11 @@ public class Janela extends javax.swing.JFrame {
         this.anaLex = anaLex;
     }
 
-    public String getCodigoFonte()
-    {
+    public String getCodigoFonte() {
         return jTextAreaCodigoFonte.getText();
     }
 
-    public void pararAnalise()
-    {
+    public void pararAnalise() {
         analise.interrupt();
         analise = null;
     }
@@ -368,7 +366,7 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemSalvarActionPerformed
 
     private void jMenuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAbrirActionPerformed
-       abrirArquivo();
+        abrirArquivo();
     }//GEN-LAST:event_jMenuItemAbrirActionPerformed
 
     private void jButtonNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovoActionPerformed
@@ -381,7 +379,7 @@ public class Janela extends javax.swing.JFrame {
 
     private void jMenuItemSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSairActionPerformed
         this.dispose();
-        System.exit(0);     
+        System.exit(0);
     }//GEN-LAST:event_jMenuItemSairActionPerformed
 
     private void jButtonExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExecutarActionPerformed
@@ -395,7 +393,6 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonExecutarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-  
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLimparActionPerformed
@@ -409,62 +406,58 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemLimparActionPerformed
 
     private void jButtonAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAjudaActionPerformed
-        criarJanelaAjuda();
+        getJanelaAjuda().setVisible(true);
     }//GEN-LAST:event_jButtonAjudaActionPerformed
 
     private void jMenuItemAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAjudaActionPerformed
-        criarJanelaAjuda();
+        getJanelaAjuda().setVisible(true);
     }//GEN-LAST:event_jMenuItemAjudaActionPerformed
 
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
-        criarJanelaSobre();
+        getJanelaSobre().setVisible(true);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
-    private void configurarJanela()
-    {
+    private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
         jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
-        addWindowListener( new AreYouSure() );
+        addWindowListener(new AreYouSure());
         adicionarKeyListener();
         centralizarJanela();
     }
 
-    private void adicionarKeyListener()
-    {
+    private void adicionarKeyListener() {
         jTextAreaCodigoFonte.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
                 alteracoesNaoSalvas = true;
-                //JOptionPane.showMessageDialog(Janela.this, "teste");
             }
 
             public void keyPressed(KeyEvent e) {
-
             }
 
             public void keyReleased(KeyEvent e) {
-
             }
         });
     }
 
-    private void criarJanelaAjuda()
-    {
-        Ajuda ajuda = new Ajuda();
-        ajuda.setLocationRelativeTo(this);
-        ajuda.setVisible(true);
+    private Ajuda getJanelaAjuda() {
+        if (ajuda == null) {
+            ajuda = new Ajuda();
+            ajuda.setLocationRelativeTo(this);
+        }
+        return ajuda;
     }
 
-    private void criarJanelaSobre()
-    {
-        Sobre sobre = new Sobre();
-        sobre.setLocationRelativeTo(this);
-        sobre.setVisible(true);
+    private Sobre getJanelaSobre() {
+        if (sobre == null) {
+            sobre = new Sobre();
+            sobre.setLocationRelativeTo(this);
+        }
+        return sobre;
     }
 
-    private void focalizarFrameDeCodigoFonte()
-    {
+    private void focalizarFrameDeCodigoFonte() {
         addWindowListener(new WindowAdapter() {
 
             @Override
@@ -474,16 +467,12 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
-    private void centralizarJanela()
-    {
+    private void centralizarJanela() {
         setLocationRelativeTo(null);
     }
 
-
 //----- MÉTODOS DE AÇÃO -----------------------------------------------------
-
-   private void abrirArquivo()
-    {
+    private void abrirArquivo() {
         JFileChooser fileChooser = getFileChooser("Abrir");
         int opcao = fileChooser.showOpenDialog(this);
 
@@ -517,10 +506,9 @@ public class Janela extends javax.swing.JFrame {
         }
     }
 
-    private void salvarArquivo()
-    {
+    private void salvarArquivo() {
         alteracoesNaoSalvas = false;
-        JFileChooser fileChooser = getFileChooser("Salvar");
+        fileChooser = getFileChooser("Salvar");
         fileChooser.setSelectedFile(new File(jTabbedPaneCodigoFonte.getTitleAt(0).replaceAll(".txt", "")));
 
         int opcao = fileChooser.showSaveDialog(this);
@@ -542,9 +530,7 @@ public class Janela extends javax.swing.JFrame {
         }
     }
 
-
-    private void comecarNovoArquivoFonte()
-    {
+    private void comecarNovoArquivoFonte() {
         if (!codigoFonteVazio() && alteracoesNaoSalvas) {
             int opcao = JOptionPane.showConfirmDialog(this, "Deseja salvar o estado atual do código?",
                     "Novo", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -556,11 +542,8 @@ public class Janela extends javax.swing.JFrame {
         reinicializarInterface();
     }
 
-
 //----- MÉTODOS AUXILIARES -----------------------------------------------------
-
-    private void reinicializarInterface()
-    {
+    private void reinicializarInterface() {
         limparFrameDeCodigoFonte();
         jTabbedPaneCodigoFonte.setTitleAt(0, "Novo arquivo");
 
@@ -568,34 +551,31 @@ public class Janela extends javax.swing.JFrame {
         limparFrameDeErros();
     }
 
-     private JFileChooser getFileChooser(String titulo)
-    {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle(titulo);
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Arquivos textos", "txt", "dat", "java"));
-        fileChooser.setCurrentDirectory(ultimoDiretorioSalvo);
+    private JFileChooser getFileChooser(String titulo) {
+        if (fileChooser == null) {
+            fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle(titulo);
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Arquivos textos", "txt", "dat", "java"));
+            fileChooser.setCurrentDirectory(ultimoDiretorioSalvo);
+        }
 
         return fileChooser;
     }
-  
-    private boolean codigoFonteVazio()
-    {
+
+    private boolean codigoFonteVazio() {
         return jTextAreaCodigoFonte.getText().equals("");
     }
 
-    private void limparFrameDeCodigoFonte()
-    {
+    private void limparFrameDeCodigoFonte() {
         this.jTextAreaCodigoFonte.setText("");
     }
 
-    private void limparFrameDeErros()
-    {
+    private void limparFrameDeErros() {
         this.jTextAreaErros.setText("");
     }
 
-    private void limparTabelaDeTokens()
-    {
+    private void limparTabelaDeTokens() {
         jTableTokens.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{
@@ -608,33 +588,33 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
-    public void imprimirErro (String erro) {
+    public void imprimirErro(String erro) {
 
-        jTextAreaErros.append(erro+'\n');
+        jTextAreaErros.append(erro + '\n');
         jTextAreaErros.setForeground(Color.red);
 
-      }
+    }
 
-    public void imprimirToken(Token token)
-    {
+    public void imprimirToken(Token token) {
         imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString(), token.getLinha());
     }
 
-    public void imprimirToken (String token, String lexema, String categoria, int linha) {
+    public void imprimirToken(String token, String lexema, String categoria, int linha) {
 
-       DefaultTableModel modelo = (DefaultTableModel) jTableTokens.getModel();
+        DefaultTableModel modelo = (DefaultTableModel) jTableTokens.getModel();
 
-       String linhaString = null;
-       linhaString = String.valueOf(linha);
+        String linhaString = null;
+        linhaString = String.valueOf(linha);
 
-       String[] dados = {token,lexema,categoria,linhaString};
+        String[] dados = {token, lexema, categoria, linhaString};
 
-       modelo.addRow(dados);
+        modelo.addRow(dados);
 
-      }
+    }
 
     private class AreYouSure extends WindowAdapter {
 
+        @Override
         public void windowClosing(WindowEvent e) {
             if (alteracoesNaoSalvas) {
                 int option = JOptionPane.showOptionDialog(
@@ -652,12 +632,10 @@ public class Janela extends javax.swing.JFrame {
             }
             System.exit(0);
         }
-
     }
-
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
 //    public static void main(String args[]) {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            public void run() {
@@ -666,7 +644,6 @@ public class Janela extends javax.swing.JFrame {
 //            }
 //        });
 //    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAbrir;
     private javax.swing.JButton jButtonAjuda;
@@ -704,5 +681,4 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextAreaErros;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
-
 }

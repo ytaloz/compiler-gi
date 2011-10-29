@@ -41,6 +41,10 @@ public class CellRenderer extends DefaultTableCellRenderer {
             component.setForeground(Color.black);
         }
 
+        if (value == "ERRO") {
+                component.setForeground(Color.RED);
+        }
+
         return component;
     }
 }
