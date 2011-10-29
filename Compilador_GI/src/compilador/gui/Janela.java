@@ -12,6 +12,7 @@ package compilador.gui;
 
 import compilador.lexico.AnalisadorLexico;
 import compilador.token.Token;
+import compilador.token.TokenErro;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -206,6 +207,7 @@ public class Janela extends javax.swing.JFrame {
 
         jTextAreaErros.setColumns(20);
         jTextAreaErros.setEditable(false);
+        jTextAreaErros.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jTextAreaErros.setRows(5);
         jScrollPane3.setViewportView(jTextAreaErros);
 
@@ -234,7 +236,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
@@ -588,7 +590,7 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
-    public void imprimirErro(String erro) {
+    private void imprimirErro(String erro) {
 
         jTextAreaErros.append(erro + '\n');
         jTextAreaErros.setForeground(Color.red);
@@ -599,7 +601,16 @@ public class Janela extends javax.swing.JFrame {
         imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString(), token.getLinha());
     }
 
-    public void imprimirToken(String token, String lexema, String categoria, int linha) {
+    public void imprimirErro(TokenErro token) {
+        imprimirErro(token.getMensagem() + "\t" + "linha: " + token.getLinha());
+    }
+
+    public void imprimirMensagemSucesso() {
+        jTextAreaErros.append("ANÁLISE REALIZADA COM SUCESSO!" + '\n');
+        jTextAreaErros.setForeground(new Color(35,142,35));
+    }
+
+    private void imprimirToken(String token, String lexema, String categoria, int linha) {
 
         DefaultTableModel modelo = (DefaultTableModel) jTableTokens.getModel();
 
