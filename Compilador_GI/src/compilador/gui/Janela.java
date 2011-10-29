@@ -15,6 +15,8 @@ package compilador.gui;
 import compilador.lexico.AnalisadorLexico;
 import compilador.token.Token;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -34,8 +36,11 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Janela extends javax.swing.JFrame {
 
-    AnalisadorLexico anaLex;
+    private AnalisadorLexico anaLex;
     private Thread analise;
+
+    private boolean alteracoesNaoSalvas;
+    File ultimoDiretorioSalvo;
 
     /** Creates new form Janela */
     public Janela(AnalisadorLexico anaLex) {
@@ -100,7 +105,7 @@ public class Janela extends javax.swing.JFrame {
         jMenuItemAjuda = new javax.swing.JMenuItem();
         jMenuItemSobre = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Analisador Léxico GI - Gabriel e Italo");
 
         jToolBar1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
@@ -206,7 +211,7 @@ public class Janela extends javax.swing.JFrame {
         jTextAreaErros.setRows(5);
         jScrollPane3.setViewportView(jTextAreaErros);
 
-        jTabbedPaneErros.addTab("Erros", jScrollPane3);
+        jTabbedPaneErros.addTab("Saída", jScrollPane3);
 
         jTableTokens.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -332,19 +337,19 @@ public class Janela extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
+            .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 926, Short.MAX_VALUE))
-            .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPaneErros, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
         );
 
         pack();
@@ -420,7 +425,28 @@ public class Janela extends javax.swing.JFrame {
         focalizarFrameDeCodigoFonte();
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
         jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
+        addWindowListener( new AreYouSure() );
+        adicionarKeyListener();
         centralizarJanela();
+    }
+
+    private void adicionarKeyListener()
+    {
+        jTextAreaCodigoFonte.addKeyListener(new KeyListener() {
+
+            public void keyTyped(KeyEvent e) {
+                alteracoesNaoSalvas = true;
+                //JOptionPane.showMessageDialog(Janela.this, "teste");
+            }
+
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
 
     private void criarJanelaAjuda()
@@ -493,9 +519,13 @@ public class Janela extends javax.swing.JFrame {
 
     private void salvarArquivo()
     {
+        alteracoesNaoSalvas = false;
         JFileChooser fileChooser = getFileChooser("Salvar");
+        fileChooser.setSelectedFile(new File(jTabbedPaneCodigoFonte.getTitleAt(0).replaceAll(".txt", "")));
 
         int opcao = fileChooser.showSaveDialog(this);
+        ultimoDiretorioSalvo = fileChooser.getCurrentDirectory();
+        //JOptionPane.showMessageDialog(this, diretorio);
 
         if (opcao == JFileChooser.APPROVE_OPTION) {
             File arquivo = new File(fileChooser.getSelectedFile().getAbsolutePath() + ".txt");
@@ -515,7 +545,7 @@ public class Janela extends javax.swing.JFrame {
 
     private void comecarNovoArquivoFonte()
     {
-        if (!codigoFonteVazio()) {
+        if (!codigoFonteVazio() && alteracoesNaoSalvas) {
             int opcao = JOptionPane.showConfirmDialog(this, "Deseja salvar o estado atual do código?",
                     "Novo", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
@@ -544,6 +574,7 @@ public class Janela extends javax.swing.JFrame {
         fileChooser.setDialogTitle(titulo);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Arquivos textos", "txt", "dat", "java"));
+        fileChooser.setCurrentDirectory(ultimoDiretorioSalvo);
 
         return fileChooser;
     }
@@ -601,6 +632,28 @@ public class Janela extends javax.swing.JFrame {
        modelo.addRow(dados);
 
       }
+
+    private class AreYouSure extends WindowAdapter {
+
+        public void windowClosing(WindowEvent e) {
+            if (alteracoesNaoSalvas) {
+                int option = JOptionPane.showOptionDialog(
+                        Janela.this,
+                        "Deseja salvar as alterações antes de sair?",
+                        "", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE, null, null,
+                        null);
+                if (option == JOptionPane.YES_OPTION) {
+                    salvarArquivo();
+                    System.exit(0);
+                } else {
+                    System.exit(0);
+                }
+            }
+            System.exit(0);
+        }
+
+    }
 
     /**
     * @param args the command line arguments
