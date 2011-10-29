@@ -118,12 +118,17 @@ public class Automato {
         while (ehCaracterDeIdentificador(caracter)) {
             consumirProxCaracter();
         }
-        retrocederUmCaracter();
-        
-        if (simbolos.getSimbolo(lexemaAtual.trim()) != null) {
-            tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual, linhaAtual);
+
+        if (ehSimboloInvalido(caracter)) {
+            criarTokenErro();
         } else {
-            tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
+
+            retrocederUmCaracter();
+            if (simbolos.getSimbolo(lexemaAtual.trim()) != null) {
+                tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual.trim(), linhaAtual);
+            } else {
+                tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual.trim(), linhaAtual);
+            }
         }
         estado = Estado.FIM;
     }
@@ -376,6 +381,15 @@ public class Automato {
     private boolean ehCaracterDeIdentificador(char c) {
         return (ehLetra(c) || ehDigito(c) || ehUnderline(c));
     }
+
+    private boolean ehSimboloInvalido(char c) {
+        return (!ehLetra(c) && !ehDigito(c) && !ehEspaco(c) && !ehDelimitador(c) && !ehOperador(c) && !ehUnderline(c) && !ehAspa(c));
+    }
+
+//    private boolean ehSimboloInvalido(char c) {
+//        int ASCII = (int) c;
+//        return ( ASCII>=32 && ASCII<=126 && ASCII!=34);
+//    }
 
     private boolean ehFinalDeArquivo() {
         return ponteiro >= codigoFonte.length-1;
