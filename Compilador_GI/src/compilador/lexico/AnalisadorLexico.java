@@ -49,6 +49,7 @@ public class AnalisadorLexico implements Runnable{
                     janela.imprimirCabecalhoErros();
                 }
                 janela.imprimirErro((TokenErro) token);
+                //janela.destacarLinha(1);
             }
             
         } while (token.getTipo() != TokenType.EOF);

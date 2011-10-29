@@ -26,8 +26,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Element;
+import javax.swing.text.Highlighter;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Utilities;
 
 /**
  *
@@ -422,6 +430,7 @@ public class Janela extends javax.swing.JFrame {
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
         jTextAreaCodigoFonte.setBorder(new NumberedBorder());
+        //jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
         jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
         addWindowListener(new AreYouSure());
         adicionarKeyListener();
@@ -475,7 +484,7 @@ public class Janela extends javax.swing.JFrame {
 
 //----- MÉTODOS DE AÇÃO -----------------------------------------------------
     private void abrirArquivo() {
-        JFileChooser fileChooser = getFileChooser("Abrir");
+        fileChooser = getFileChooser("Abrir");
         int opcao = fileChooser.showOpenDialog(this);
 
         if (opcao == JFileChooser.APPROVE_OPTION) {
@@ -515,7 +524,6 @@ public class Janela extends javax.swing.JFrame {
 
         int opcao = fileChooser.showSaveDialog(this);
         ultimoDiretorioSalvo = fileChooser.getCurrentDirectory();
-        //JOptionPane.showMessageDialog(this, diretorio);
 
         if (opcao == JFileChooser.APPROVE_OPTION) {
             File arquivo = new File(fileChooser.getSelectedFile().getAbsolutePath() + ".txt");
@@ -545,6 +553,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
 //----- MÉTODOS AUXILIARES -----------------------------------------------------
+    
     private void reinicializarInterface() {
         limparFrameDeCodigoFonte();
         jTabbedPaneCodigoFonte.setTitleAt(0, "Novo arquivo");
@@ -591,13 +600,12 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public void imprimirCabecalhoErros() {
-        jTextAreaErros.append("ERROS LÉXICOS\n");
-        //jTextAreaErros.setForeground(Color.red);
+        jTextAreaErros.append(" ERROS LÉXICOS\n");
     }
 
     private void imprimirErro(String erro) {
 
-        jTextAreaErros.append("\t" + erro + '\n');
+        jTextAreaErros.append("  " + erro + '\n');
         jTextAreaErros.setForeground(Color.red);
 
     }
@@ -608,6 +616,7 @@ public class Janela extends javax.swing.JFrame {
 
     public void imprimirErro(TokenErro token) {
         imprimirErro(token.getMensagem() + "\t" + "linha: " + token.getLinha());
+        //destacarLinha(token.getPosInicial(), token.getPosFinal());
     }
 
     public void imprimirMensagemSucesso() {
@@ -628,6 +637,7 @@ public class Janela extends javax.swing.JFrame {
 
     }
 
+
     private class AreYouSure extends WindowAdapter {
 
         @Override
@@ -647,6 +657,52 @@ public class Janela extends javax.swing.JFrame {
                 }
             }
             System.exit(0);
+        }
+    }
+
+    public void destacarLinha(int posInicial, int posFinal) {
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.PINK);
+        try {
+            jTextAreaCodigoFonte.getHighlighter().addHighlight(posInicial, posFinal, painter);
+            //jTextAreaCodigoFonte.get
+        } catch (BadLocationException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    public class CurrentLineHighlighter implements CaretListener {
+
+        private Color DEFAULT_COLOR = new Color(230, 230, 210);
+        private Highlighter.HighlightPainter painter;
+        private Object highlight;
+
+        public CurrentLineHighlighter() {
+            this(null);
+        }
+
+        public CurrentLineHighlighter(Color highlightColor) {
+            Color c = highlightColor != null ? highlightColor : DEFAULT_COLOR;
+            painter = new DefaultHighlighter.DefaultHighlightPainter(c);
+        }
+
+        public void caretUpdate(CaretEvent evt) {
+            JTextComponent comp = (JTextComponent) evt.getSource();
+            if (comp != null && highlight != null) {
+                comp.getHighlighter().removeHighlight(highlight);
+                highlight = null;
+            }
+
+            int pos = comp.getCaretPosition();
+            Element elem = Utilities.getParagraphElement(comp, pos);
+            int start = elem.getStartOffset();
+            int end = elem.getEndOffset();
+            try {
+                highlight = comp.getHighlighter().addHighlight(start, end,
+                        painter);
+            } catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }
         }
     }
     /**
