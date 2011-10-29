@@ -231,6 +231,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
