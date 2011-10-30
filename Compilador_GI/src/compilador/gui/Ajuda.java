@@ -40,7 +40,7 @@ public class Ajuda extends javax.swing.JFrame {
 
         jTextPane1.setContentType("text/html");
         jTextPane1.setEditable(false);
-        jTextPane1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jTextPane1.setFont(new java.awt.Font("Monospaced", 0, 12));
         jTextPane1.setText("<html><b style=color:green>Palavras reservadas:</b> <b>variaveis, metodos, constantes, classe, tipo, retorno, vazio, principal, se, entao, senao, enquanto, para, leia, escreva, inteiro, real, logico, caractere, cadeia, verdadeiro, falso, herda_de</b>\n<br><br>\n<b style=color:green>Identificadores:</b> <b>Letra ( Letra | Dígito | _ )*</b>\n<br><br>\n<b style=color:green>Número:</b> <b>( - )? Dígito+ ( . Dígito+ )?</b>\n<br><br>\n<b style=color:green>Letra:</b> <b>( a..z | A..Z )*</b>\n<br><br>\n<b style=color:green>Dígito:</b><b> 0..9</b>\n<br><br>\n<b style=color:green>Simbolo:</b> <b>ASCII de 32 a 126 (exceto 34)</b>\n<br><br>\n<b style=color:green>Cadeia constante:</b> <b>\"( Letra | Dígito | Simbolo )*\"</b>\n<br><br>\n<b style=color:green>Operadores:</b> <b>+  -  *  / == != > >= < <= && || = ++ -- .</b>\n<br><br>\n<b style=color:green>Delimitadores:</b> <b>; ( ) { } [ ] </b>\n<br><br>\n<b style=color:green>Comentários:</b>  <b> /*isto é um comentário de bloco */</b><br>\n\t                 <b>// isto é um comentário de linha</b></html>\n\n");
         jScrollPane1.setViewportView(jTextPane1);
 
@@ -51,13 +51,10 @@ public class Ajuda extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addComponent(jLabel1))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -66,8 +63,8 @@ public class Ajuda extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
-                .addGap(34, 34, 34))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -82,9 +79,8 @@ public class Ajuda extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         pack();
