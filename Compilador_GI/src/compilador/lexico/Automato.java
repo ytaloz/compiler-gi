@@ -412,7 +412,7 @@ public class Automato {
     }
 
     private void criarTokenErro(String mensagem) {
-        while(!ehEspaco(caracter) && !ehDelimitador(caracter)) {
+        while(!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
             if(caracter == '\n') linhaAtual++;
             consumirProxCaracter();
         }
