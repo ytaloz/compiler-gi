@@ -40,6 +40,7 @@ public class Ajuda extends javax.swing.JFrame {
 
         jTextPane1.setContentType("text/html");
         jTextPane1.setEditable(false);
+        jTextPane1.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jTextPane1.setText("<html><b style=color:green>Palavras reservadas:</b> <b>variaveis, metodos, constantes, classe, tipo, retorno, vazio, principal, se, entao, senao, enquanto, para, leia, escreva, inteiro, real, logico, caractere, cadeia, verdadeiro, falso, herda_de</b>\n<br><br>\n<b style=color:green>Identificadores:</b> <b>Letra ( Letra | Dígito | _ )*</b>\n<br><br>\n<b style=color:green>Número:</b> <b>( - )? Dígito+ ( . Dígito+ )?</b>\n<br><br>\n<b style=color:green>Letra:</b> <b>( a..z | A..Z )*</b>\n<br><br>\n<b style=color:green>Dígito:</b><b> 0..9</b>\n<br><br>\n<b style=color:green>Simbolo:</b> <b>ASCII de 32 a 126 (exceto 34)</b>\n<br><br>\n<b style=color:green>Cadeia constante:</b> <b>\"( Letra | Dígito | Simbolo )*\"</b>\n<br><br>\n<b style=color:green>Operadores:</b> <b>+  -  *  / == != > >= < <= && || = ++ -- .</b>\n<br><br>\n<b style=color:green>Delimitadores:</b> <b>; ( ) { } [ ] </b>\n<br><br>\n<b style=color:green>Comentários:</b>  <b> /*isto é um comentário de bloco */</b><br>\n\t                 <b>// isto é um comentário de linha</b></html>\n\n");
         jScrollPane1.setViewportView(jTextPane1);
 
