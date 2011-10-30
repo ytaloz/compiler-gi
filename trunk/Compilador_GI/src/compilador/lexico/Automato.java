@@ -37,7 +37,9 @@ public class Automato {
         this.simbolos = simbolos;
     }
 
-    public Token getToken() {
+    //função principal - reconhece e retorna o próximo token do arquivo
+
+    public Token getProxToken() {
         lexemaAtual = "";
         consumirProxCaracter();
 
@@ -79,6 +81,8 @@ public class Automato {
         return tokenAtual; 
     }
 
+    //Estado Inicial do Autômato, delega o reconhecimento para algum dos subautomatos
+    
     private void estadoInicial() {
         if (ehLetra(caracter))
         {
@@ -87,7 +91,19 @@ public class Automato {
         else if (ehDigito(caracter))
         {
             estado = Estado.EM_NUM;
-        } 
+        }
+        else if (ehAspa(caracter))
+        {
+            estado = Estado.EM_CADEIACONSTANTE;
+        }
+        else if (ehOperador(caracter))
+        {
+            estado = Estado.EM_OPERADOR;
+        }
+        else if (ehDelimitador(caracter))
+        {
+            estado = Estado.EM_DELIMITADOR;
+        }
         else if (ehEspaco(caracter))
         {
             consumirEspacos();
@@ -96,23 +112,13 @@ public class Automato {
         {
             estado = Estado.FIM;
             criarTokenFinalDeArquivo();
-        } 
-        else if (ehOperador(caracter))
-        {
-            estado = Estado.EM_OPERADOR;
-        } 
-        else if (ehDelimitador(caracter))
-        {
-            estado = Estado.EM_DELIMITADOR;
-        }
-        else if (ehAspa(caracter))
-        {
-            estado = Estado.EM_CADEIACONSTANTE;
-        }
+        }        
         else {
             criarTokenErro("Simbolo inválido: ");
         }
     }
+
+    //MÉTODOS DE RECONHECIMENTO - SUBAUTÔMATOS
 
     private void reconhecerIdentificador()
     {
@@ -123,12 +129,11 @@ public class Automato {
         if (ehSimboloInvalido(caracter) || caracter=='!') {
             criarTokenErro("Identificador Mal Formado: ");
         } else {
-
             retrocederUmCaracter();
-            if (simbolos.getSimbolo(lexemaAtual.trim()) != null) {
-                tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual.trim(), linhaAtual);
+            if (simbolos.getSimbolo(lexemaAtual) != null) {
+                tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual, linhaAtual);
             } else {
-                tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual.trim(), linhaAtual);
+                tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
             }
         }
         estado = Estado.FIM;
@@ -294,40 +299,12 @@ public class Automato {
         
     }
 
-
-
-    //MÉTODOS AUXILIARES
-
-    private void consumirProxCaracter() {
-        if (ehFinalDeArquivo()) {
-            criarTokenFinalDeArquivo();
-        } else {
-            ponteiro++;
-            this.caracter = this.codigoFonte[ponteiro];
-            this.lexemaAtual = this.lexemaAtual + caracter;            
+    private void consumirCadeiaConstante() {
+        consumirProxCaracter();
+        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspa(caracter)) {
+            consumirProxCaracter();
         }
-    }
-
-    private void retrocederUmCaracter() {
-        if (!ehFinalDeArquivo()) {
-            ponteiro--;
-            this.caracter = this.codigoFonte[ponteiro];
-            this.lexemaAtual = this.lexemaAtual.substring(0, (this.lexemaAtual.length() - 1));        
-        }
-    }
-
-    private void consumirEspacos() {
-        while (ehEspaco(caracter)) {
-            ponteiro++;
-            if (caracter == '\n') linhaAtual++;
-            if (!ehFinalDeArquivo()) {
-                this.caracter = this.codigoFonte[ponteiro];
-            } else {
-                criarTokenFinalDeArquivo();
-                break;
-            }
-        }
-        lexemaAtual = lexemaAtual + caracter;
+        if(caracter == '\n') linhaAtual++;
     }
 
     private void consumirComentarioLinha() {
@@ -353,14 +330,59 @@ public class Automato {
         }
     }
 
-    private void consumirCadeiaConstante() {
-        consumirProxCaracter();
-        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspa(caracter)) {
-            consumirProxCaracter();
-        }
-        if(caracter == '\n') linhaAtual++;
+     private void criarTokenFinalDeArquivo() {
+        this.tokenAtual = new Token(TokenType.EOF, TokenCategory.EOF, "Fim de Arquivo", linhaAtual);
+        estado = Estado.FIM;
     }
 
+    private void criarTokenErro(String mensagem) {
+        while(!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
+            if(caracter == '\n') linhaAtual++;
+            consumirProxCaracter();
+        }
+        retrocederUmCaracter();
+        this.lexemaAtual = this.lexemaAtual.trim();
+        mensagem = "#" + mensagem + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
+        estado = Estado.FIM;
+    }
+
+
+
+    //MÉTODOS AUXILIARES
+
+    private void consumirProxCaracter() {
+        if (ehFinalDeArquivo()) {
+            criarTokenFinalDeArquivo();
+        } else {
+            ponteiro++;
+            this.caracter = this.codigoFonte[ponteiro];
+            this.lexemaAtual = this.lexemaAtual + caracter;            
+        }
+    }
+
+    private void retrocederUmCaracter() {
+        if (!ehFinalDeArquivo()) {
+            ponteiro--;
+            this.caracter = this.codigoFonte[ponteiro];
+            this.lexemaAtual = this.lexemaAtual.substring(0, (this.lexemaAtual.length() - 1));
+        }
+    }
+
+    private void consumirEspacos() {
+        while (ehEspaco(caracter)) {
+            ponteiro++;
+            if (caracter == '\n') linhaAtual++;
+            if (!ehFinalDeArquivo()) {
+                this.caracter = this.codigoFonte[ponteiro];
+            } else {
+                criarTokenFinalDeArquivo();
+                break;
+            }
+        }
+        lexemaAtual = lexemaAtual + caracter;
+    }
+    
     private boolean ehDigito(char c) {
         return Character.isDigit(c);
     }
@@ -397,28 +419,8 @@ public class Automato {
         return (!ehLetra(c) && !ehDigito(c) && !ehEspaco(c) && !ehDelimitador(c) && !ehOperador(c) && !ehUnderline(c) && !ehAspa(c));
     }
 
-//    private boolean ehSimboloInvalido(char c) {
-//        int ASCII = (int) c;
-//        return ( ASCII>=32 && ASCII<=126 && ASCII!=34);
-//    }
-
     private boolean ehFinalDeArquivo() {
         return ponteiro >= codigoFonte.length-1;
-    }
-
-    private void criarTokenFinalDeArquivo() {
-        this.tokenAtual = new Token(TokenType.EOF, TokenCategory.EOF, "Fim de Arquivo", linhaAtual);
-        estado = Estado.FIM;
-    }
-
-    private void criarTokenErro(String mensagem) {
-        while(!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
-            if(caracter == '\n') linhaAtual++;
-            consumirProxCaracter();
-        }
-        retrocederUmCaracter();
-        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, "#" + mensagem + "\"" + lexemaAtual.trim() + "\"", ponteiro);
-        estado = Estado.FIM;
     }
 
 }
