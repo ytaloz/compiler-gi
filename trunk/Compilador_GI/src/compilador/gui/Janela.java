@@ -611,7 +611,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public void imprimirToken(Token token) {
-        imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString(), token.getLinha());
+        imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString().toLowerCase(), token.getLinha());
     }
 
     public void imprimirErro(TokenErro token) {

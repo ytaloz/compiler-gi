@@ -392,7 +392,7 @@ public class Automato {
     }
 
     private boolean ehEspaco(char c) {
-        return (Character.isSpaceChar(c) || c == '\r' || c == '\n');
+        return (Character.isSpaceChar(c) || c == '\r' || c == '\n' || c=='\t');
     }
 
     private boolean ehDelimitador(char c) {
