@@ -366,6 +366,7 @@ public class Automato {
             ponteiro--;
             this.caracter = this.codigoFonte[ponteiro];
             this.lexemaAtual = this.lexemaAtual.substring(0, (this.lexemaAtual.length() - 1));
+            this.lexemaAtual = lexemaAtual.trim();
         }
     }
 
