@@ -336,9 +336,20 @@ public class Automato {
     }
 
     private void criarTokenErro(String mensagem) {
-        while(!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
-            if(caracter == '\n') linhaAtual++;
-            consumirProxCaracter();
+        if (estado == estado.EM_NUM) {
+            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperadorMenosOPonto(caracter)) {
+                if (caracter == '\n') {
+                    linhaAtual++;
+                }
+                consumirProxCaracter();
+            }
+        } else {
+            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
+                if (caracter == '\n') {
+                    linhaAtual++;
+                }
+                consumirProxCaracter();
+            }
         }
         retrocederUmCaracter();
         this.lexemaAtual = this.lexemaAtual.trim();
@@ -402,6 +413,10 @@ public class Automato {
 
     private boolean ehOperador(char c) {
         return (c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '>' || c == '<' || c == '&' || c == '|' || c == '.');
+    }
+
+    private boolean ehOperadorMenosOPonto(char c) {
+        return (c == '+' || c == '-' || c == '*' || c == '/' || c == '=' || c == '!' || c == '>' || c == '<' || c == '&' || c == '|');
     }
 
     private boolean ehUnderline(char c) {
