@@ -36,10 +36,11 @@ public class AnalisadorLexico implements Runnable{
     {
         erros = 0;
         Automato automato = new Automato(janela.getCodigoFonte(), tabelaDeSimbolos);
+        tokens = new ArrayList<Token>();
         Token token;
 
         do {
-            token = automato.getToken();
+            token = automato.getProxToken();
             tokens.add(token);
             janela.imprimirToken(token);
 
@@ -49,7 +50,6 @@ public class AnalisadorLexico implements Runnable{
                     janela.imprimirCabecalhoErros();
                 }
                 janela.imprimirErro((TokenErro) token);
-                //janela.destacarLinha(1);
             }
             
         } while (token.getTipo() != TokenType.EOF);
@@ -57,7 +57,10 @@ public class AnalisadorLexico implements Runnable{
 
         if (erros == 0) {
             janela.imprimirMensagemSucesso();
+        } else {
+            janela.imprimirTotalDeErros(erros);
         }
+        janela.imprimirTotalDeTokens(tokens.size());
         janela.pararAnalise();
         
     }

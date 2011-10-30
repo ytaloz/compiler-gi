@@ -215,7 +215,7 @@ public class Janela extends javax.swing.JFrame {
 
         jTextAreaErros.setColumns(20);
         jTextAreaErros.setEditable(false);
-        jTextAreaErros.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        jTextAreaErros.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jTextAreaErros.setRows(5);
         jScrollPane3.setViewportView(jTextAreaErros);
 
@@ -244,7 +244,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
@@ -615,8 +615,16 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public void imprimirErro(TokenErro token) {
-        imprimirErro(token.getMensagem() + "\t" + "linha: " + token.getLinha());
+        imprimirErro(token.getMensagem());
         //destacarLinha(token.getPosInicial(), token.getPosFinal());
+    }
+
+    public void imprimirTotalDeErros(int total) {
+        jTextAreaErros.append("\n Total de erros léxicos: " + total);
+    }
+
+    public void imprimirTotalDeTokens(int total) {
+        jTextAreaErros.append("\n Total de tokens analisados: " + total);
     }
 
     public void imprimirMensagemSucesso() {
