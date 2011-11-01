@@ -314,17 +314,39 @@ public class Automato {
     }
 
     private void consumirComentarioBloco() {
+//        while (caracter != '*' && !ehFinalDeArquivo()) {
+//            if(caracter == '\n') linhaAtual++;
+//            consumirProxCaracter();
+//        }
+//        if(caracter == '*') {
+//            consumirProxCaracter();
+//            if(caracter == '/') {
+//                tokenAtual = new Token(TokenType.COMENTBLOCO, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
+//            } else if(caracter != '*') {
+//                consumirComentarioBloco();
+//            }
+//        } else {
+//            criarTokenErro("Fim Inesperado de Arquivo - necessário fechar o comentário de bloco: ");
+//        }
+        consumirComentarioBlocoPrimeiraParte();
+    }
+
+    private void consumirComentarioBlocoPrimeiraParte() {
         while (caracter != '*' && !ehFinalDeArquivo()) {
             if(caracter == '\n') linhaAtual++;
             consumirProxCaracter();
         }
+        consumirComentarioBlocoSegundaParte();
+    }
+
+    private void consumirComentarioBlocoSegundaParte() {
         if(caracter == '*') {
             consumirProxCaracter();
             if(caracter == '/') {
                 tokenAtual = new Token(TokenType.COMENTBLOCO, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
             } else if(caracter != '*') {
                 consumirComentarioBloco();
-            }
+            } else consumirComentarioBlocoPrimeiraParte();
         } else {
             criarTokenErro("Fim Inesperado de Arquivo - necessário fechar o comentário de bloco: ");
         }
