@@ -245,6 +245,7 @@ public class Janela extends javax.swing.JFrame {
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
         jTextAreaCodigoFonte.setColumns(20);
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Courier 10 Pitch", 0, 14)); // NOI18N
         jTextAreaCodigoFonte.setRows(5);
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
@@ -300,6 +301,11 @@ public class Janela extends javax.swing.JFrame {
         jMenuItemExecutar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F9, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/spanner_48_menor.png"))); // NOI18N
         jMenuItemExecutar.setText("Análise Léxica");
+        jMenuItemExecutar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExecutarActionPerformed(evt);
+            }
+        });
         jMenuExecutar.add(jMenuItemExecutar);
 
         jMenuItemCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/cancel_48_menor.png"))); // NOI18N
@@ -427,6 +433,16 @@ public class Janela extends javax.swing.JFrame {
     private void jMenuItemSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSobreActionPerformed
         getJanelaSobre().setVisible(true);
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
+
+    private void jMenuItemExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExecutarActionPerformed
+        limparTabelaDeTokens();
+        limparFrameDeErros();
+        if (analise != null) {
+            pararAnalise();
+        }
+        analise = new Thread(anaLex);
+        analise.start();
+    }//GEN-LAST:event_jMenuItemExecutarActionPerformed
 
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
