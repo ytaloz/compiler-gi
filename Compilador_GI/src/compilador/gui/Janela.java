@@ -446,7 +446,7 @@ public class Janela extends javax.swing.JFrame {
 
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
-        jTextAreaCodigoFonte.setBorder(new NumberedBorder());
+        jTextAreaCodigoFonte.setBorder(new NumberedBorder(jTextAreaCodigoFonte.getFont().getSize()+5));
 //        jTextAreaCodigoFonte.setLineWrap(true);
 //        jTextAreaCodigoFonte.setWrapStyleWord(true);
         //jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());

@@ -27,8 +27,9 @@ public class NumberedBorder extends AbstractBorder{
 	private Color myColor;
 	private JViewport viewport;
 
-	public NumberedBorder() {
+	public NumberedBorder(int lineHeight) {
 		this.myColor = new Color(0, 0, 255);
+                this.lineHeight = lineHeight;
 	}
 
     @Override
