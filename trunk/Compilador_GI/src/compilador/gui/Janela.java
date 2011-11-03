@@ -237,7 +237,6 @@ public class Janela extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTableTokens.setCellSelectionEnabled(true);
         jTableTokens.setEditingColumn(0);
         jTableTokens.setEditingRow(0);
         jTableTokens.setShowVerticalLines(false);
