@@ -444,6 +444,7 @@ public class Janela extends javax.swing.JFrame {
 
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
+        setExtendedState(Janela.MAXIMIZED_BOTH);
         jTextAreaCodigoFonte.setBorder(new NumberedBorder(jTextAreaCodigoFonte.getFont().getSize()+5));
         jTextAreaCodigoFonte.setDocument(new CorSintaxeDocument());
 
