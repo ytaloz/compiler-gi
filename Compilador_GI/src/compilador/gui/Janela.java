@@ -453,7 +453,7 @@ public class Janela extends javax.swing.JFrame {
 
 //        jTextAreaCodigoFonte.setLineWrap(true);
 //        jTextAreaCodigoFonte.setWrapStyleWord(true);
-        //jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
+        jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
         jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
         addWindowListener(new AreYouSure());
         adicionarKeyListener();
