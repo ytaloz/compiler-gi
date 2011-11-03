@@ -72,6 +72,8 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 			throws BadLocationException {
 		if (str.equals("{"))
 			str = addMatchingBrace(offset);
+                else if (str.equals("("))
+			str = addMatchingParentesis(offset);
 		super.insertString(offset, str, (javax.swing.text.AttributeSet) a);
 		processChangedLines(offset, str.length());
 	}
@@ -462,5 +464,21 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 		}
 		return "{\n" + whiteSpace.toString() + whiteSpace.toString() + "\n"
 				+ whiteSpace.toString() + "}";
+	}
+
+        protected String addMatchingParentesis(int offset) throws BadLocationException {
+		StringBuffer whiteSpace = new StringBuffer();
+		int line = rootElement.getElementIndex(offset);
+		int i = rootElement.getElement(line).getStartOffset();
+		while (true) {
+			String temp = doc.getText(i, 1);
+			if (temp.equals(" ") || temp.equals("\t")) {
+				whiteSpace.append(temp);
+				i++;
+			} else
+				break;
+		}
+		return "(" + ")";
+
 	}
 }
