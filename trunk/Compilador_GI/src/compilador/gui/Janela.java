@@ -159,7 +159,7 @@ public class Janela extends javax.swing.JFrame {
         jToolBar1.add(jButtonSalvar);
         jToolBar1.add(jSeparator3);
 
-        jButtonExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/spanner_48.png"))); // NOI18N
+        jButtonExecutar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/run.png"))); // NOI18N
         jButtonExecutar.setText("Executar");
         jButtonExecutar.setToolTipText("Análise Léxica");
         jButtonExecutar.setFocusable(false);
@@ -237,6 +237,9 @@ public class Janela extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTableTokens.setCellSelectionEnabled(true);
+        jTableTokens.setEditingColumn(0);
+        jTableTokens.setEditingRow(0);
         jTableTokens.setShowVerticalLines(false);
         jScrollPane2.setViewportView(jTableTokens);
 
@@ -244,7 +247,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
