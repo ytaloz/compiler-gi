@@ -95,7 +95,7 @@ public class Janela extends javax.swing.JFrame {
         jTableTokens = new javax.swing.JTable();
         jTabbedPaneCodigoFonte = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaCodigoFonte = new javax.swing.JTextArea();
+        jTextAreaCodigoFonte = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuArquivo = new javax.swing.JMenu();
         jMenuItemNovo = new javax.swing.JMenuItem();
@@ -244,9 +244,7 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setColumns(20);
-        jTextAreaCodigoFonte.setFont(new java.awt.Font("Courier 10 Pitch", 0, 14)); // NOI18N
-        jTextAreaCodigoFonte.setRows(5);
+        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jScrollPane1.setViewportView(jTextAreaCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
@@ -447,6 +445,8 @@ public class Janela extends javax.swing.JFrame {
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
         jTextAreaCodigoFonte.setBorder(new NumberedBorder(jTextAreaCodigoFonte.getFont().getSize()+5));
+        jTextAreaCodigoFonte.setDocument(new CorSintaxeDocument());
+
 //        jTextAreaCodigoFonte.setLineWrap(true);
 //        jTextAreaCodigoFonte.setWrapStyleWord(true);
         //jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
@@ -456,6 +456,7 @@ public class Janela extends javax.swing.JFrame {
         centralizarJanela();
     }
 
+  
     private void adicionarKeyListener() {
         jTextAreaCodigoFonte.addKeyListener(new KeyListener() {
 
@@ -776,7 +777,7 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPaneErros;
     private javax.swing.JTabbedPane jTabbedPaneTokens;
     private javax.swing.JTable jTableTokens;
-    private javax.swing.JTextArea jTextAreaCodigoFonte;
+    private javax.swing.JTextPane jTextAreaCodigoFonte;
     private javax.swing.JTextArea jTextAreaErros;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
