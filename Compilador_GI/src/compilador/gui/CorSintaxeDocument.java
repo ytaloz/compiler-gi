@@ -31,6 +31,9 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 	private Hashtable keywords;
         private TabelaDeSimbolos tabela = new TabelaDeSimbolos();
 
+        private int indexStart;
+        private int indexEnd;
+
 	public CorSintaxeDocument() {
 
 		doc = this;
@@ -94,15 +97,20 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 		int endLine = rootElement.getElementIndex(offset + length);
 		// Make sure all comment lines prior to the start line are commented
 		// and determine if the start line is still in a multi line comment
-		setMultiLineComment(commentLinesBefore(content, startLine));
-		// Do the actual highlighting
+
+
+                //setMultiLineComment(commentLinesBefore(content, startLine));
+
+
+                // Do the actual highlighting
 		for (int i = startLine; i <= endLine; i++)
 			applyHighlighting(content, i);
 		// Resolve highlighting to the next end multi line delimiter
-		if (isMultiLineComment())
-			commentLinesAfter(content, endLine);
-		else
-			highlightLinesAfter(content, endLine);
+//		if (isMultiLineComment())
+//			commentLinesAfter(content, endLine);
+//		else
+//			highlightLinesAfter(content, endLine);
+                highlightLinesAfter(content, endLine);
 	}
 
 	/*
@@ -129,20 +137,20 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 	/*
 	 * Highlight comment lines to matching end delimiter
 	 */
-	private void commentLinesAfter(String content, int line) {
-		int offset = rootElement.getElement(line).getEndOffset();
-		// End of comment not found, nothing to do
-		int endDelimiter = indexOf(content, getEndDelimiter(), offset);
+        private void commentLinesAfter(String content, int line) {
+            int offset = rootElement.getElement(line).getEndOffset();
+            // End of comment not found, nothing to do
+            int endDelimiter = indexOf(content, getEndDelimiter(), offset);
 		if (endDelimiter < 0)
-			return;
-		// Matching start/end of comment found, comment the lines
-		int startDelimiter = lastIndexOf(content, getStartDelimiter(),
-				endDelimiter);
-		if (startDelimiter < 0 || startDelimiter <= offset) {
-			doc.setCharacterAttributes(offset, endDelimiter - offset + 1,
-					comment, false);
-		}
-	}
+                return;
+            // Matching start/end of comment found, comment the lines
+            int startDelimiter = lastIndexOf(content, getStartDelimiter(),
+                    endDelimiter);
+            if (startDelimiter < 0 || startDelimiter <= offset) {
+                doc.setCharacterAttributes(offset, endDelimiter - offset + 1,
+                        comment, false);
+            }
+        }
 
 	/*
 	 * Highlight lines to start or end delimiter
@@ -184,13 +192,18 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 			endOffset = contentLength - 1;
 		// check for multi line comments
 		// (always set the comment attribute for the entire line)
-		if (endingMultiLineComment(content, startOffset, endOffset)
-				|| isMultiLineComment()
-				|| startingMultiLineComment(content, startOffset, endOffset)) {
-			doc.setCharacterAttributes(startOffset,
-					endOffset - startOffset + 1, comment, false);
-			return;
-		}
+
+
+//		if (endingMultiLineComment(content, startOffset, endOffset)
+//				|| isMultiLineComment()
+//				|| startingMultiLineComment(content, startOffset, endOffset)) {
+//			doc.setCharacterAttributes(indexStart,
+//					indexEnd - indexStart + 1, comment, false);
+//			return;
+//		}
+
+
+
 		// set normal attributes for the line
 		doc.setCharacterAttributes(startOffset, lineLength, normal, true);
 		// check for single line comment
@@ -209,8 +222,8 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 	 */
 	private boolean startingMultiLineComment(String content, int startOffset,
 			int endOffset) throws BadLocationException {
-		int index = indexOf(content, getStartDelimiter(), startOffset);
-		if ((index < 0) || (index > endOffset))
+		indexStart = indexOf(content, getStartDelimiter(), startOffset);
+		if ((indexStart < 0) || (indexStart > endOffset))
 			return false;
 		else {
 			setMultiLineComment(true);
@@ -223,8 +236,8 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 	 */
 	private boolean endingMultiLineComment(String content, int startOffset,
 			int endOffset) throws BadLocationException {
-		int index = indexOf(content, getEndDelimiter(), startOffset);
-		if ((index < 0) || (index > endOffset))
+		indexEnd = indexOf(content, getEndDelimiter(), startOffset);
+		if ((indexEnd < 0) || (indexEnd > endOffset))
 			return false;
 		else {
 			setMultiLineComment(false);
