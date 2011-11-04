@@ -468,6 +468,7 @@ public class Janela extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
         }
+        repaint();
     }
   
     private void adicionarKeyListener() {
