@@ -26,6 +26,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -410,6 +412,7 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonExecutarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
+    //mudarInterface();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLimparActionPerformed
@@ -459,6 +462,13 @@ public class Janela extends javax.swing.JFrame {
         centralizarJanela();
     }
 
+    private void mudarInterface() {
+                 try {
+           UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+        } catch (UnsupportedLookAndFeelException ex) {
+            ex.printStackTrace();
+        }
+    }
   
     private void adicionarKeyListener() {
         jTextAreaCodigoFonte.addKeyListener(new KeyListener() {

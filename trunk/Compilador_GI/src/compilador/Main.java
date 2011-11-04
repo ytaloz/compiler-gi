@@ -19,12 +19,12 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-                 try {
-           UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        }
+//
+//                 try {
+//           UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
+//        } catch (UnsupportedLookAndFeelException ex) {
+//            ex.printStackTrace();
+//        }
 
         AnalisadorLexico analex = new AnalisadorLexico();
     }
