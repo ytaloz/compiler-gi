@@ -41,8 +41,13 @@ public class CellRenderer extends DefaultTableCellRenderer {
             component.setForeground(Color.black);
         }
 
-        if (value == "ERRO") {
+        if (value == "ERRO" || value == "erro") {
                 component.setForeground(Color.RED);
+        }
+
+        if (value == "EOF" || value == "eof " || value == "Fim de Arquivo") {
+                component.setForeground(Color.GRAY);
+                component.setFont(component.getFont().deriveFont(Font.BOLD));
         }
 
         return component;
