@@ -45,9 +45,9 @@ public class CellRenderer extends DefaultTableCellRenderer {
                 component.setForeground(Color.RED);
         }
 
-        if (value == "EOF" || value == "eof " || value == "Fim de Arquivo") {
-                component.setForeground(Color.GRAY);
-                component.setFont(component.getFont().deriveFont(Font.BOLD));
+        if (value == "EOF" || value.equals("eof") || value == "Fim de Arquivo") {
+                component.setForeground(Color.DARK_GRAY);
+                //component.setFont(component.getFont().deriveFont(Font.BOLD));
         }
 
         return component;
