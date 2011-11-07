@@ -364,6 +364,7 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
+                if(ehSimboloInvalido(caracter)) break;
             }
         } else {
             while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
@@ -371,6 +372,7 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
+                if(ehSimboloInvalido(caracter)) break;
             }
         }
         retrocederUmCaracter();
