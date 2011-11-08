@@ -27,9 +27,9 @@ public class NumberedBorder extends AbstractBorder{
 	private Color myColor;
 	private JViewport viewport;
 
-	public NumberedBorder(int lineHeight) {
+	public NumberedBorder(int fontSize) {
 		this.myColor = new Color(0, 0, 255);
-                this.lineHeight = lineHeight;
+                this.lineHeight = getLineHeight(fontSize);
 	}
 
     @Override
@@ -111,11 +111,20 @@ public class NumberedBorder extends AbstractBorder{
 		return this.characterHeight * lenght;
 	}
 
-	protected void searchViewport(Component c) {
-		Container parent = c.getParent();
-		if (parent instanceof JViewport) {
-			this.viewport = (JViewport) parent;
-		}
+	   protected void searchViewport(Component c) {
+        Container parent = c.getParent();
+        if (parent instanceof JViewport) {
+            this.viewport = (JViewport) parent;
+        }
 
-}
+    }
+
+           private int getLineHeight(int fontSize) {
+
+               if(System.getProperty("os.name").equalsIgnoreCase("Linux")) {
+                   return fontSize + 3;
+               } else {
+                   return fontSize + 5;
+               }
+           }
 }
