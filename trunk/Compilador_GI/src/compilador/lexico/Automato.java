@@ -17,6 +17,8 @@ import compilador.token.TokenType;
  */
 public class Automato {
 
+    private static int TAMANHO_MAX_ID = 255;
+
     TabelaDeSimbolos simbolos;
 
     char[] codigoFonte;
@@ -134,8 +136,10 @@ public class Automato {
             consumirProxCaracter();
         }
 
-        if (ehSimboloInvalido(caracter) || caracter=='!') {
+        if (ehSimboloInvalido(caracter) || caracter == '!') {
             criarTokenErro("Identificador Mal Formado: ");
+        } else if (lexemaAtual.length() > TAMANHO_MAX_ID) {
+            criarTokenErro("Identificador Muito Grande: ");
         } else {
             retrocederUmCaracter();
             if (simbolos.getSimbolo(lexemaAtual) != null) {
