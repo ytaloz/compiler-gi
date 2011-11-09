@@ -1,0 +1,37 @@
+ vazio heapSort(inteiro[] v)
+       {  
+         buildMaxHeap(v);
+         inteiro n = v.length;
+ 
+         para (inteiro i = v.length - 1; i > 0; i--) 
+         { 
+            swap(v, i , 0);
+            maxHeapify(v, 0, --n);
+         }
+       }
+       vazio buildMaxHeap(inteiro[] v)
+       { 
+          para (int i = v.length/2 - 1; i >= 0; i--)
+             maxHeapify(v, i , v. length );
+       }
+       vazio maxHeapify(int[] v, int pos, int n) 
+       { 
+          inteiro max = 2 * pos + 1, right = max + 1;
+          se (max < n)
+          { 
+             se ( right < n && v[max] < v[right])
+                max = right;
+             se (v[max] > v[pos]) 
+             { 
+                swap(v, max, pos);
+                maxHeapify(v, max, n);
+             }
+          }
+       }
+ 
+       vazio swap ( int[ ] v, int j, int aposJ )
+       {
+          inteiro aux = v [ j ];
+          v [ j ] = v [ aposJ ];
+          v [ aposJ ] = aux;
+       }
