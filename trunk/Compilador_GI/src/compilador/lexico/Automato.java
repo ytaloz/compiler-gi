@@ -155,6 +155,13 @@ public class Automato {
                     while (ehDigito(caracter)) {
                         consumirProxCaracter();
                     }
+                    if (ehEspaco(caracter) || ehDelimitador(caracter) || ehOperadorMenosOPonto(caracter)) {
+                        retrocederUmCaracter();
+                        tokenAtual = new Token(TokenType.NUM, TokenCategory.NUMERO, lexemaAtual, linhaAtual);
+                        estado = Estado.FIM;
+                    } else {
+                        criarTokenErro("Numero Mal Formado: ");
+                    }
                 } else {
                     criarTokenErro("Numero Mal Formado: ");
                 }
