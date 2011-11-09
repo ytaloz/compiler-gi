@@ -17,6 +17,7 @@ public enum Estado {
     EM_OPERADOR,
     EM_DELIMITADOR,
     EM_CADEIACONSTANTE,
+    EM_CARACTER,
     FIM
 
 
