@@ -37,6 +37,7 @@ public enum TokenType {
 
     //DELIMITADORES
     PONTOVIRGULA,
+    VIRGULA,
     ABREPAR,
     FECHAPAR,
     ABRECHAVE,

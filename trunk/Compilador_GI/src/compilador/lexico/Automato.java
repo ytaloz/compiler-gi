@@ -266,6 +266,9 @@ public class Automato {
         if (caracter == ';') {
             tokenAtual = new Token(TokenType.PONTOVIRGULA, TokenCategory.DELIMITADOR, ";", linhaAtual);
         }
+        if (caracter == ',') {
+            tokenAtual = new Token(TokenType.VIRGULA, TokenCategory.DELIMITADOR, ",", linhaAtual);
+        }
         if (caracter == '(') {
             tokenAtual = new Token(TokenType.ABREPAR, TokenCategory.DELIMITADOR, "(", linhaAtual);
         }
@@ -432,7 +435,7 @@ public class Automato {
     }
 
     private boolean ehDelimitador(char c) {
-        return (c == ';' || c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}');
+        return (c == ';' || c == ',' || c == '(' || c == ')' || c == '[' || c == ']' || c == '{' || c == '}');
     }
 
     private boolean ehOperador(char c) {
