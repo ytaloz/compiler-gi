@@ -16,6 +16,7 @@ public enum TokenType {
     ID,
     NUM,
     LITERAL,
+    CARACTER,
 
     //OPERADORES
     ADICAO,

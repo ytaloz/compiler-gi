@@ -70,6 +70,10 @@ public class Automato {
                     reconhecerCadeiaConstante();
                     break;
                 }
+                case EM_CARACTER: {
+                    reconhecerCaracter();
+                    break;
+                }
                 default: {
                     criarTokenErro("Simbolo Inválido: ");
                     break;
@@ -92,9 +96,13 @@ public class Automato {
         {
             estado = Estado.EM_NUM;
         }
-        else if (ehAspa(caracter))
+        else if (ehAspaDupla(caracter))
         {
             estado = Estado.EM_CADEIACONSTANTE;
+        }
+        else if (ehAspaSimples(caracter))
+        {
+            estado = Estado.EM_CARACTER;
         }
         else if (ehOperador(caracter))
         {
@@ -300,7 +308,7 @@ public class Automato {
 
     private void reconhecerCadeiaConstante() {
         consumirCadeiaConstante();
-        if (ehAspa(caracter)) {
+        if (ehAspaDupla(caracter)) {
             tokenAtual = new Token(TokenType.LITERAL, TokenCategory.CADEIA_CONSTANTE, lexemaAtual, linhaAtual);
         } else {
             criarTokenErro("String Não Fechada - esperava um '\"': ");
@@ -309,10 +317,31 @@ public class Automato {
         
     }
 
+    private void reconhecerCaracter() {
+        consumirCadeiaConstanteCaracter();
+        if (ehAspaSimples(caracter)) {
+            tokenAtual = new Token(TokenType.CARACTER, TokenCategory.CADEIA_CONSTANTE, lexemaAtual, linhaAtual);
+        } else {
+            criarTokenErro("Caractere não fechado: ");
+        }
+        estado = Estado.FIM;
+
+    }
+
     private void consumirCadeiaConstante() {
         consumirProxCaracter();
-        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspa(caracter)) {
+        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspaDupla(caracter)) {
             consumirProxCaracter();
+        }
+        if(caracter == '\n') linhaAtual++;
+    }
+
+    private void consumirCadeiaConstanteCaracter() {
+        consumirProxCaracter();
+        int i = 0;
+        while (caracter != '\n' && !ehFinalDeArquivo() && !ehAspaSimples(caracter) && i<1) {
+            consumirProxCaracter();
+            i++;
         }
         if(caracter == '\n') linhaAtual++;
     }
@@ -457,8 +486,12 @@ public class Automato {
         return c == '_';
     }
 
-    private boolean ehAspa(char c) {
+    private boolean ehAspaDupla(char c) {
         return c=='\"';
+    }
+
+    private boolean ehAspaSimples(char c) {
+        return c=='\'';
     }
     
     private boolean ehCaracterDeIdentificador(char c) {
@@ -466,7 +499,7 @@ public class Automato {
     }
 
     private boolean ehSimboloInvalido(char c) {
-        return (!ehLetra(c) && !ehDigito(c) && !ehEspaco(c) && !ehDelimitador(c) && !ehOperador(c) && !ehUnderline(c) && !ehAspa(c));
+        return (!ehLetra(c) && !ehDigito(c) && !ehEspaco(c) && !ehDelimitador(c) && !ehOperador(c) && !ehUnderline(c) && !ehAspaDupla(c) && !ehAspaSimples(c));
     }
 
     private boolean ehFinalDeArquivo() {
