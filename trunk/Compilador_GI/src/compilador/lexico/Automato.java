@@ -77,7 +77,11 @@ public class Automato {
                     break;
                 }
                 default: {
-                    criarTokenErro("Simbolo Inválido: ");
+                    //criarTokenErro("Simbolo Inválido: ");
+                    lexemaAtual = lexemaAtual.trim();
+                    String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+                    this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
+                    estado = Estado.FIM;
                     break;
                 }
                 
@@ -124,7 +128,11 @@ public class Automato {
             criarTokenFinalDeArquivo();
         }        
         else {
-            criarTokenErro("Simbolo inválido: ");
+            //criarTokenErro("Simbolo inválido: ");
+            lexemaAtual = lexemaAtual.trim();
+            String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+            this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
+            estado = Estado.FIM;
         }
     }
 
@@ -407,7 +415,7 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
-                if(ehSimboloInvalido(caracter)) break;
+                //if(ehSimboloInvalido(caracter)) break;
             }
         } else {
             while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
@@ -415,7 +423,7 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
-                if(ehSimboloInvalido(caracter)) break;
+                //if(ehSimboloInvalido(caracter)) break;
             }
         }
         retrocederUmCaracter();
