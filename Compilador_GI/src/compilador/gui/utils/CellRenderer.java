@@ -1,5 +1,5 @@
 
-package compilador.gui;
+package compilador.gui.utils;
 
 import java.awt.Color;
 import java.awt.Component;

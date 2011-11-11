@@ -245,7 +245,7 @@ public class Automato {
             if(caracter=='=') {
                 tokenAtual = new Token(TokenType.DIF, TokenCategory.OPERADOR, "!=", linhaAtual);
             } else {
-                criarTokenErro("Simbolo Inválido: ");
+                criarTokenErro("Operador Mal Formado - esperava '=': ");
             }
         }
         if(caracter=='>') {

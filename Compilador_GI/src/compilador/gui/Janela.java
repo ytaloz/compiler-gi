@@ -10,6 +10,9 @@
  */
 package compilador.gui;
 
+import compilador.gui.utils.CellRenderer;
+import compilador.gui.utils.CorSintaxeDocument;
+import compilador.gui.utils.NumberedBorder;
 import compilador.lexico.AnalisadorLexico;
 import compilador.token.Token;
 import compilador.token.TokenErro;
