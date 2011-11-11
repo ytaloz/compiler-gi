@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package compilador.gui;
+package compilador.gui.utils;
 
 import compilador.TabelaDeSimbolos;
 import java.awt.Color;
