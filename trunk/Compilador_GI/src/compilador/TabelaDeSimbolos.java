@@ -13,19 +13,19 @@ import java.util.HashMap;
  */
 public class TabelaDeSimbolos {
 
-    private HashMap<String,Item> tabela;
+    private HashMap<String,String> tabela;
 
     public TabelaDeSimbolos(){
-        tabela = new HashMap<String,Item>();
+        tabela = new HashMap<String,String>();
         inicializarPalavrasChave();
     }
 
     public void inserir(String lexema)
     {
-        tabela.put(lexema, new Item(lexema));
+        tabela.put(lexema, lexema);
     }
 
-    public Item getSimbolo(String chave)
+    public String getSimbolo(String chave)
     {
         return tabela.get(chave);
     }
