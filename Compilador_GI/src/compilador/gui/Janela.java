@@ -29,8 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -405,17 +403,12 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemSairActionPerformed
 
     private void jButtonExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExecutarActionPerformed
-        limparTabelaDeTokens();
-        limparFrameDeErros();
-        if (analise != null) {
-            pararAnalise();
-        }
-        analise = new Thread(anaLex);
-        analise.start();
+        executarAnalise();
     }//GEN-LAST:event_jButtonExecutarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-    //mudarInterface();
+        analise.interrupt();
+        analise = null;
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLimparActionPerformed
@@ -441,39 +434,54 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemSobreActionPerformed
 
     private void jMenuItemExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExecutarActionPerformed
-        limparTabelaDeTokens();
-        limparFrameDeErros();
-        if (analise != null) {
-            pararAnalise();
-        }
-        analise = new Thread(anaLex);
-        analise.start();
+        executarAnalise();
     }//GEN-LAST:event_jMenuItemExecutarActionPerformed
+
+//----- MÉTODOS DE CONFIGURAÇÃO DA INTERFACE -----------------------------------
 
     private void configurarJanela() {
         focalizarFrameDeCodigoFonte();
-        setExtendedState(Janela.MAXIMIZED_BOTH);
+        maximizarJanela();
+        centralizarJanela();
+        configurarFrameDeCodigoFonte();
+        configurarTabelaDeTokens();
+        checarAlteracaoDeArquivoQuandoFechar();
+    }
+
+    private void configurarFrameDeCodigoFonte() {
         jTextAreaCodigoFonte.setBorder(new NumberedBorder(jTextAreaCodigoFonte.getFont().getSize()));
         jTextAreaCodigoFonte.setDocument(new CorSintaxeDocument());
-
-//        jTextAreaCodigoFonte.setLineWrap(true);
-//        jTextAreaCodigoFonte.setWrapStyleWord(true);
         jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
-        jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
-        addWindowListener(new AreYouSure());
-        adicionarKeyListener();
-        centralizarJanela();
     }
 
-    private void mudarInterface() {
-                 try {
-           UIManager.setLookAndFeel(new com.jgoodies.looks.windows.WindowsLookAndFeel());
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        }
-        repaint();
+    private void configurarTabelaDeTokens() {
+        jTableTokens.setDefaultRenderer(Object.class, new CellRenderer());
     }
-  
+
+    private void focalizarFrameDeCodigoFonte() {
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                jTextAreaCodigoFonte.requestFocus();
+            }
+        });
+    }
+
+    private void checarAlteracaoDeArquivoQuandoFechar() {
+        adicionarKeyListener();
+        addWindowListener(new ChecadorDeAlteracoesAoSalvar());
+    }
+
+    private void centralizarJanela() {
+        setLocationRelativeTo(null);
+    }
+
+    private void maximizarJanela() {
+        setExtendedState(Janela.MAXIMIZED_BOTH);
+    }
+
+    //escuta uma alteração no código fonte
     private void adicionarKeyListener() {
         jTextAreaCodigoFonte.addKeyListener(new KeyListener() {
 
@@ -489,37 +497,8 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
-    private Ajuda getJanelaAjuda() {
-        if (ajuda == null) {
-            ajuda = new Ajuda();
-            ajuda.setLocationRelativeTo(this);
-        }
-        return ajuda;
-    }
-
-    private Sobre getJanelaSobre() {
-        if (sobre == null) {
-            sobre = new Sobre();
-            sobre.setLocationRelativeTo(this);
-        }
-        return sobre;
-    }
-
-    private void focalizarFrameDeCodigoFonte() {
-        addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-                jTextAreaCodigoFonte.requestFocus();
-            }
-        });
-    }
-
-    private void centralizarJanela() {
-        setLocationRelativeTo(null);
-    }
-
-//----- MÉTODOS DE AÇÃO -----------------------------------------------------
+//----- MÉTODOS DE AÇÃO --------------------------------------------------------
+    
     private void abrirArquivo() {
         fileChooser = getFileChooser("Abrir");
         int opcao = fileChooser.showOpenDialog(this);
@@ -589,6 +568,16 @@ public class Janela extends javax.swing.JFrame {
         reinicializarInterface();
     }
 
+    private void executarAnalise() {
+        limparTabelaDeTokens();
+        limparFrameDeErros();
+        if (analise != null) {
+            pararAnalise();
+        }
+        analise = new Thread(anaLex);
+        analise.start();
+    }
+
 //----- MÉTODOS AUXILIARES -----------------------------------------------------
     
     private void reinicializarInterface() {
@@ -609,6 +598,22 @@ public class Janela extends javax.swing.JFrame {
         }
 
         return fileChooser;
+    }
+
+    private Ajuda getJanelaAjuda() {
+        if (ajuda == null) {
+            ajuda = new Ajuda();
+            ajuda.setLocationRelativeTo(this);
+        }
+        return ajuda;
+    }
+
+    private Sobre getJanelaSobre() {
+        if (sobre == null) {
+            sobre = new Sobre();
+            sobre.setLocationRelativeTo(this);
+        }
+        return sobre;
     }
 
     private boolean codigoFonteVazio() {
@@ -636,37 +641,28 @@ public class Janela extends javax.swing.JFrame {
         });
     }
 
-    public void imprimirCabecalhoErros() {
-        jTextAreaErros.append(" ERROS LÉXICOS\n");
-    }
-
-    private void imprimirErro(String erro) {
-
-        jTextAreaErros.append("  " + erro + '\n');
-        jTextAreaErros.setForeground(Color.red);
-
-    }
-
-    public void imprimirToken(Token token) {
-        imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString().toLowerCase(), token.getLinha());
-    }
-
-    public void imprimirErro(TokenErro token) {
-        imprimirErro(token.getMensagem());
-        //destacarLinha(token.getPosInicial(), token.getPosFinal());
-    }
-
-    public void imprimirTotalDeErros(int total) {
-        jTextAreaErros.append("\n Total de erros léxicos: " + total);
-    }
-
-    public void imprimirTotalDeTokens(int total) {
-        jTextAreaErros.append("\n Total de tokens analisados: " + total);
-    }
+//----- MÉTODOS AUXILIARES - IMPRESSÃO DA SAÍDA --------------------------------
 
     public void imprimirMensagemSucesso() {
         jTextAreaErros.append(" ANÁLISE REALIZADA COM SUCESSO!" + '\n');
         jTextAreaErros.setForeground(new Color(35,142,35));
+    }
+
+    public void imprimirCabecalhoErros() {
+        jTextAreaErros.append(" ERROS LÉXICOS\n");
+        jTextAreaErros.setForeground(Color.red);
+    }
+
+    public void imprimirErro(TokenErro token) {
+        imprimirErro(token.getMensagem());
+    }
+
+    private void imprimirErro(String erro) {
+        jTextAreaErros.append("  " + erro + '\n');     
+    }
+
+    public void imprimirToken(Token token) {
+        imprimirToken(token.getTipo().toString(), token.getLexema(), token.getCategoria().toString().toLowerCase(), token.getLinha());
     }
 
     private void imprimirToken(String token, String lexema, String categoria, int linha) {
@@ -682,8 +678,18 @@ public class Janela extends javax.swing.JFrame {
 
     }
 
+    public void imprimirTotalDeErros(int total) {
+        jTextAreaErros.append("\n Total de erros léxicos: " + total);
+    }
 
-    private class AreYouSure extends WindowAdapter {
+    public void imprimirTotalDeTokens(int total) {
+        jTextAreaErros.append("\n Total de tokens analisados: " + total);
+    }
+    
+
+//----- CLASSES INTERNAS -----------------------------------------------------
+
+    private class ChecadorDeAlteracoesAoSalvar extends WindowAdapter {
 
         @Override
         public void windowClosing(WindowEvent e) {
@@ -705,18 +711,8 @@ public class Janela extends javax.swing.JFrame {
         }
     }
 
-    public void destacarLinha(int posInicial, int posFinal) {
-        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.PINK);
-        try {
-            jTextAreaCodigoFonte.getHighlighter().addHighlight(posInicial, posFinal, painter);
-            //jTextAreaCodigoFonte.get
-        } catch (BadLocationException ex) {
-            ex.printStackTrace();
-        }
-    }
 
-
-    public class CurrentLineHighlighter implements CaretListener {
+    private class CurrentLineHighlighter implements CaretListener {
 
         private Color DEFAULT_COLOR = new Color(230, 230, 210);
         private Highlighter.HighlightPainter painter;
