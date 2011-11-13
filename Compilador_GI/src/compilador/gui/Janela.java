@@ -62,7 +62,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public String getCodigoFonte() {
-        return jTextAreaCodigoFonte.getText();
+        return jTextPaneCodigoFonte.getText();
     }
 
     public void pararAnalise() {
@@ -98,7 +98,7 @@ public class Janela extends javax.swing.JFrame {
         jTableTokens = new javax.swing.JTable();
         jTabbedPaneCodigoFonte = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaCodigoFonte = new javax.swing.JTextPane();
+        jTextPaneCodigoFonte = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuArquivo = new javax.swing.JMenu();
         jMenuItemNovo = new javax.swing.JMenuItem();
@@ -194,11 +194,6 @@ public class Janela extends javax.swing.JFrame {
         jButtonLimpar.setFocusable(false);
         jButtonLimpar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonLimpar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButtonLimpar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonLimparActionPerformed(evt);
-            }
-        });
         jToolBar1.add(jButtonLimpar);
 
         jButtonAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/questionmark_48.png"))); // NOI18N
@@ -249,8 +244,8 @@ public class Janela extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jTabbedPaneTokens);
 
-        jTextAreaCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
-        jScrollPane1.setViewportView(jTextAreaCodigoFonte);
+        jTextPaneCodigoFonte.setFont(new java.awt.Font("Monospaced", 0, 12));
+        jScrollPane1.setViewportView(jTextPaneCodigoFonte);
 
         jTabbedPaneCodigoFonte.addTab("Novo Arquivo", jScrollPane1);
 
@@ -449,9 +444,9 @@ public class Janela extends javax.swing.JFrame {
     }
 
     private void configurarFrameDeCodigoFonte() {
-        jTextAreaCodigoFonte.setBorder(new NumberedBorder(jTextAreaCodigoFonte.getFont().getSize()));
-        jTextAreaCodigoFonte.setDocument(new CorSintaxeDocument());
-        jTextAreaCodigoFonte.addCaretListener(new CurrentLineHighlighter());
+        jTextPaneCodigoFonte.setBorder(new NumberedBorder(jTextPaneCodigoFonte.getFont().getSize()));
+        jTextPaneCodigoFonte.setDocument(new CorSintaxeDocument());
+        jTextPaneCodigoFonte.addCaretListener(new CurrentLineHighlighter());
     }
 
     private void configurarTabelaDeTokens() {
@@ -463,7 +458,7 @@ public class Janela extends javax.swing.JFrame {
 
             @Override
             public void windowOpened(WindowEvent e) {
-                jTextAreaCodigoFonte.requestFocus();
+                jTextPaneCodigoFonte.requestFocus();
             }
         });
     }
@@ -483,7 +478,7 @@ public class Janela extends javax.swing.JFrame {
 
     //escuta uma alteração no código fonte
     private void adicionarKeyListener() {
-        jTextAreaCodigoFonte.addKeyListener(new KeyListener() {
+        jTextPaneCodigoFonte.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
                 alteracoesNaoSalvas = true;
@@ -525,7 +520,7 @@ public class Janela extends javax.swing.JFrame {
                 } while (line != null);
 
                 jTabbedPaneCodigoFonte.setTitleAt(0, fileChooser.getSelectedFile().getName());
-                jTextAreaCodigoFonte.setText(aux);
+                jTextPaneCodigoFonte.setText(aux);
 
             } catch (FileNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, "O arquivo especificado não foi encontrado!", "Arquivo não encontrado", JOptionPane.ERROR_MESSAGE);
@@ -547,7 +542,7 @@ public class Janela extends javax.swing.JFrame {
 
             try {
                 writer = new FileWriter(arquivo);
-                writer.write(jTextAreaCodigoFonte.getText());
+                writer.write(jTextPaneCodigoFonte.getText());
                 writer.close();
             } catch (IOException exception) {
                 JOptionPane.showInternalMessageDialog(this, "Erro durante escrita do arquivo!", "Erro ao salvar arquivo", JOptionPane.ERROR_MESSAGE);
@@ -617,11 +612,11 @@ public class Janela extends javax.swing.JFrame {
     }
 
     private boolean codigoFonteVazio() {
-        return jTextAreaCodigoFonte.getText().equals("");
+        return jTextPaneCodigoFonte.getText().equals("");
     }
 
     private void limparFrameDeCodigoFonte() {
-        this.jTextAreaCodigoFonte.setText("");
+        this.jTextPaneCodigoFonte.setText("");
     }
 
     private void limparFrameDeErros() {
@@ -790,8 +785,8 @@ public class Janela extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPaneErros;
     private javax.swing.JTabbedPane jTabbedPaneTokens;
     private javax.swing.JTable jTableTokens;
-    private javax.swing.JTextPane jTextAreaCodigoFonte;
     private javax.swing.JTextArea jTextAreaErros;
+    private javax.swing.JTextPane jTextPaneCodigoFonte;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 }
