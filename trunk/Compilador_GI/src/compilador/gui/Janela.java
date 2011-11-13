@@ -65,11 +65,6 @@ public class Janela extends javax.swing.JFrame {
         return jTextPaneCodigoFonte.getText();
     }
 
-    public void pararAnalise() {
-        analise.interrupt();
-        analise = null;
-    }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -402,8 +397,7 @@ public class Janela extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonExecutarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        analise.interrupt();
-        analise = null;
+        pararAnalise();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLimparActionPerformed
@@ -464,7 +458,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
     private void checarAlteracaoDeArquivoQuandoFechar() {
-        adicionarKeyListener();
+        adicionarKeyListenerParaAlteracoesNoCodigo();
         addWindowListener(new ChecadorDeAlteracoesAoSalvar());
     }
 
@@ -476,8 +470,7 @@ public class Janela extends javax.swing.JFrame {
         setExtendedState(Janela.MAXIMIZED_BOTH);
     }
 
-    //escuta uma alteração no código fonte
-    private void adicionarKeyListener() {
+    private void adicionarKeyListenerParaAlteracoesNoCodigo() {
         jTextPaneCodigoFonte.addKeyListener(new KeyListener() {
 
             public void keyTyped(KeyEvent e) {
@@ -572,6 +565,12 @@ public class Janela extends javax.swing.JFrame {
         analise = new Thread(anaLex);
         analise.start();
     }
+
+    public void pararAnalise() {
+        analise.interrupt();
+        analise = null;
+    }
+
 
 //----- MÉTODOS AUXILIARES -----------------------------------------------------
     
@@ -684,6 +683,7 @@ public class Janela extends javax.swing.JFrame {
 
 //----- CLASSES INTERNAS -----------------------------------------------------
 
+    //WindowsListener para checar alterações no arquivo quando a janela for fechada
     private class ChecadorDeAlteracoesAoSalvar extends WindowAdapter {
 
         @Override
@@ -707,6 +707,7 @@ public class Janela extends javax.swing.JFrame {
     }
 
 
+    //Listener de cursor para destacar a linha atual sendo editada
     private class CurrentLineHighlighter implements CaretListener {
 
         private Color DEFAULT_COLOR = new Color(230, 230, 210);
