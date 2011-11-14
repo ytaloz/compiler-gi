@@ -77,12 +77,7 @@ public class Automato {
                     break;
                 }
                 default: {
-                    //criarTokenErro("Simbolo Inválido: ");
-                    lexemaAtual = lexemaAtual.trim();
-                    String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
-                    this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
-                    estado = Estado.FIM;
-                    break;
+                    throw new RuntimeException("Estado Não definido: " + estado.toString());
                 }
                 
             }
@@ -128,11 +123,7 @@ public class Automato {
             criarTokenFinalDeArquivo();
         }        
         else {
-            //criarTokenErro("Simbolo inválido: ");
-            lexemaAtual = lexemaAtual.trim();
-            String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
-            this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
-            estado = Estado.FIM;
+            criarTokenSimboloInvalido();
         }
     }
 
@@ -365,72 +356,25 @@ public class Automato {
     }
 
     private void consumirComentarioBloco() {
-//        while (caracter != '*' && !ehFinalDeArquivo()) {
-//            if(caracter == '\n') linhaAtual++;
-//            consumirProxCaracter();
-//        }
-//        if(caracter == '*') {
-//            consumirProxCaracter();
-//            if(caracter == '/') {
-//                tokenAtual = new Token(TokenType.COMENTBLOCO, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
-//            } else if(caracter != '*') {
-//                consumirComentarioBloco();
-//            }
-//        } else {
-//            criarTokenErro("Fim Inesperado de Arquivo - necessário fechar o comentário de bloco: ");
-//        }
-        consumirComentarioBlocoPrimeiraParte();
-    }
-
-    private void consumirComentarioBlocoPrimeiraParte() {
         while (caracter != '*' && !ehFinalDeArquivo()) {
             if(caracter == '\n') linhaAtual++;
             consumirProxCaracter();
         }
-        consumirComentarioBlocoSegundaParte();
+        consumirComentarioBlocoFechamento();
     }
 
-    private void consumirComentarioBlocoSegundaParte() {
+    private void consumirComentarioBlocoFechamento() {
         if(caracter == '*') {
             consumirProxCaracter();
             if(caracter == '/') {
                 tokenAtual = new Token(TokenType.COMENTBLOCO, TokenCategory.COMENTARIO, lexemaAtual, linhaAtual);
             } else if(caracter != '*') {
                 consumirComentarioBloco();
-            } else consumirComentarioBlocoPrimeiraParte();
+            } else consumirComentarioBloco();
         } else {
             criarTokenErro("Fim Inesperado de Arquivo - necessário fechar o comentário de bloco: ");
         }
     }
-
-    private void criarTokenFinalDeArquivo() {
-        this.tokenAtual = new Token(TokenType.EOF, TokenCategory.EOF, "Fim de Arquivo", linhaAtual);
-        estado = Estado.FIM;
-    }
-
-    private void criarTokenErro(String mensagem) {
-        if (estado == estado.EM_NUM) {
-            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperadorMenosOPonto(caracter)) {
-                if (caracter == '\n') {
-                    linhaAtual++;
-                }
-                consumirProxCaracter();
-            }
-        } else {
-            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
-                if (caracter == '\n') {
-                    linhaAtual++;
-                }
-                consumirProxCaracter();
-            }
-        }
-        retrocederUmCaracter();
-        this.lexemaAtual = this.lexemaAtual.trim();
-        mensagem = "#" + mensagem + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
-        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
-        estado = Estado.FIM;
-    }
-
 
 
     //MÉTODOS AUXILIARES
@@ -466,6 +410,41 @@ public class Automato {
             }
         }
         lexemaAtual = lexemaAtual + caracter;
+    }
+
+    private void criarTokenFinalDeArquivo() {
+        this.tokenAtual = new Token(TokenType.EOF, TokenCategory.EOF, "Fim de Arquivo", linhaAtual);
+        estado = Estado.FIM;
+    }
+
+    private void criarTokenErro(String mensagem) {
+        if (estado == estado.EM_NUM) {
+            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperadorMenosOPonto(caracter)) {
+                if (caracter == '\n') {
+                    linhaAtual++;
+                }
+                consumirProxCaracter();
+            }
+        } else {
+            while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
+                if (caracter == '\n') {
+                    linhaAtual++;
+                }
+                consumirProxCaracter();
+            }
+        }
+        retrocederUmCaracter();
+        this.lexemaAtual = this.lexemaAtual.trim();
+        mensagem = "#" + mensagem + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
+        estado = Estado.FIM;
+    }
+
+    private void criarTokenSimboloInvalido() {
+        lexemaAtual = lexemaAtual.trim();
+        String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+        this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
+        estado = Estado.FIM;
     }
     
     private boolean ehDigito(char c) {
