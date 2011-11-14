@@ -43,7 +43,6 @@ public class AnalisadorLexico implements Runnable{
             token = automato.getProxToken();
             tokens.add(token);
             janela.imprimirToken(token);
-            //if (tokens.size()==1) janela.setCaretColor();
 
             if (token instanceof TokenErro) {
                 erros++;
@@ -69,8 +68,5 @@ public class AnalisadorLexico implements Runnable{
     public void run() {
         analisarTokens();
     }
-
-    
-
 
 }

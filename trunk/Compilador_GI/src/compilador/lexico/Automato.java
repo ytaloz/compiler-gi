@@ -403,7 +403,7 @@ public class Automato {
         }
     }
 
-     private void criarTokenFinalDeArquivo() {
+    private void criarTokenFinalDeArquivo() {
         this.tokenAtual = new Token(TokenType.EOF, TokenCategory.EOF, "Fim de Arquivo", linhaAtual);
         estado = Estado.FIM;
     }
@@ -415,7 +415,6 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
-                //if(ehSimboloInvalido(caracter)) break;
             }
         } else {
             while (!ehEspaco(caracter) && !ehDelimitador(caracter) && !ehOperador(caracter)) {
@@ -423,7 +422,6 @@ public class Automato {
                     linhaAtual++;
                 }
                 consumirProxCaracter();
-                //if(ehSimboloInvalido(caracter)) break;
             }
         }
         retrocederUmCaracter();
