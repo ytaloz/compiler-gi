@@ -48,12 +48,12 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 		StyleConstants.setForeground(comment, green);
 		//StyleConstants.setItalic(comment, true);
 		keyword = new SimpleAttributeSet();
-		Color blue = new Color(0, 0, 140);
+		Color blue = new Color(0, 0, 230);
 
 		StyleConstants.setForeground(keyword, blue);
 		//StyleConstants.setBold(keyword, true);
 		quote = new SimpleAttributeSet();
-		Color red = new Color(140, 0, 0);
+		Color red = new Color(206, 123, 0);
 
 		StyleConstants.setForeground(quote, red);
 		Object dummyObject = new Object();
