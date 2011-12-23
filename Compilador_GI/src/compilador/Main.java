@@ -26,7 +26,7 @@ public class Main {
 //            ex.printStackTrace();
 //        }
 
-        AnalisadorLexico analex = new AnalisadorLexico();
+        Compilador compilador = new Compilador();
     }
 
 }

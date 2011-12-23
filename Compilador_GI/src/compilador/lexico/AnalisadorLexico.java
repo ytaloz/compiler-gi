@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author Gabriel
  */
-public class AnalisadorLexico implements Runnable{
+public class AnalisadorLexico {
 
     Janela janela;
 
@@ -26,13 +26,12 @@ public class AnalisadorLexico implements Runnable{
 
     private int erros = 0;
 
-    public AnalisadorLexico()
+    public AnalisadorLexico(Janela janela)
     {
-        janela = new Janela(this);
-        janela.setVisible(true);
+        this.janela = janela;
     }
 
-    public void analisarTokens()
+    public List<Token> analisarTokens()
     {
         erros = 0;
         Automato automato = new Automato(janela.getCodigoFonte(), tabelaDeSimbolos);
@@ -62,11 +61,9 @@ public class AnalisadorLexico implements Runnable{
         }
         janela.imprimirTotalDeTokens(tokens.size());
         janela.pararAnalise();
-        
-    }
 
-    public void run() {
-        analisarTokens();
+        return tokens;
+        
     }
 
 }

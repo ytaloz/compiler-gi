@@ -10,6 +10,7 @@
  */
 package compilador.gui;
 
+import compilador.Compilador;
 import compilador.gui.utils.CellRenderer;
 import compilador.gui.utils.CorSintaxeDocument;
 import compilador.gui.utils.NumberedBorder;
@@ -46,7 +47,8 @@ import javax.swing.text.Utilities;
  */
 public class Janela extends javax.swing.JFrame {
 
-    private AnalisadorLexico anaLex;
+    //private AnalisadorLexico anaLex;
+    private Compilador compilador;
     private Thread analise;
     private boolean alteracoesNaoSalvas;
     private File ultimoDiretorioSalvo;
@@ -55,10 +57,11 @@ public class Janela extends javax.swing.JFrame {
     private Ajuda ajuda;
 
     /** Creates new form Janela */
-    public Janela(AnalisadorLexico anaLex) {
+    public Janela(Compilador compilador) {
         initComponents();
         configurarJanela();
-        this.anaLex = anaLex;
+        setVisible(true);
+        this.compilador = compilador;
     }
 
     public String getCodigoFonte() {
@@ -562,7 +565,7 @@ public class Janela extends javax.swing.JFrame {
         if (analise != null) {
             pararAnalise();
         }
-        analise = new Thread(anaLex);
+        analise = new Thread(compilador);
         analise.start();
     }
 
