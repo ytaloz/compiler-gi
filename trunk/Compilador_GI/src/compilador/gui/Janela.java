@@ -192,6 +192,11 @@ public class Janela extends javax.swing.JFrame {
         jButtonLimpar.setFocusable(false);
         jButtonLimpar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonLimpar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonLimpar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLimparActionPerformed(evt);
+            }
+        });
         jToolBar1.add(jButtonLimpar);
 
         jButtonAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/questionmark_48.png"))); // NOI18N
