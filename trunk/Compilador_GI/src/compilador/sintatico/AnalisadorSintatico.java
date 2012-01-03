@@ -8,6 +8,7 @@ package compilador.sintatico;
 import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class AnalisadorSintatico {
     private int ponteiro = -1;
 
     //lista de erros sintaticos
-    private List<ErroSintatico> erros;
+    private List<ErroSintatico> erros = new ArrayList<ErroSintatico>();
 
     //classe que armazena os conjuntos primeiros das produções da gramática
     private ConjuntoPrimeiro conjuntoPrimeiro = new ConjuntoPrimeiro();
@@ -53,7 +54,7 @@ public class AnalisadorSintatico {
     {
         this.tokens = tokens;
         proxToken();
-        programa();
+        //programa();
     }
 
     //MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA
@@ -138,6 +139,11 @@ public class AnalisadorSintatico {
     public void imprimirSaida()
     {
         if (temErros()) janela.imprimirCabecalhoErrosSintaticos();
+
+        for (ErroSintatico erro : erros) {
+
+        }
+
         if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());
     }
 
