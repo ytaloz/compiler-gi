@@ -680,8 +680,12 @@ public class Janela extends javax.swing.JFrame {
 
     }
 
-    public void imprimirTotalDeErros(int total) {
+    public void imprimirTotalDeErrosLexicos(int total) {
         jTextAreaErros.append("\n Total de erros léxicos: " + total);
+    }
+
+    public void imprimirTotalDeErrosSintaticos(int total) {
+        jTextAreaErros.append("\n Total de erros sintáticos: " + total);
     }
 
     public void imprimirTotalDeTokens(int total) {
