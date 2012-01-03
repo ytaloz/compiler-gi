@@ -57,7 +57,7 @@ public class AnalisadorLexico {
         if (erros == 0) {
             janela.imprimirMensagemSucesso();
         } else {
-            janela.imprimirTotalDeErros(erros);
+            janela.imprimirTotalDeErrosLexicos(erros);
         }
         janela.imprimirTotalDeTokens(tokens.size());
         janela.pararAnalise();
