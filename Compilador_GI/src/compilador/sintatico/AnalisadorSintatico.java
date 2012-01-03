@@ -53,26 +53,29 @@ public class AnalisadorSintatico {
     public void analisar(List<Token> tokens)
     {
         this.tokens = tokens;
+        this.ponteiro = -1;
+        
         proxToken();
         //programa();
+        bloco_constantes();
     }
 
     //MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA
 
-    private void programa()
-    {
-        if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
-            bloco_constantes();
-            outros_blocos_programa();
-        }
-        if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
-            bloco_variaveis();
-            classes();
-        }
-        if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
-            classes();
-        }
-    }
+//    private void programa()
+//    {
+//        if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
+//            bloco_constantes();
+//            //outros_blocos_programa();
+//        }
+//        else if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
+//            bloco_variaveis();
+//            classes();
+//        }
+//        else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
+//            classes();
+//        }
+//    }
 
     private void bloco_constantes()
     {
@@ -141,7 +144,7 @@ public class AnalisadorSintatico {
         if (temErros()) janela.imprimirCabecalhoErrosSintaticos();
 
         for (ErroSintatico erro : erros) {
-
+            janela.imprimirErroSintatico(erro);
         }
 
         if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());

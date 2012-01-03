@@ -16,7 +16,7 @@ public class ErroSintatico {
 
     public ErroSintatico(String msg, int linha)
     {
-        this.mensagem = msg;
+        this.mensagem = msg + "\t" + "linha: " + linha;
         this.linha = linha;
     }
 
