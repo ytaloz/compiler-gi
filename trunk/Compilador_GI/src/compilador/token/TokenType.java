@@ -12,7 +12,6 @@ package compilador.token;
 public enum TokenType {
 
 
-    PALAVRA_RESERVADA,
     ID,
     NUM,
     LITERAL,
@@ -50,6 +49,31 @@ public enum TokenType {
     COMENTBLOCO,
     COMENTLINHA,
 
+    //PALAVRAS RESERVADAS
+    VARIAVEIS,
+    METODOS,
+    CONSTANTES,
+    CLASSE,
+    RETORNO,
+    VAZIO,
+    PRINCIPAL,
+    SE,
+    ENTAO,
+    SENAO,
+    ENQUANTO,
+    PARA,
+    LEIA,
+    ESCREVA,
+    INTEIRO,
+    REAL,
+    LOGICO,
+    CARACTERE,
+    CADEIA,
+    VERDADEIRO,
+    FALSO,
+    HERDA_DE,
+
+    //OUTROS
     ERRO,
     EOF
 
