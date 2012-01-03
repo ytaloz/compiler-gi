@@ -41,31 +41,14 @@ public class AnalisadorLexico {
         do {
             token = automato.getProxToken();
             tokens.add(token);
-            //janela.imprimirToken(token);
 
             if (token instanceof TokenErro) {
                 erros++;
-                if (erros == 1) {
-                    //janela.imprimirCabecalhoErros();
-                }
-                //janela.imprimirErro((TokenErro) token);
             }
             
         } while (token.getTipo() != TokenType.EOF);
 
-
-//        if (erros == 0) {
-//            janela.imprimirMensagemSucesso();
-//        } else {
-//            janela.imprimirTotalDeErrosLexicos(erros);
-//        }
-        //janela.imprimirTotalDeTokens(tokens.size());
-
-
-        //janela.pararAnalise();
-
-        return tokens;
-        
+        return tokens;        
     }
 
     public void imprimirSaida()
