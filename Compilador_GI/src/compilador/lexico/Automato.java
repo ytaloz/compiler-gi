@@ -152,8 +152,8 @@ public class Automato {
             criarTokenErro("Identificador Muito Grande: ");
         } else {
             retrocederUmCaracter();
-            if (simbolos.getSimbolo(lexemaAtual) != null) {
-                tokenAtual = new Token(TokenType.PALAVRA_RESERVADA, TokenCategory.PALAVRA_RESERVADA, lexemaAtual, linhaAtual);
+            if (ehPalavraReservada(lexemaAtual)) {
+                tokenAtual = new Token(getTokenTypePalavraReservada(lexemaAtual), TokenCategory.PALAVRA_RESERVADA, lexemaAtual, linhaAtual);
             } else {
                 tokenAtual = new Token(TokenType.ID, TokenCategory.IDENTIFICADOR, lexemaAtual, linhaAtual);
             }
@@ -457,6 +457,11 @@ public class Automato {
         this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
         estado = Estado.FIM;
     }
+
+    private TokenType getTokenTypePalavraReservada(String lexema)
+    {
+        return simbolos.getTokenPalavraChave(lexema);
+    }
     
     private boolean ehDigito(char c) {
         return Character.isDigit(c);
@@ -496,6 +501,11 @@ public class Automato {
     
     private boolean ehCaracterDeIdentificador(char c) {
         return (ehLetra(c) || ehDigito(c) || ehUnderline(c));
+    }
+
+    private boolean ehPalavraReservada(String lexema)
+    {
+        return simbolos.getSimbolo(lexema) != null;
     }
 
     private boolean ehSimboloInvalido(char c) {

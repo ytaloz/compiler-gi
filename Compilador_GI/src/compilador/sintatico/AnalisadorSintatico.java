@@ -35,11 +35,24 @@ public class AnalisadorSintatico {
         this.janela = janela;
     }
 
+
+    //método principal - inicia a análise sintática, dada uma lista de tokens
+    
     public void analisar(List<Token> tokens)
     {
         this.tokens = tokens;
         proxToken();
     }
+
+    //MÉTODOS CORRESPONDENTES AO NÃO-TERMINAIS DA GRAMÁTICA
+
+    private void programa()
+    {
+        
+    }
+
+
+    //MÉTODOS AUXILIARES
 
     private void proxToken()
     {
@@ -66,6 +79,7 @@ public class AnalisadorSintatico {
 
     public boolean temErros()
     {
+        if( erros==null ) return false;
         return erros.size() > 0;
     }
 
