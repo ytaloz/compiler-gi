@@ -7,8 +7,10 @@ package compilador;
 
 import compilador.gui.Janela;
 import compilador.lexico.AnalisadorLexico;
+import compilador.sintatico.AnalisadorSintatico;
 import compilador.token.Token;
 import java.util.List;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -18,17 +20,60 @@ public class Compilador implements Runnable {
 
     Janela janela;
     List<Token> tokens;
+
     AnalisadorLexico analisadorLexico;
+    AnalisadorSintatico analisadorSintatico;
 
     public Compilador()
     {
         janela = new Janela(this);
         analisadorLexico = new AnalisadorLexico(janela);
+        analisadorSintatico = new AnalisadorSintatico(janela);
     }
 
     public void analisar(String codigoFonte)
     {
+        analiseLexica();
+        analiseSintatica();
+        janela.pararAnalise();
+
+        imprimirSaida();
+    }
+
+    private void analiseLexica()
+    {
         tokens = analisadorLexico.analisarTokens();
+    }
+
+    private void analiseSintatica()
+    {
+        analisadorSintatico.analisar(tokens);
+    }
+
+    private void imprimirSaida() 
+    {
+        Runnable runnable = new Runnable() {
+            public void run() {
+
+                if (existemErros()) {
+                    janela.imprimirCabecalhoErros();
+                } else {
+                    janela.imprimirMensagemSucesso();
+                }
+
+                analisadorLexico.imprimirSaida();
+                analisadorSintatico.imprimirSaida();
+
+                janela.imprimirTotalDeTokens(tokens.size());
+            }
+        };
+        SwingUtilities.invokeLater(runnable);
+
+    }
+
+    private boolean existemErros()
+    {
+        return ( analisadorLexico.temErros() || analisadorSintatico.temErros() );
     }
 
     public void run() {

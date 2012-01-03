@@ -41,29 +41,50 @@ public class AnalisadorLexico {
         do {
             token = automato.getProxToken();
             tokens.add(token);
-            janela.imprimirToken(token);
+            //janela.imprimirToken(token);
 
             if (token instanceof TokenErro) {
                 erros++;
                 if (erros == 1) {
-                    janela.imprimirCabecalhoErros();
+                    //janela.imprimirCabecalhoErros();
                 }
-                janela.imprimirErro((TokenErro) token);
+                //janela.imprimirErro((TokenErro) token);
             }
             
         } while (token.getTipo() != TokenType.EOF);
 
 
-        if (erros == 0) {
-            janela.imprimirMensagemSucesso();
-        } else {
-            janela.imprimirTotalDeErrosLexicos(erros);
-        }
-        janela.imprimirTotalDeTokens(tokens.size());
-        janela.pararAnalise();
+//        if (erros == 0) {
+//            janela.imprimirMensagemSucesso();
+//        } else {
+//            janela.imprimirTotalDeErrosLexicos(erros);
+//        }
+        //janela.imprimirTotalDeTokens(tokens.size());
+
+
+        //janela.pararAnalise();
 
         return tokens;
         
+    }
+
+    public void imprimirSaida()
+    {
+        if (temErros()) janela.imprimirCabecalhoErrosLexicos();
+
+        for (Token token : tokens) {
+            janela.imprimirToken(token);
+            if (token instanceof TokenErro) {
+                janela.imprimirErro((TokenErro) token);
+            }
+        }
+
+        if (temErros()) janela.imprimirTotalDeErrosLexicos(erros);
+    }
+
+    public boolean temErros()
+    {
+        return erros > 0;
     }
 
 }

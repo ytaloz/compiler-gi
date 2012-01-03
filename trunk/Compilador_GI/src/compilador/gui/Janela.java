@@ -651,8 +651,17 @@ public class Janela extends javax.swing.JFrame {
     }
 
     public void imprimirCabecalhoErros() {
-        jTextAreaErros.append(" ERROS LÉXICOS\n");
+        jTextAreaErros.append(" ERROS FORAM ENCONTRADOS DURANTE A ANÁLISE!\n\n");
         jTextAreaErros.setForeground(Color.red);
+    }
+
+    public void imprimirCabecalhoErrosLexicos() {
+        jTextAreaErros.append(" ERROS LÉXICOS\n");
+    }
+
+    public void imprimirCabecalhoErrosSintaticos() {
+        jTextAreaErros.append(" ERROS SINTÁTICOS\n");
+        jTextAreaErros.append(" \t(Foram encontrados erros sintáticos)\n");
     }
 
     public void imprimirErro(TokenErro token) {
