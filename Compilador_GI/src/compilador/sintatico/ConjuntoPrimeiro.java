@@ -8,6 +8,7 @@ package compilador.sintatico;
 import compilador.token.TokenType;
 import compilador.token.TokenType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Set;
@@ -20,9 +21,9 @@ public class ConjuntoPrimeiro {
 
     private Map<String, Set> conjuntos = new HashMap<String, Set>();
 
-    private Set<TokenType> bloco_constantes;
-    private Set<TokenType> bloco_variaveis;
-    private Set<TokenType> classes;
+    private Set<TokenType> bloco_constantes = new HashSet<TokenType>();
+    private Set<TokenType> bloco_variaveis = new HashSet<TokenType>();
+    private Set<TokenType> classes = new HashSet<TokenType>();
 
     public ConjuntoPrimeiro()
     {

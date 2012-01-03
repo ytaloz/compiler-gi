@@ -15,6 +15,7 @@ import compilador.gui.utils.CellRenderer;
 import compilador.gui.utils.CorSintaxeDocument;
 import compilador.gui.utils.NumberedBorder;
 import compilador.lexico.AnalisadorLexico;
+import compilador.sintatico.ErroSintatico;
 import compilador.token.Token;
 import compilador.token.TokenErro;
 import java.awt.Color;
@@ -666,6 +667,11 @@ public class Janela extends javax.swing.JFrame {
 
     public void imprimirErroLexico(TokenErro token) {
         imprimirErro(token.getMensagem());
+    }
+
+    public void imprimirErroSintatico(ErroSintatico erro)
+    {
+        
     }
 
     private void imprimirErro(String erro) {
