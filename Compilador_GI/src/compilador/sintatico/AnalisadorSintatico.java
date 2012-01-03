@@ -15,10 +15,20 @@ import java.util.List;
  */
 public class AnalisadorSintatico {
 
-    Janela janela;
-    List<Token> tokens;
+    private Janela janela;
 
-    private int erros = 0;
+    //lista de tokens representando o codigo fonte
+    private List<Token> tokens;
+
+    //token atual da análise
+    private Token tokenAtual;
+
+    //ponteiro do token atual sendo analisado
+    private int ponteiro = -1;
+
+    //lista de erros sintaticos
+    private List<ErroSintatico> erros;
+
 
     public AnalisadorSintatico(Janela janela)
     {
@@ -28,17 +38,35 @@ public class AnalisadorSintatico {
     public void analisar(List<Token> tokens)
     {
         this.tokens = tokens;
+        proxToken();
+    }
+
+    private void proxToken()
+    {
+        ponteiro++;
+        tokenAtual = tokens.get(ponteiro);
+    }
+
+    private void match(Token esperado)
+    {
+        if(tokenAtual.getTipo() == esperado.getTipo()) proxToken();
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void erroSintatico(String msg, int linha)
+    {
+        erros.add(new ErroSintatico(msg, linha));
     }
 
     public void imprimirSaida()
     {
         if (temErros()) janela.imprimirCabecalhoErrosSintaticos();
-        if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros);
+        if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());
     }
 
     public boolean temErros()
     {
-        return erros > 0;
+        return erros.size() > 0;
     }
 
 }

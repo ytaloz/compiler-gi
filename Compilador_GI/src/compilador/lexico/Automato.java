@@ -19,17 +19,28 @@ public class Automato {
 
     private static int TAMANHO_MAX_ID = 255;
 
-    TabelaDeSimbolos simbolos;
+    private TabelaDeSimbolos simbolos;
 
-    char[] codigoFonte;
-    char caracter;                //caractere atual lido
-    String lexemaAtual = "" ;
+    //vetor de caracteres representando o codigo fonte
+    private char[] codigoFonte;
 
-    int ponteiro = -1;           //indice do vetor de caracteres 
-    int linhaAtual = 1;              //linha atual da leitura
+    //caractere atual lido
+    private char caracter;
 
-    Estado estado = Estado.START;
-    Token tokenAtual;
+    //lexema do token em análise
+    private String lexemaAtual = "" ;
+
+    //indice do vetor de caracteres
+    private int ponteiro = -1;
+
+    //linha atual da leitura
+    private int linhaAtual = 1;
+
+    //estado atual do automato
+    private Estado estado = Estado.START;
+
+    //token atual a ser retornado pelo analisador
+    private Token tokenAtual;
 
 
     public Automato(String codigoFonte, TabelaDeSimbolos simbolos)
