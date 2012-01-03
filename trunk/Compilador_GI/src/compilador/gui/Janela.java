@@ -664,7 +664,7 @@ public class Janela extends javax.swing.JFrame {
         jTextAreaErros.append(" \t(Foram encontrados erros sintáticos)\n");
     }
 
-    public void imprimirErro(TokenErro token) {
+    public void imprimirErroLexico(TokenErro token) {
         imprimirErro(token.getMensagem());
     }
 

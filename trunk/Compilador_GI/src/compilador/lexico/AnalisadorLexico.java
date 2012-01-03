@@ -24,6 +24,7 @@ public class AnalisadorLexico {
     List<Token> tokens = new ArrayList<Token>();
     TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
 
+    //total de erros computados
     private int erros = 0;
 
     public AnalisadorLexico(Janela janela)
@@ -58,7 +59,7 @@ public class AnalisadorLexico {
         for (Token token : tokens) {
             janela.imprimirToken(token);
             if (token instanceof TokenErro) {
-                janela.imprimirErro((TokenErro) token);
+                janela.imprimirErroLexico((TokenErro) token);
             }
         }
 
