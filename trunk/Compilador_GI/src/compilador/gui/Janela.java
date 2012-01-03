@@ -662,7 +662,6 @@ public class Janela extends javax.swing.JFrame {
 
     public void imprimirCabecalhoErrosSintaticos() {
         jTextAreaErros.append(" ERROS SINTÁTICOS\n");
-        jTextAreaErros.append(" \t(Foram encontrados erros sintáticos)\n");
     }
 
     public void imprimirErroLexico(TokenErro token) {
@@ -671,11 +670,11 @@ public class Janela extends javax.swing.JFrame {
 
     public void imprimirErroSintatico(ErroSintatico erro)
     {
-        
+        imprimirErro(erro.getMensagem());
     }
 
     private void imprimirErro(String erro) {
-        jTextAreaErros.append("  " + erro + '\n');     
+        jTextAreaErros.append("  #" + erro + '\n');
     }
 
     public void imprimirToken(Token token) {

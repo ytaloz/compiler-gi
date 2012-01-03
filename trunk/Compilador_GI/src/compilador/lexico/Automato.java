@@ -446,14 +446,14 @@ public class Automato {
         }
         retrocederUmCaracter();
         this.lexemaAtual = this.lexemaAtual.trim();
-        mensagem = "#" + mensagem + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+        mensagem = mensagem + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
         this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
         estado = Estado.FIM;
     }
 
     private void criarTokenSimboloInvalido() {
         lexemaAtual = lexemaAtual.trim();
-        String mensagem = "#" + "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
+        String mensagem = "Simbolo Inválido: " + "\"" + lexemaAtual + "\"" + "\t" + "linha: " + linhaAtual;
         this.tokenAtual = new TokenErro(lexemaAtual, linhaAtual, mensagem, ponteiro);
         estado = Estado.FIM;
     }
