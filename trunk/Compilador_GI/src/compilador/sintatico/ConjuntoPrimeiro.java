@@ -30,6 +30,10 @@ public class ConjuntoPrimeiro {
     private Set<TokenType> parametro_real = new HashSet<TokenType>();
     private Set<TokenType> expressao_aritmetica = new HashSet<TokenType>();
 
+    private Set<TokenType> comando_geral = new HashSet<TokenType>();
+    private Set<TokenType> comando_linha = new HashSet<TokenType>();
+    private Set<TokenType> comando_bloco = new HashSet<TokenType>();
+
     public ConjuntoPrimeiro()
     {
         init_bloco_constantes();
@@ -40,6 +44,9 @@ public class ConjuntoPrimeiro {
         init_tipo_variavel();
         init_parametro_real();
         init_expressao_aritmetica();
+        init_comando_geral();
+        init_comando_linha();
+        init_comando_bloco();
 
         armazenarConjuntos();
     }
@@ -109,6 +116,37 @@ public class ConjuntoPrimeiro {
         expressao_aritmetica.add(TokenType.NUM);
     }
 
+    private void init_comando_geral()
+    {
+        comando_geral.add(TokenType.ESCREVA);
+        comando_geral.add(TokenType.LEIA);
+        comando_geral.add(TokenType.RETORNO);
+        comando_geral.add(TokenType.INCR);
+        comando_geral.add(TokenType.DECR);
+        comando_geral.add(TokenType.ID);
+        comando_geral.add(TokenType.SE);
+        comando_geral.add(TokenType.PARA);
+        comando_geral.add(TokenType.ENQUANTO);
+
+    }
+
+    private void init_comando_linha()
+    {
+        comando_linha.add(TokenType.ESCREVA);
+        comando_linha.add(TokenType.LEIA);
+        comando_linha.add(TokenType.RETORNO);
+        comando_linha.add(TokenType.INCR);
+        comando_linha.add(TokenType.DECR);
+        comando_linha.add(TokenType.ID);
+    }
+
+    private void init_comando_bloco()
+    {
+        comando_bloco.add(TokenType.SE);
+        comando_bloco.add(TokenType.PARA);
+        comando_bloco.add(TokenType.ENQUANTO);
+    }
+
     private void armazenarConjuntos()
     {
         conjuntos.put(AnalisadorSintatico.BLOCO_CONSTANTES, bloco_constantes);
@@ -119,6 +157,9 @@ public class ConjuntoPrimeiro {
         conjuntos.put(AnalisadorSintatico.TIPO_VARIAVEL, tipo_variavel);
         conjuntos.put(AnalisadorSintatico.PARAMETRO_REAL, parametro_real);
         conjuntos.put(AnalisadorSintatico.EXPRESSAO_ARITMETICA, expressao_aritmetica);
+        conjuntos.put(AnalisadorSintatico.COMANDO_GERAL, comando_geral);
+        conjuntos.put(AnalisadorSintatico.COMANDO_LINHA, comando_linha);
+        conjuntos.put(AnalisadorSintatico.COMANDO_BLOCO, comando_bloco);
 
     }
 
