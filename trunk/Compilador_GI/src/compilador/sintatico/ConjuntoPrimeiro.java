@@ -24,6 +24,10 @@ public class ConjuntoPrimeiro {
     private Set<TokenType> classes = new HashSet<TokenType>();
 
     private Set<TokenType> decl_constantes_mesmo_tipo = new HashSet<TokenType>();
+    private Set<TokenType> decl_variaveis_mesmo_tipo = new HashSet<TokenType>();
+    private Set<TokenType> tipo_variavel = new HashSet<TokenType>();
+
+    private Set<TokenType> parametro_real = new HashSet<TokenType>();
 
     public ConjuntoPrimeiro()
     {
@@ -31,6 +35,9 @@ public class ConjuntoPrimeiro {
         init_bloco_variaveis();
         init_classes();
         init_decl_constantes_mesmo_tipo();
+        init_decl_variaveis_mesmo_tipo();
+        init_tipo_variavel();
+        init_parametro_real();
 
         armazenarConjuntos();
     }
@@ -62,6 +69,35 @@ public class ConjuntoPrimeiro {
         decl_constantes_mesmo_tipo.add(TokenType.LOGICO);
         decl_constantes_mesmo_tipo.add(TokenType.CARACTERE);
         decl_constantes_mesmo_tipo.add(TokenType.CADEIA);
+    }
+
+    private void init_decl_variaveis_mesmo_tipo()
+    {
+        decl_variaveis_mesmo_tipo.add(TokenType.INTEIRO);
+        decl_variaveis_mesmo_tipo.add(TokenType.REAL);
+        decl_variaveis_mesmo_tipo.add(TokenType.LOGICO);
+        decl_variaveis_mesmo_tipo.add(TokenType.CARACTERE);
+        decl_variaveis_mesmo_tipo.add(TokenType.CADEIA);
+        decl_variaveis_mesmo_tipo.add(TokenType.ID);
+    }
+
+    private void init_tipo_variavel()
+    {
+        tipo_variavel.add(TokenType.INTEIRO);
+        tipo_variavel.add(TokenType.REAL);
+        tipo_variavel.add(TokenType.LOGICO);
+        tipo_variavel.add(TokenType.CARACTERE);
+        tipo_variavel.add(TokenType.CADEIA);
+    }
+
+    private void init_parametro_real()
+    {
+        parametro_real.add(TokenType.ID);
+        parametro_real.add(TokenType.NUM);
+        parametro_real.add(TokenType.CADEIA);
+        parametro_real.add(TokenType.CARACTER);
+        parametro_real.add(TokenType.VERDADEIRO);
+        parametro_real.add(TokenType.FALSO);
     }
 
     private void armazenarConjuntos()
