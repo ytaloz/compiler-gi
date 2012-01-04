@@ -70,8 +70,8 @@ public class AnalisadorSintatico {
         //instanciar_obj();
         //classes();
         //expressao();
-        //atribuicao();
-        comandos();
+        atribuicao();
+        //comandos();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -839,18 +839,10 @@ public class AnalisadorSintatico {
                 complemento_ponto_comando();
                 break;
             }
-            case ABREPAR: {
-                match(TokenType.ABREPAR);
-                parametros_reais();
-                match(TokenType.FECHAPAR);
+            case ID: {
+                match(TokenType.ID);
                 break;
             }
-            case ATRIB: {
-                match(TokenType.ATRIB);
-                segundo_membro_atribuicao();
-                break;
-            }
-            default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
         }
     }
 
@@ -871,19 +863,51 @@ public class AnalisadorSintatico {
 
     private void complemento_id_atribuicao()
     {
-        if(tokenAtual.getTipo() == TokenType.ABREPAR ||
-           tokenAtual.getTipo() == TokenType.PONTO ||
+        if(tokenAtual.getTipo() == TokenType.PONTO ||
            tokenAtual.getTipo() == TokenType.ATRIB ||
            tokenAtual.getTipo() == TokenType.ABRECOLCH)  {
 
-            complemento_referencia_variavel();
-            match(TokenType.ATRIB);
-            segundo_membro_atribuicao();
+            complemento_referencia_variavel_atrib();
         }
         else if(tokenAtual.getTipo() == TokenType.INCR ||
                 tokenAtual.getTipo() == TokenType.DECR) {
 
             incremento_decremento();
+        }
+    }
+
+    private void complemento_referencia_variavel_atrib()
+    {
+        if( tokenAtual.getTipo() == TokenType.PONTO ) {
+            loop_acesso_atributo_obj();
+
+            complemento_referencia_variavel();
+
+            match(TokenType.ATRIB);
+            segundo_membro_atribuicao();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
+            match(TokenType.ABRECOLCH);
+            expressao_aritmetica();
+            match(TokenType.FECHACOLCH);
+            match(TokenType.ATRIB);
+            segundo_membro_atribuicao();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ATRIB) {
+            match(TokenType.ATRIB);
+            segundo_membro_atribuicao();
+        }
+    }
+
+    private void complemento_referencia_variavel()
+    {
+        if( tokenAtual.getTipo() == TokenType.PONTO ) {
+            loop_acesso_atributo_obj();
+        }
+        else if( tokenAtual.getTipo() == TokenType.ABRECOLCH ) {
+            match(TokenType.ABRECOLCH);
+            expressao_aritmetica();
+            match(TokenType.FECHACOLCH);
         }
     }
 
@@ -958,20 +982,6 @@ public class AnalisadorSintatico {
     {
         if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) proxToken();
         else erroSintatico("<incremento_decremento> esperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
-    }
-
-    private void complemento_referencia_variavel()
-    {
-        if(tokenAtual.getTipo() == TokenType.ABREPAR ||
-           tokenAtual.getTipo() == TokenType.PONTO ||
-           tokenAtual.getTipo() == TokenType.ATRIB) {
-            loop_acesso_atributo_obj();
-        }
-        else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
-            match(TokenType.ABRECOLCH);
-            expressao_aritmetica();
-            match(TokenType.FECHACOLCH);
-        }
     }
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
