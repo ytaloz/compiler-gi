@@ -28,6 +28,7 @@ public class ConjuntoPrimeiro {
     private Set<TokenType> tipo_variavel = new HashSet<TokenType>();
 
     private Set<TokenType> parametro_real = new HashSet<TokenType>();
+    private Set<TokenType> expressao_aritmetica = new HashSet<TokenType>();
 
     public ConjuntoPrimeiro()
     {
@@ -38,6 +39,7 @@ public class ConjuntoPrimeiro {
         init_decl_variaveis_mesmo_tipo();
         init_tipo_variavel();
         init_parametro_real();
+        init_expressao_aritmetica();
 
         armazenarConjuntos();
     }
@@ -100,6 +102,13 @@ public class ConjuntoPrimeiro {
         parametro_real.add(TokenType.FALSO);
     }
 
+    private void init_expressao_aritmetica()
+    {
+        expressao_aritmetica.add(TokenType.ABREPAR);
+        expressao_aritmetica.add(TokenType.ID);
+        expressao_aritmetica.add(TokenType.NUM);
+    }
+
     private void armazenarConjuntos()
     {
         conjuntos.put(AnalisadorSintatico.BLOCO_CONSTANTES, bloco_constantes);
@@ -109,6 +118,7 @@ public class ConjuntoPrimeiro {
         conjuntos.put(AnalisadorSintatico.DECL_VARIAVEIS_MESMO_TIPO, decl_variaveis_mesmo_tipo);
         conjuntos.put(AnalisadorSintatico.TIPO_VARIAVEL, tipo_variavel);
         conjuntos.put(AnalisadorSintatico.PARAMETRO_REAL, parametro_real);
+        conjuntos.put(AnalisadorSintatico.EXPRESSAO_ARITMETICA, expressao_aritmetica);
 
     }
 
