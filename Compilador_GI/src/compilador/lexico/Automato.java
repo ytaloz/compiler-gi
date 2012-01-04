@@ -401,12 +401,12 @@ public class Automato {
     }
 
     private void retrocederUmCaracter() {
-        if (!ehFinalDeArquivo()) {
+        //if (!ehFinalDeArquivo()) {
             ponteiro--;
             this.caracter = this.codigoFonte[ponteiro];
             this.lexemaAtual = this.lexemaAtual.substring(0, (this.lexemaAtual.length() - 1));
             this.lexemaAtual = lexemaAtual.trim();
-        }
+        //}
     }
 
     private void consumirEspacos() {

@@ -397,13 +397,18 @@ public class AnalisadorSintatico {
             janela.imprimirErroSintatico(erro);
         }
 
-        if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());
+        //if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());
     }
 
     public boolean temErros()
     {
         if( erros==null ) return false;
         return erros.size() > 0;
+    }
+
+    public int getErros()
+    {
+        return erros.size();
     }
 
 }

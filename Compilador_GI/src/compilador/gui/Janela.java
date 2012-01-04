@@ -705,6 +705,10 @@ public class Janela extends javax.swing.JFrame {
     public void imprimirTotalDeTokens(int total) {
         jTextAreaErros.append("\n Total de tokens analisados: " + total);
     }
+
+    public void imprimirLinha() {
+        jTextAreaErros.append("\n");
+    }
     
 
 //----- CLASSES INTERNAS -----------------------------------------------------
@@ -736,7 +740,7 @@ public class Janela extends javax.swing.JFrame {
     //Listener de cursor para destacar a linha atual sendo editada
     private class CurrentLineHighlighter implements CaretListener {
 
-        private Color DEFAULT_COLOR = new Color(230, 250, 230);
+        private Color DEFAULT_COLOR = new Color(230, 240, 230);
         private Highlighter.HighlightPainter painter;
         private Object highlight;
 

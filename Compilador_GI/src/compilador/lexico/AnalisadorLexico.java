@@ -63,12 +63,17 @@ public class AnalisadorLexico {
             }
         }
 
-        if (temErros()) janela.imprimirTotalDeErrosLexicos(erros);
+        //if (temErros()) janela.imprimirTotalDeErrosLexicos(erros);
     }
 
     public boolean temErros()
     {
         return erros > 0;
+    }
+
+    public int getErros()
+    {
+        return erros;
     }
 
 }
