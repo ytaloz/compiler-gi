@@ -28,6 +28,9 @@ public class AnalisadorSintatico {
     public static final String TIPO_VARIAVEL = "tipo_variavel";
     public static final String PARAMETRO_REAL = "parametro_real";
     public static final String EXPRESSAO_ARITMETICA = "expressao_aritmetica";
+    public static final String COMANDO_GERAL = "comando_geral";
+    public static final String COMANDO_LINHA = "comando_linha";
+    public static final String COMANDO_BLOCO = "comando_bloco";
 
     private Janela janela;
 
@@ -66,7 +69,9 @@ public class AnalisadorSintatico {
         //bloco_variaveis();
         //instanciar_obj();
         //classes();
-        expressao();
+        //expressao();
+        //atribuicao();
+        comandos();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -140,16 +145,6 @@ public class AnalisadorSintatico {
         loop_lista_decl_constantes();
     }
 
-    private void atribuicao()
-    {
-
-    }
-
-    private void segundo_membro_atribuicao()
-    {
-
-    }
-
     private void loop_lista_decl_constantes()
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
@@ -202,16 +197,19 @@ public class AnalisadorSintatico {
         {
             case VIRGULA: {
                 loop_lista_decl_variaveis();
+                break;
             }
             case ATRIB: {
                 match(TokenType.ATRIB);
                 segundo_membro_atribuicao();
                 loop_lista_decl_variaveis();
+                break;
             }
             case ABRECOLCH: {
                 match(TokenType.ABRECOLCH);
                 expressao_aritmetica();
                 match(TokenType.FECHACOLCH);
+                break;
             }
             default : erroSintatico("Erro sintático no complemento_decl_variavel!", tokenAtual.getLinha());
         }
@@ -589,12 +587,392 @@ public class AnalisadorSintatico {
 
     // COMANDOS
 
-    private void loop_acesso_atributo_obj()
+    private void comandos()
     {
-        
+        if(primeiro(COMANDO_GERAL).contains(tokenAtual.getTipo())) {
+            comando_geral();
+            comandos();
+        }
     }
 
+    private void comando_geral()
+    {
+        if(primeiro(COMANDO_LINHA).contains(tokenAtual.getTipo())) {
+            comando_linha();
+            match(TokenType.PONTOVIRGULA);
+        }
+        else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
+            comando_bloco();
+        }
+        else erroSintatico("Token inesperado em comando_geral: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
 
+    private void comando_linha()
+    {
+        switch(tokenAtual.getTipo())
+        {
+            case ESCREVA: {
+                comando_escreva();
+                break;
+            }
+            case LEIA: {
+                comando_leia();
+                break;
+            }
+            case RETORNO: {
+                retorno();
+                break;
+            }
+            case INCR: {
+                incremento_decremento();
+                match(TokenType.ID);
+                break;
+            }
+            case DECR: {
+                incremento_decremento();
+                match(TokenType.ID);
+                break;
+            }
+            case ID: {
+                match(TokenType.ID);
+                complemento_variavel_comando();
+                break;
+            }
+            default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        }
+    }
+
+    private void comando_bloco()
+    {
+        switch(tokenAtual.getTipo())
+        {
+             case SE: {
+                comando_se();
+                break;
+            }
+            case PARA: {
+                comando_para();
+                break;
+            }
+            case ENQUANTO: {
+                comando_enquanto();
+                break;
+            }
+         }
+    }
+    
+    private void comando_se()
+    {
+        match(TokenType.SE);
+        match(TokenType.ABREPAR);
+        expressao_logica();
+        match(TokenType.FECHAPAR);
+        match(TokenType.ENTAO);
+        match(TokenType.ABRECHAVE);
+        comandos();
+        match(TokenType.FECHACHAVE);
+        complemento_comando_se();
+    }
+    
+    private void complemento_comando_se()
+    {
+        if(tokenAtual.getTipo() == TokenType.SENAO) {
+            match(TokenType.SENAO);
+            match(TokenType.ABRECHAVE);
+            comandos();
+            match(TokenType.FECHACHAVE);
+        }
+    }
+    
+    private void comando_para()
+    {
+        match(TokenType.PARA);
+        match(TokenType.ABREPAR);
+        atribuicao();
+        match(TokenType.PONTOVIRGULA);
+        expressao_logica();
+        match(TokenType.PONTOVIRGULA);
+        atribuicao();
+        match(TokenType.ABRECHAVE);
+        comandos();
+        match(TokenType.FECHACHAVE);
+    }
+    
+    private void comando_enquanto()
+    {
+        match(TokenType.ENQUANTO);
+        match(TokenType.ABREPAR);
+        expressao_logica();
+        match(TokenType.FECHAPAR);
+        match(TokenType.ABRECHAVE);
+        comandos();
+        match(TokenType.FECHACHAVE);
+    }
+
+    private void comando_escreva()
+    {
+        match(TokenType.ESCREVA);
+        match(TokenType.ABREPAR);
+        params_escreva();
+        match(TokenType.FECHAPAR);
+    }
+
+    private void params_escreva()
+    {
+        param_escreva();
+        loop_params_escreva();
+    }
+
+    private void param_escreva()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ABREPAR ||
+             tokenAtual.getTipo() == TokenType.VERDADEIRO ||
+             tokenAtual.getTipo() == TokenType.FALSO   ||
+             tokenAtual.getTipo() == TokenType.ID ||
+             tokenAtual.getTipo() == TokenType.NUM  ) {
+
+            expressao();
+        }
+        else if ( tokenAtual.getTipo() == TokenType.LITERAL ) {
+            match(TokenType.LITERAL);
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void loop_params_escreva()
+    {
+        if ( tokenAtual.getTipo() == TokenType.VIRGULA ) {
+            match(TokenType.VIRGULA);
+            params_escreva();
+        }
+    }
+
+    private void comando_leia()
+    {
+        match(TokenType.LEIA);
+        match(TokenType.ABREPAR);
+        params_leia();
+        match(TokenType.FECHAPAR);
+    }
+
+    private void params_leia()
+    {
+        match(TokenType.ID);
+        loop_params_leia();
+    }
+
+    private void loop_params_leia()
+    {
+        if ( tokenAtual.getTipo() == TokenType.VIRGULA ) {
+            match(TokenType.VIRGULA);
+            params_leia();
+        }
+    }
+
+    private void retorno()
+    {
+        match(TokenType.RETORNO);
+        match(TokenType.ABREPAR);
+        expressao();
+        match(TokenType.FECHAPAR);
+    }
+
+    private void complemento_variavel_comando()
+    {
+        switch(tokenAtual.getTipo())
+        {
+            case PONTO: {
+                match(TokenType.PONTO);
+                complemento_ponto_comando();
+                break;
+            }
+            case ABRECOLCH: {
+                match(TokenType.ABRECOLCH);
+                expressao_aritmetica();
+                match(TokenType.FECHACOLCH);
+                match(TokenType.ATRIB);
+                segundo_membro_atribuicao();
+                break;
+            }
+            case ATRIB: {
+                match(TokenType.ATRIB);
+                segundo_membro_atribuicao();
+                break;
+            }
+            case ABREPAR: {
+                match(TokenType.ABREPAR);
+                parametros_reais();
+                match(TokenType.FECHAPAR);
+                break;
+            }
+            case INCR: {
+                incremento_decremento();
+                break;
+            }
+            case DECR: {
+                incremento_decremento();
+                break;
+            }
+        }
+    }
+
+    private void complemento_ponto_comando()
+    {
+        match(TokenType.ID);
+        loop_acesso_atributo_obj();
+    }
+
+    private void parametros_reais()
+    {
+        if (primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
+            parametro_real();
+            loop_parametros_reais();
+        }
+    }
+
+    private void loop_acesso_atributo_obj()
+    {
+        switch(tokenAtual.getTipo())
+        {
+            case PONTO: {
+                match(TokenType.PONTO);
+                complemento_ponto_comando();
+                break;
+            }
+            case ABREPAR: {
+                match(TokenType.ABREPAR);
+                parametros_reais();
+                match(TokenType.FECHAPAR);
+                break;
+            }
+            case ATRIB: {
+                match(TokenType.ATRIB);
+                segundo_membro_atribuicao();
+                break;
+            }
+            default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        }
+    }
+
+    // ATRIBUIÇÃO
+
+    private void atribuicao()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ID  ) {
+            match( TokenType.ID );
+            complemento_id_atribuicao();
+         }
+        else if( tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR ) {
+            incremento_decremento();
+            match( TokenType.ID );
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void complemento_id_atribuicao()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR ||
+           tokenAtual.getTipo() == TokenType.PONTO ||
+           tokenAtual.getTipo() == TokenType.ATRIB ||
+           tokenAtual.getTipo() == TokenType.ABRECOLCH)  {
+
+            complemento_referencia_variavel();
+            match(TokenType.ATRIB);
+            segundo_membro_atribuicao();
+        }
+        else if(tokenAtual.getTipo() == TokenType.INCR ||
+                tokenAtual.getTipo() == TokenType.DECR) {
+
+            incremento_decremento();
+        }
+    }
+
+     private void segundo_membro_atribuicao()
+     {
+         switch(tokenAtual.getTipo())
+         {
+             case ID: {
+                match(TokenType.ID);
+                complemento_variavel_atribuicao();
+                break;
+             }
+             case NUM: {
+                match(TokenType.NUM);
+                prox_trecho_multiplicacao();
+                prox_trecho_soma();
+                break;
+             }
+             case ABREPAR: {
+                match(TokenType.ABREPAR);
+                expressao_aritmetica();
+                match(TokenType.FECHAPAR);
+                break;
+             }
+             case INCR: {
+                incremento_decremento();
+                match(TokenType.ID);
+                break;
+             }
+             case DECR: {
+                incremento_decremento();
+                match(TokenType.ID);
+                break;
+             }
+             case VERDADEIRO: {
+                expressao_booleana();
+                break;
+             }
+             case FALSO: {
+                expressao_booleana();
+                break;
+             }
+             case LITERAL: {
+                match(TokenType.LITERAL);
+                break;
+             }
+             case CARACTER: {
+                match(TokenType.CARACTER);
+                break;
+             }
+             default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+         }
+     }
+
+     private void complemento_variavel_atribuicao()
+     {
+         if(tokenAtual.getTipo() == TokenType.ABREPAR ||
+           tokenAtual.getTipo() == TokenType.PONTO ||
+           tokenAtual.getTipo() == TokenType.ATRIB ||
+           tokenAtual.getTipo() == TokenType.ABRECOLCH)  {
+
+             complemento_fator_variavel();
+             prox_trecho_multiplicacao();
+             prox_trecho_soma();
+         }
+         else if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR ) {
+             incremento_decremento();
+         }
+     }
+
+    private void incremento_decremento()
+    {
+        if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) proxToken();
+        else erroSintatico("<incremento_decremento> esperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void complemento_referencia_variavel()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR ||
+           tokenAtual.getTipo() == TokenType.PONTO ||
+           tokenAtual.getTipo() == TokenType.ATRIB) {
+            loop_acesso_atributo_obj();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
+            match(TokenType.ABRECOLCH);
+            expressao_aritmetica();
+            match(TokenType.FECHACOLCH);
+        }
+    }
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
 
@@ -614,7 +992,7 @@ public class AnalisadorSintatico {
     private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo() + ", esperava: " + esperado, tokenAtual.getLinha());
     }
 
     private void erroSintatico(String msg, int linha)
