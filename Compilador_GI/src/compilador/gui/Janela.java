@@ -736,7 +736,7 @@ public class Janela extends javax.swing.JFrame {
     //Listener de cursor para destacar a linha atual sendo editada
     private class CurrentLineHighlighter implements CaretListener {
 
-        private Color DEFAULT_COLOR = new Color(230, 230, 210);
+        private Color DEFAULT_COLOR = new Color(230, 250, 230);
         private Highlighter.HighlightPainter painter;
         private Object highlight;
 

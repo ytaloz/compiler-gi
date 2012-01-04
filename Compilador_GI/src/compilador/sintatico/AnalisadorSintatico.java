@@ -62,7 +62,13 @@ public class AnalisadorSintatico {
         proxToken();
         //programa();
         //bloco_constantes();
-        bloco_variaveis();
+        //bloco_variaveis();
+        //instanciar_obj();
+        classes();
+
+        if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
+            erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        }
     }
 
     private void inicializarVariaveis()
@@ -237,6 +243,63 @@ public class AnalisadorSintatico {
     // DECLARAÇÃO DE CLASSES
 
     private void classes()
+    {
+        if(tokenAtual.getTipo() == TokenType.CLASSE) {
+           classe();
+           classes();
+        }
+    }
+
+    private void classe()
+    {
+        match(TokenType.CLASSE);
+        match(TokenType.ID);
+        complemento_decl_classe();
+    }
+
+    private void complemento_decl_classe()
+    {
+         if(tokenAtual.getTipo() == TokenType.ABRECHAVE) {
+           match(TokenType.ABRECHAVE);
+           blocos_classe();
+           match(TokenType.FECHACHAVE);
+        }
+         else if(tokenAtual.getTipo() == TokenType.HERDA_DE)
+         {
+             match(TokenType.HERDA_DE);
+             match(TokenType.ID);
+             match(TokenType.ABRECHAVE);
+             blocos_classe();
+             match(TokenType.FECHACHAVE);
+         }
+         else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void blocos_classe()
+    {
+         if(tokenAtual.getTipo() == TokenType.CONSTANTES) {
+          bloco_constantes();
+          bloco_variaveis();
+          bloco_metodos();
+        }
+    }
+
+    // METODOS
+
+    private void bloco_metodos()
+    {
+        match(TokenType.METODOS);
+        match(TokenType.ABRECHAVE);
+        declaracao_metodos();
+        metodo_principal();
+    }
+
+    private void declaracao_metodos()
+    {
+
+    }
+
+    private void metodo_principal()
     {
         
     }
