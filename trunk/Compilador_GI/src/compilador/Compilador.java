@@ -68,7 +68,7 @@ public class Compilador implements Runnable {
                 analisadorSintatico.imprimirSaida();
        
                 janela.imprimirTotalDeErrosLexicos(analisadorLexico.getErros());
-                janela.imprimirTotalDeErrosSintaticos(analisadorLexico.getErros());
+                if(analisadorLexico.getErros()>0) janela.imprimirTotalDeErrosSintaticos(analisadorSintatico.getErros());
                 janela.imprimirTotalDeTokens(tokens.size());
             }
         };
