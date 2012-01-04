@@ -18,12 +18,15 @@ import java.util.Set;
  */
 public class AnalisadorSintatico {
 
-    //constantes correspondentes aos nomes dos não terminais, para buscar o conjunto primeiro
+    //constantes correspondentes aos nomes dos não terminais que necessitam de conjunto primeiro na análise
     
     public static final String BLOCO_CONSTANTES = "bloco_constantes";
     public static final String BLOCO_VARIAVEIS = "bloco_variaveis";
     public static final String CLASSES = "classes";
     public static final String DECL_CONSTANTES_MESMO_TIPO = "decl_constantes_mesmo_tipo";
+    public static final String DECL_VARIAVEIS_MESMO_TIPO = "decl_variaveis_mesmo_tipo";
+    public static final String TIPO_VARIAVEL = "tipo_variavel";
+    public static final String PARAMETRO_REAL = "parametro_real";
 
     private Janela janela;
 
@@ -58,7 +61,8 @@ public class AnalisadorSintatico {
         
         proxToken();
         //programa();
-        bloco_constantes();
+        //bloco_constantes();
+        bloco_variaveis();
     }
 
     private void inicializarVariaveis()
@@ -67,7 +71,8 @@ public class AnalisadorSintatico {
         erros.clear();
     }
 
-    //MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA
+
+//-------- MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA --------------
 
 //    private void programa()
 //    {
@@ -83,6 +88,9 @@ public class AnalisadorSintatico {
 //            classes();
 //        }
 //    }
+
+
+    // DECLARAÇÃO DE CONSTANTES
 
     private void bloco_constantes()
     {
@@ -137,6 +145,11 @@ public class AnalisadorSintatico {
 
     }
 
+    private void segundo_membro_atribuicao()
+    {
+
+    }
+
     private void loop_lista_decl_constantes()
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
@@ -145,10 +158,83 @@ public class AnalisadorSintatico {
         }
     }
 
+    // DECLARAÇÃO DE VARIÁVEIS
+
     private void bloco_variaveis()
     {
-        
+        switch( tokenAtual.getTipo() )
+        {
+            case VARIAVEIS: {
+                match(TokenType.VARIAVEIS);
+                match(TokenType.ABRECHAVE);
+                declaracao_variaveis();
+                match(TokenType.FECHACHAVE);
+                break;
+            }
+            default : erroSintatico("Erro sintático no bloco variaveis!", tokenAtual.getLinha());
+        }
     }
+
+    private void declaracao_variaveis()
+    {
+        if (primeiro(DECL_VARIAVEIS_MESMO_TIPO).contains(tokenAtual.getTipo())) {
+            decl_variaveis_mesmo_tipo();
+            declaracao_variaveis();
+        }
+    }
+
+    private void decl_variaveis_mesmo_tipo()
+    {
+        if(primeiro(TIPO_VARIAVEL).contains(tokenAtual.getTipo())) {
+            tipo_variavel();
+            lista_decl_variaveis();
+            match(TokenType.PONTOVIRGULA);
+        }
+        else if(tokenAtual.getTipo() == TokenType.ID) {
+            match(TokenType.ID);
+            match(TokenType.ID);
+            complemento_variavel_instanciar_obj();
+        }
+    }
+
+    private void lista_decl_variaveis()
+    {
+        match(TokenType.ID);
+        complemento_decl_variavel();
+    }
+
+    private void complemento_decl_variavel()
+    {
+        switch( tokenAtual.getTipo() )
+        {
+            case VIRGULA: {
+                loop_lista_decl_variaveis();
+            }
+            case ATRIB: {
+                match(TokenType.ATRIB);
+                segundo_membro_atribuicao();
+                loop_lista_decl_variaveis();
+            }
+            case ABRECOLCH: {
+                match(TokenType.ABRECOLCH);
+                expressao_aritmetica();
+                match(TokenType.FECHACOLCH);
+            }
+            default : erroSintatico("Erro sintático no complemento_decl_variavel!", tokenAtual.getLinha());
+        }
+    }
+
+    private void loop_lista_decl_variaveis()
+    {
+        if(tokenAtual.getTipo() == TokenType.VIRGULA) {
+            match(TokenType.VIRGULA);
+           lista_decl_variaveis();
+        }
+    }
+
+   
+
+    // DECLARAÇÃO DE CLASSES
 
     private void classes()
     {
@@ -160,14 +246,68 @@ public class AnalisadorSintatico {
 
     }
 
-    //MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO
+    // OBJETOS
+
+    private void instanciar_obj()
+    {
+        match(TokenType.ID);
+        match(TokenType.ID);
+        complemento_variavel_instanciar_obj();
+    }
+
+    private void complemento_variavel_instanciar_obj()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR) {
+            match(TokenType.ABREPAR);
+           parametros_reais();
+           match(TokenType.FECHAPAR);
+        }
+    }
+
+    private void parametros_reais()
+    {
+        if(primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
+            parametro_real();
+            loop_parametros_reais();
+        }
+    }
+
+    private void parametro_real()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ID ||
+             tokenAtual.getTipo() == TokenType.NUM ||
+             tokenAtual.getTipo() == TokenType.CADEIA ||
+             tokenAtual.getTipo() == TokenType.CARACTER ||
+             tokenAtual.getTipo() == TokenType.VERDADEIRO ||
+             tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
+
+        else erroSintatico("<parametro_real> esperado; ", tokenAtual.getLinha());
+    }
+
+    private void loop_parametros_reais()
+    {
+        if(tokenAtual.getTipo() == TokenType.VIRGULA) {
+            match(TokenType.VIRGULA);
+            parametros_reais();
+        }
+    }
+
+    // EXPRESSOES
+
+    private void expressao_aritmetica()
+    {
+        
+    }
+
+
+//-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
 
     private Set<TokenType> primeiro(String producao)
     {
         return conjuntoPrimeiro.getConjunto(producao);
     }
 
-    //MÉTODOS AUXILIARES
+//--------------------------- MÉTODOS AUXILIARES -------------------------------
 
     private void proxToken()
     {
