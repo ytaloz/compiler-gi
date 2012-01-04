@@ -70,8 +70,9 @@ public class AnalisadorSintatico {
         //instanciar_obj();
         //classes();
         //expressao();
-        atribuicao();
+        //atribuicao();
         //comandos();
+        bloco_metodos();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -276,18 +277,99 @@ public class AnalisadorSintatico {
         match(TokenType.METODOS);
         match(TokenType.ABRECHAVE);
         declaracao_metodos();
-        metodo_principal();
         match(TokenType.FECHACHAVE);
     }
 
     private void declaracao_metodos()
     {
+        if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
+             tokenAtual.getTipo() == TokenType.REAL ||
+             tokenAtual.getTipo() == TokenType.LOGICO ||
+             tokenAtual.getTipo() == TokenType.CARACTERE ||
+             tokenAtual.getTipo() == TokenType.CADEIA ) {
 
+           tipo_metodo_menos_vazio();
+           declaracao_metodo();
+           declaracao_metodos();
+        }
+        else if( tokenAtual.getTipo() == TokenType.VAZIO ) {
+            match(TokenType.VAZIO);
+            declaracao_metodo_vazio();
+        }
     }
 
-    private void metodo_principal()
+
+    private void tipo_metodo_menos_vazio()
     {
-        
+        if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
+             tokenAtual.getTipo() == TokenType.REAL ||
+             tokenAtual.getTipo() == TokenType.LOGICO ||
+             tokenAtual.getTipo() == TokenType.CARACTERE ||
+             tokenAtual.getTipo() == TokenType.CADEIA ) proxToken();
+    }
+
+    private void declaracao_metodo()
+    {
+        match(TokenType.ID);
+        match(TokenType.ABREPAR);
+        parametros_formais();
+        match(TokenType.FECHAPAR);
+        match(TokenType.ABRECHAVE);
+        declaracao_variaveis();
+        comandos();
+        match(TokenType.FECHACHAVE);
+    }
+
+    private void declaracao_metodo_vazio()
+    {
+        if(tokenAtual.getTipo() == TokenType.ID) {
+            declaracao_metodo();
+            declaracao_metodos();
+        }
+        else if(tokenAtual.getTipo() == TokenType.PRINCIPAL) {
+            match(TokenType.PRINCIPAL);
+            match(TokenType.ABREPAR);
+            match(TokenType.VAZIO);
+            match(TokenType.FECHAPAR);
+            match(TokenType.ABRECHAVE);
+            declaracao_variaveis();
+            comandos();
+            match(TokenType.FECHACHAVE);
+        }
+    }
+
+    private void parametros_formais()
+    {
+        if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
+             tokenAtual.getTipo() == TokenType.REAL ||
+             tokenAtual.getTipo() == TokenType.LOGICO ||
+             tokenAtual.getTipo() == TokenType.CARACTERE ||
+             tokenAtual.getTipo() == TokenType.CADEIA ) {
+
+            parametros_mesmo_tipo();
+            parametros_formais();
+        }
+    }
+
+    private void parametros_mesmo_tipo()
+    {
+        tipo_variavel();
+        lista_parametros();
+        match(TokenType.PONTOVIRGULA);
+    }
+
+    private void lista_parametros()
+    {
+        match(TokenType.ID);
+        loop_lista_parametros();
+    }
+
+    private void loop_lista_parametros()
+    {
+        if (tokenAtual.getTipo() == TokenType.VIRGULA) {
+            match(TokenType.VIRGULA);
+            lista_parametros();
+        }
     }
 
     private void outros_blocos_programa()
