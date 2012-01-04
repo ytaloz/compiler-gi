@@ -27,6 +27,7 @@ public class AnalisadorSintatico {
     public static final String DECL_VARIAVEIS_MESMO_TIPO = "decl_variaveis_mesmo_tipo";
     public static final String TIPO_VARIAVEL = "tipo_variavel";
     public static final String PARAMETRO_REAL = "parametro_real";
+    public static final String EXPRESSAO_ARITMETICA = "expressao_aritmetica";
 
     private Janela janela;
 
@@ -63,8 +64,9 @@ public class AnalisadorSintatico {
         //programa();
         //bloco_constantes();
         //bloco_variaveis();
-        instanciar_obj();
+        //instanciar_obj();
         //classes();
+        expressao();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -339,12 +341,259 @@ public class AnalisadorSintatico {
         }
     }
 
-    // EXPRESSOES
+    // EXPRESSÕES
+
+    private void expressao()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR) {
+            match(TokenType.ABREPAR);
+            expressao_parentese();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM ) {
+            termo();
+            prox_trecho_soma();
+            prox_trecho_relacional();
+        }
+        else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO ) {
+            expressao_booleana();
+            prox_trecho_expl();
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+
+    }
+
+    private void expressao_parentese()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR) {
+            match(TokenType.ABREPAR);
+            complemento_expressao_parentese();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM ) {
+            termo();
+            prox_trecho_soma();
+            prox_trecho_geral();
+        }
+        else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO ) {
+            expressao_booleana();
+            prox_trecho_expl();
+            match(TokenType.FECHAPAR);
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void termo()
+    {
+        fator();
+        prox_trecho_multiplicacao();
+    }
+
+    private void fator()
+    {
+         if(tokenAtual.getTipo() == TokenType.ID) {
+            match(TokenType.ID);
+            complemento_fator_variavel();
+        }
+        else if(tokenAtual.getTipo() == TokenType.NUM ) {
+            match(TokenType.NUM);
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void complemento_fator_variavel()
+    {
+        if(tokenAtual.getTipo() == TokenType.ABREPAR || tokenAtual.getTipo() == TokenType.PONTO || tokenAtual.getTipo() == TokenType.ATRIB) {
+            loop_acesso_atributo_obj();
+        }
+        else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
+            match(TokenType.ABRECOLCH);
+            expressao_aritmetica();
+            match(TokenType.FECHACOLCH);
+        }
+    }
+
+    private void prox_trecho_multiplicacao()
+    {
+        if(tokenAtual.getTipo() == TokenType.MULT || tokenAtual.getTipo() == TokenType.DIV) {
+            operador_multiplicacao();
+            expressao_aritmetica();
+        }
+    }
+
+    private void operador_multiplicacao()
+    {
+        if ( tokenAtual.getTipo() == TokenType.MULT ||
+             tokenAtual.getTipo() == TokenType.DIV  ) proxToken();
+
+        else erroSintatico("<operador_multiplicacao> esperado; ", tokenAtual.getLinha());
+    }
+
+    private void prox_trecho_soma()
+    {
+        if(tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB) {
+            operador_soma();
+            expressao_aritmetica();
+        }
+    }
+
+    private void operador_soma()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ADICAO ||
+             tokenAtual.getTipo() == TokenType.SUB  ) proxToken();
+
+        else erroSintatico("<operador_soma> esperado; ", tokenAtual.getLinha());
+    }
+
+    private void prox_trecho_relacional()
+    {
+        if ( tokenAtual.getTipo() == TokenType.MAIOR ||
+             tokenAtual.getTipo() == TokenType.MENOR ||
+             tokenAtual.getTipo() == TokenType.MAIORIGUAL   ||
+             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
+             tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) {
+            
+                operador_relacional();
+                expressao_aritmetica();
+                prox_trecho_expl();
+        }
+    }
+
+    private void operador_relacional()
+    {
+        if ( tokenAtual.getTipo() == TokenType.MAIOR ||
+             tokenAtual.getTipo() == TokenType.MENOR ||
+             tokenAtual.getTipo() == TokenType.MAIORIGUAL   ||
+             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
+             tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) proxToken();
+
+        else erroSintatico("<operador_relacional> esperado; ", tokenAtual.getLinha());
+    }
+
+    private void prox_trecho_expl()
+    {
+         if ( tokenAtual.getTipo() == TokenType.OU || tokenAtual.getTipo() == TokenType.E  ) {
+             operador_logico();
+             expressao_logica();
+         }
+    }
+
+    private void operador_logico()
+    {
+        if ( tokenAtual.getTipo() == TokenType.OU ||
+             tokenAtual.getTipo() == TokenType.E  ) proxToken();
+    }
+
+    private void expressao_logica()
+    {
+        termo_l();
+        prox_trecho_expl();
+    }
+
+    private void termo_l()
+    {
+        if ( tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO  ) {
+             expressao_booleana();
+         }
+        else if ( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+             match(TokenType.ABREPAR);
+             termo_l_parentesis();
+         }
+        else if ( tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM  ) {
+             termo();
+             prox_trecho_soma();
+             operador_relacional();
+             expressao_aritmetica();
+         }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void termo_l_parentesis()
+    {
+        if(primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
+            expressao_aritmetica();
+            match(TokenType.FECHAPAR);
+            operador_relacional();
+            expressao_aritmetica();
+        }
+        else if( tokenAtual.getTipo() == TokenType.E || tokenAtual.getTipo() == TokenType.OU  ) {
+            prox_trecho_expl();
+            match(TokenType.FECHAPAR);
+        }
+    }
+
+
+
+    private void complemento_expressao_parentese()
+    {
+        termo_l_parentesis();
+        prox_trecho_expl();
+        match(TokenType.FECHAPAR);
+    }
+
+    private void prox_trecho_geral()
+    {
+        if ( tokenAtual.getTipo() == TokenType.MAIOR ||
+             tokenAtual.getTipo() == TokenType.MENOR ||
+             tokenAtual.getTipo() == TokenType.MAIORIGUAL   ||
+             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
+             tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) {
+            operador_relacional();
+            expressao_aritmetica();
+            prox_trecho_expl();
+            match(TokenType.FECHAPAR);
+        }
+        else if( tokenAtual.getTipo() == TokenType.FECHAPAR ) {
+            match(TokenType.FECHAPAR);
+            complemento_exp_aritm_parentese();
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void complemento_exp_aritm_parentese()
+    {
+        if ( tokenAtual.getTipo() == TokenType.MAIOR ||
+             tokenAtual.getTipo() == TokenType.MENOR ||
+             tokenAtual.getTipo() == TokenType.MAIORIGUAL   ||
+             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
+             tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) {
+            operador_relacional();
+            expressao_aritmetica();
+            prox_trecho_expl();
+        }
+    }
 
     private void expressao_aritmetica()
     {
+        if ( tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM  ) {
+             termo();
+             prox_trecho_soma();
+         }
+        else if( tokenAtual.getTipo() == TokenType.ABREPAR) {
+            match( TokenType.ABREPAR );
+            expressao_aritmetica();
+            match( TokenType.FECHAPAR );
+        }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+    }
+
+    private void expressao_booleana()
+    {
+        if ( tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO  ) {
+             proxToken();
+         }
+    }
+
+
+    // COMANDOS
+
+    private void loop_acesso_atributo_obj()
+    {
         
     }
+
 
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
