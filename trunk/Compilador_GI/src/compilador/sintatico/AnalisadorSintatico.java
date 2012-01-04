@@ -23,6 +23,7 @@ public class AnalisadorSintatico {
     public static final String BLOCO_CONSTANTES = "bloco_constantes";
     public static final String BLOCO_VARIAVEIS = "bloco_variaveis";
     public static final String CLASSES = "classes";
+    public static final String DECL_CONSTANTES_MESMO_TIPO = "decl_constantes_mesmo_tipo";
 
     private Janela janela;
 
@@ -53,11 +54,17 @@ public class AnalisadorSintatico {
     public void analisar(List<Token> tokens)
     {
         this.tokens = tokens;
-        this.ponteiro = -1;
+        inicializarVariaveis();
         
         proxToken();
         //programa();
         bloco_constantes();
+    }
+
+    private void inicializarVariaveis()
+    {
+        this.ponteiro = -1;
+        erros.clear();
     }
 
     //MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA
@@ -95,7 +102,47 @@ public class AnalisadorSintatico {
 
     private void declaracao_constantes()
     {
-        
+        if (primeiro(DECL_CONSTANTES_MESMO_TIPO).contains(tokenAtual.getTipo())) {
+            decl_constantes_mesmo_tipo();
+            declaracao_constantes();
+        }
+    }
+
+    private void decl_constantes_mesmo_tipo()
+    {
+        tipo_variavel();
+        lista_decl_constantes();
+        match(TokenType.PONTOVIRGULA);
+    }
+
+    private void tipo_variavel()
+    {
+        if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
+             tokenAtual.getTipo() == TokenType.REAL ||
+             tokenAtual.getTipo() == TokenType.LOGICO ||
+             tokenAtual.getTipo() == TokenType.CARACTERE ||
+             tokenAtual.getTipo() == TokenType.CADEIA  ) proxToken();
+            
+        else erroSintatico("<tipo_variavel> esperado; ", tokenAtual.getLinha());
+    }
+
+    private void lista_decl_constantes()
+    {
+        atribuicao();
+        loop_lista_decl_constantes();
+    }
+
+    private void atribuicao()
+    {
+
+    }
+
+    private void loop_lista_decl_constantes()
+    {
+        if (tokenAtual.getTipo() == TokenType.VIRGULA) {
+            match(TokenType.VIRGULA);
+            lista_decl_constantes();
+        }
     }
 
     private void bloco_variaveis()
