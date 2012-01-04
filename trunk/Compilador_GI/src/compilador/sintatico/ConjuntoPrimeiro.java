@@ -106,6 +106,10 @@ public class ConjuntoPrimeiro {
         conjuntos.put(AnalisadorSintatico.BLOCO_VARIAVEIS, bloco_variaveis);
         conjuntos.put(AnalisadorSintatico.CLASSES, classes);
         conjuntos.put(AnalisadorSintatico.DECL_CONSTANTES_MESMO_TIPO, decl_constantes_mesmo_tipo);
+        conjuntos.put(AnalisadorSintatico.DECL_VARIAVEIS_MESMO_TIPO, decl_variaveis_mesmo_tipo);
+        conjuntos.put(AnalisadorSintatico.TIPO_VARIAVEL, tipo_variavel);
+        conjuntos.put(AnalisadorSintatico.PARAMETRO_REAL, parametro_real);
+
     }
 
 }
