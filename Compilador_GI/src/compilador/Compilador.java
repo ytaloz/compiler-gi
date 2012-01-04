@@ -64,11 +64,11 @@ public class Compilador implements Runnable {
                 }
 
                 analisadorLexico.imprimirSaida();
-                janela.imprimirLinha();
+                if(analisadorLexico.getErros()>0) janela.imprimirLinha();
                 analisadorSintatico.imprimirSaida();
        
                 janela.imprimirTotalDeErrosLexicos(analisadorLexico.getErros());
-                if(analisadorLexico.getErros()>0) janela.imprimirTotalDeErrosSintaticos(analisadorSintatico.getErros());
+                janela.imprimirTotalDeErrosSintaticos(analisadorSintatico.getErros());
                 janela.imprimirTotalDeTokens(tokens.size());
             }
         };
