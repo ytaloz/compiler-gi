@@ -100,18 +100,10 @@ public class AnalisadorSintatico {
 
     private void bloco_constantes()
     {
-        switch( tokenAtual.getTipo() )
-        {
-            case CONSTANTES: {
-                match(TokenType.CONSTANTES);
-                match(TokenType.ABRECHAVE);
-                declaracao_constantes();
-                match(TokenType.FECHACHAVE);
-                break;
-            }
-            default : erroSintatico("Erro sintático no bloco constantes!", tokenAtual.getLinha());
-        }
-
+        match(TokenType.CONSTANTES);
+        match(TokenType.ABRECHAVE);
+        declaracao_constantes();
+        match(TokenType.FECHACHAVE);
     }
 
     private void declaracao_constantes()
@@ -168,17 +160,10 @@ public class AnalisadorSintatico {
 
     private void bloco_variaveis()
     {
-        switch( tokenAtual.getTipo() )
-        {
-            case VARIAVEIS: {
-                match(TokenType.VARIAVEIS);
-                match(TokenType.ABRECHAVE);
-                declaracao_variaveis();
-                match(TokenType.FECHACHAVE);
-                break;
-            }
-            default : erroSintatico("Erro sintático no bloco variaveis!", tokenAtual.getLinha());
-        }
+        match(TokenType.VARIAVEIS);
+        match(TokenType.ABRECHAVE);
+        declaracao_variaveis();
+        match(TokenType.FECHACHAVE);
     }
 
     private void declaracao_variaveis()
@@ -292,6 +277,7 @@ public class AnalisadorSintatico {
         match(TokenType.ABRECHAVE);
         declaracao_metodos();
         metodo_principal();
+        match(TokenType.FECHACHAVE);
     }
 
     private void declaracao_metodos()
