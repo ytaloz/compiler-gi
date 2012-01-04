@@ -63,8 +63,8 @@ public class AnalisadorSintatico {
         //programa();
         //bloco_constantes();
         //bloco_variaveis();
-        //instanciar_obj();
-        classes();
+        instanciar_obj();
+        //classes();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -308,24 +308,22 @@ public class AnalisadorSintatico {
     {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
             match(TokenType.ABREPAR);
-           parametros_reais();
+           parametros_reais_instanciar_obj();
            match(TokenType.FECHAPAR);
         }
     }
 
-    private void parametros_reais()
+    private void parametros_reais_instanciar_obj()
     {
-        if(primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
-            parametro_real();
-            loop_parametros_reais();
-        }
+        parametro_real();
+        loop_parametros_reais();
     }
 
     private void parametro_real()
     {
         if ( tokenAtual.getTipo() == TokenType.ID ||
              tokenAtual.getTipo() == TokenType.NUM ||
-             tokenAtual.getTipo() == TokenType.CADEIA ||
+             tokenAtual.getTipo() == TokenType.LITERAL ||
              tokenAtual.getTipo() == TokenType.CARACTER ||
              tokenAtual.getTipo() == TokenType.VERDADEIRO ||
              tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
@@ -337,7 +335,7 @@ public class AnalisadorSintatico {
     {
         if(tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
-            parametros_reais();
+            parametros_reais_instanciar_obj();
         }
     }
 
