@@ -6,11 +6,9 @@
 package compilador.sintatico;
 
 import compilador.token.TokenType;
-import compilador.token.TokenType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Set;
 
 /**
@@ -25,11 +23,14 @@ public class ConjuntoPrimeiro {
     private Set<TokenType> bloco_variaveis = new HashSet<TokenType>();
     private Set<TokenType> classes = new HashSet<TokenType>();
 
+    private Set<TokenType> decl_constantes_mesmo_tipo = new HashSet<TokenType>();
+
     public ConjuntoPrimeiro()
     {
         init_bloco_constantes();
         init_bloco_variaveis();
         init_classes();
+        init_decl_constantes_mesmo_tipo();
 
         armazenarConjuntos();
     }
@@ -54,11 +55,21 @@ public class ConjuntoPrimeiro {
         classes.add(TokenType.CLASSE);
     }
 
+    private void init_decl_constantes_mesmo_tipo()
+    {
+        decl_constantes_mesmo_tipo.add(TokenType.INTEIRO);
+        decl_constantes_mesmo_tipo.add(TokenType.REAL);
+        decl_constantes_mesmo_tipo.add(TokenType.LOGICO);
+        decl_constantes_mesmo_tipo.add(TokenType.CARACTERE);
+        decl_constantes_mesmo_tipo.add(TokenType.CADEIA);
+    }
+
     private void armazenarConjuntos()
     {
         conjuntos.put(AnalisadorSintatico.BLOCO_CONSTANTES, bloco_constantes);
         conjuntos.put(AnalisadorSintatico.BLOCO_VARIAVEIS, bloco_variaveis);
         conjuntos.put(AnalisadorSintatico.CLASSES, classes);
+        conjuntos.put(AnalisadorSintatico.DECL_CONSTANTES_MESMO_TIPO, decl_constantes_mesmo_tipo);
     }
 
 }
