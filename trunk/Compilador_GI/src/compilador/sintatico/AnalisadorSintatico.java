@@ -57,11 +57,10 @@ public class AnalisadorSintatico {
     }
 
 
-    //método principal - inicia a análise sintática, dada uma lista de tokens
+//----- MÉTODO PRINCIPAL - INICIA A ANÁLISE ------------------------------------
     
     public void analisar(List<Token> tokens)
     {
-        //this.tokens = tokens;
         this.tokens = removerErrosEComentarios((ArrayList)tokens);
         inicializarVariaveis();
         
@@ -93,14 +92,6 @@ public class AnalisadorSintatico {
         }
 
         return resultado;
-
-//        for (Token token : resultado) {
-//            if(token.getTipo()==TokenType.ERRO || token.getTipo()==TokenType.COMENTBLOCO || token.getTipo()==TokenType.COMENTLINHA)
-//            {
-//                resultado.remove(token);
-//            }
-//        }
-//        return resultado;
     }
 
 
@@ -112,8 +103,12 @@ public class AnalisadorSintatico {
         erros.clear();
     }
 
+/******************************************************************************
+ ************* MÉTODOS DE RECONHECIMENTO - NÃO TERMINAIS **********************
+/******************************************************************************/
 
-//-------- MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA --------------
+
+//-------- INÍCIO DO PROGRAMA --------------
 
     private void programa()
     {
@@ -142,7 +137,7 @@ public class AnalisadorSintatico {
     }
 
 
-    // DECLARAÇÃO DE CONSTANTES
+// ------------------ DECLARAÇÃO DE CONSTANTES ---------------------------------
 
     private void bloco_constantes()
     {
@@ -192,7 +187,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    // DECLARAÇÃO DE VARIÁVEIS
+// --------------- DECLARAÇÃO DE VARIÁVEIS -------------------------------------
 
     private void bloco_variaveis()
     {
@@ -269,7 +264,7 @@ public class AnalisadorSintatico {
     }
 
 
-    // DECLARAÇÃO DE CLASSES
+// --------- DECLARAÇÃO DE CLASSES ---------------------------------------------
 
     private void classes()
     {
@@ -313,7 +308,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    // METODOS
+// -------------- METODOS ------------------------------------------------------
 
     private void bloco_metodos()
     {
@@ -415,7 +410,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    // OBJETOS
+ // ------------------- OBJETOS ------------------------------------------------
 
     private void instanciar_obj()
     {
@@ -459,7 +454,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    // EXPRESSÕES
+ // ------------------- EXPRESSÕES ---------------------------------------------
 
     private void expressao()
     {
@@ -735,7 +730,7 @@ public class AnalisadorSintatico {
     }
 
 
-    // COMANDOS
+// -------------------- COMANDOS -----------------------------------------------
 
     private void comandos()
     {
@@ -998,7 +993,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    // ATRIBUIÇÃO
+// ------------------- ATRIBUIÇÃO ----------------------------------------------
 
     private void atribuicao()
     {
@@ -1155,18 +1150,9 @@ public class AnalisadorSintatico {
 
     private void match(TokenType esperado)
     {
-        //checarComentarios();
         if(tokenAtual.getTipo() == esperado) proxToken();
         else erroSintatico(esperado, tokenAtual);
     }
-
-//    private void checarComentarios()
-//    {
-//        while( tokenAtual.getTipo() == TokenType.COMENTBLOCO || tokenAtual.getTipo() == TokenType.COMENTLINHA )
-//        {
-//            proxToken();
-//        }
-//    }
 
     //exibe token esperado na mensagem de erro
     private void erroSintatico(TokenType esperado, Token obtido)
