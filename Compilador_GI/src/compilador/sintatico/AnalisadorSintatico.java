@@ -75,7 +75,7 @@ public class AnalisadorSintatico {
         // bloco_metodos();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
-            erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+            erroSintatico(tokenAtual);
         }
     }
 
@@ -196,7 +196,7 @@ public class AnalisadorSintatico {
             complemento_variavel_instanciar_obj();
             match(TokenType.PONTOVIRGULA);
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void lista_decl_variaveis()
@@ -274,7 +274,7 @@ public class AnalisadorSintatico {
              blocos_classe();
              match(TokenType.FECHACHAVE);
          }
-         else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+         else erroSintatico(tokenAtual);
     }
 
     private void blocos_classe()
@@ -449,7 +449,7 @@ public class AnalisadorSintatico {
             expressao_booleana();
             prox_trecho_expl();
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
 
     }
 
@@ -469,7 +469,7 @@ public class AnalisadorSintatico {
             prox_trecho_expl();
             match(TokenType.FECHAPAR);
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void termo()
@@ -487,7 +487,7 @@ public class AnalisadorSintatico {
         else if(tokenAtual.getTipo() == TokenType.NUM ) {
             match(TokenType.NUM);
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void complemento_fator_variavel()
@@ -596,7 +596,7 @@ public class AnalisadorSintatico {
              operador_relacional();
              expressao_aritmetica();
          }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void termo_l_parentesis()
@@ -639,7 +639,7 @@ public class AnalisadorSintatico {
             match(TokenType.FECHAPAR);
             complemento_exp_aritm_parentese();
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void complemento_exp_aritm_parentese()
@@ -667,7 +667,7 @@ public class AnalisadorSintatico {
             expressao_aritmetica();
             match( TokenType.FECHAPAR );
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void expressao_relacional()
@@ -704,7 +704,7 @@ public class AnalisadorSintatico {
         else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
             comando_bloco();
         }
-        else erroSintatico("Token inesperado em comando_geral: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);;
     }
 
     private void comando_linha()
@@ -738,7 +738,7 @@ public class AnalisadorSintatico {
                 complemento_variavel_comando();
                 break;
             }
-            default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+            default: erroSintatico(tokenAtual);;
         }
     }
 
@@ -838,7 +838,7 @@ public class AnalisadorSintatico {
         else if ( tokenAtual.getTipo() == TokenType.LITERAL ) {
             match(TokenType.LITERAL);
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);
     }
 
     private void loop_params_escreva()
@@ -960,7 +960,7 @@ public class AnalisadorSintatico {
             incremento_decremento();
             match( TokenType.ID );
         }
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else erroSintatico(tokenAtual);;
     }
 
     private void complemento_id_atribuicao()
@@ -1060,7 +1060,7 @@ public class AnalisadorSintatico {
                 match(TokenType.CARACTER);
                 break;
              }
-             default: erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+             default: erroSintatico(tokenAtual);
          }
      }
 
@@ -1105,9 +1105,34 @@ public class AnalisadorSintatico {
     private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
-        else erroSintatico("Token inesperado: " + tokenAtual.getTipo() + ", esperava: " + esperado, tokenAtual.getLinha());
+        else erroSintatico(esperado, tokenAtual);
     }
 
+    //exibe token esperado na mensagem de erro
+    private void erroSintatico(TokenType esperado, Token obtido)
+    {
+        String msg = "Token inesperado: " + obtido.getTipo() + " ";
+
+        if(obtido.getTipo() == TokenType.ID) {
+            msg += "(" + obtido.getLexema() + ")";
+        }
+
+        msg += ", esperava: " + esperado;
+        erros.add(new ErroSintatico(msg, obtido.getLinha()));
+    }
+
+    //não era esperado um unico token, portanto só exibe o token inesperado obtido
+    private void erroSintatico(Token obtido)
+    {
+        String msg = "Token inesperado: " + obtido.getTipo() + " ";
+        
+        if(obtido.getTipo() == TokenType.ID) {
+            msg += "(" + obtido.getLexema() + ")";
+        }
+        erros.add(new ErroSintatico(msg, obtido.getLinha()));
+    }
+
+    //exibe uma mensagem livre de erro
     private void erroSintatico(String msg, int linha)
     {
         erros.add(new ErroSintatico(msg, linha));
@@ -1120,8 +1145,6 @@ public class AnalisadorSintatico {
         for (ErroSintatico erro : erros) {
             janela.imprimirErroSintatico(erro);
         }
-
-        //if (temErros()) janela.imprimirTotalDeErrosSintaticos(erros.size());
     }
 
     public boolean temErros()
