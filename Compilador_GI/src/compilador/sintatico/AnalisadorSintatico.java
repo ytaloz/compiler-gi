@@ -704,7 +704,7 @@ public class AnalisadorSintatico {
         else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
             comando_bloco();
         }
-        else erroSintatico(tokenAtual);;
+        else erroSintatico(tokenAtual);
     }
 
     private void comando_linha()
@@ -960,7 +960,7 @@ public class AnalisadorSintatico {
             incremento_decremento();
             match( TokenType.ID );
         }
-        else erroSintatico(tokenAtual);;
+        else erroSintatico(tokenAtual);
     }
 
     private void complemento_id_atribuicao()
