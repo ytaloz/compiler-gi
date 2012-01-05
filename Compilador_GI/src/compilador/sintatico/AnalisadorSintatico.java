@@ -669,6 +669,13 @@ public class AnalisadorSintatico {
         else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
     }
 
+    private void expressao_relacional()
+    {
+        expressao_aritmetica();
+        operador_relacional();
+        expressao_aritmetica();
+    }
+
     private void expressao_booleana()
     {
         if ( tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO  ) {
@@ -782,9 +789,11 @@ public class AnalisadorSintatico {
         match(TokenType.ABREPAR);
         atribuicao();
         match(TokenType.PONTOVIRGULA);
-        expressao_logica();
+        //expressao_logica();
+        expressao_relacional();
         match(TokenType.PONTOVIRGULA);
         atribuicao();
+        match(TokenType.FECHAPAR);
         match(TokenType.ABRECHAVE);
         comandos();
         match(TokenType.FECHACHAVE);
@@ -1068,6 +1077,7 @@ public class AnalisadorSintatico {
          else if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR ) {
              incremento_decremento();
          }
+         else proxToken();
      }
 
     private void incremento_decremento()
