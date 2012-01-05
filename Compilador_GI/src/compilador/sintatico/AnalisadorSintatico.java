@@ -9,6 +9,7 @@ import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenType;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +61,8 @@ public class AnalisadorSintatico {
     
     public void analisar(List<Token> tokens)
     {
-        this.tokens = tokens;
+        //this.tokens = tokens;
+        this.tokens = removerErrosEComentarios((ArrayList)tokens);
         inicializarVariaveis();
         
         proxToken();
@@ -78,6 +80,31 @@ public class AnalisadorSintatico {
             erroSintatico(tokenAtual);
         }
     }
+
+    private List<Token> removerErrosEComentarios(ArrayList<Token> tokens)
+    {
+        List<Token> resultado = (List) tokens.clone();
+
+        for (Iterator<Token> i = resultado.iterator(); i.hasNext();) {
+            Token token = i.next();
+            if (token.getTipo()==TokenType.ERRO || token.getTipo()==TokenType.COMENTBLOCO || token.getTipo()==TokenType.COMENTLINHA) {
+                i.remove();
+            }
+        }
+
+        return resultado;
+
+//        for (Token token : resultado) {
+//            if(token.getTipo()==TokenType.ERRO || token.getTipo()==TokenType.COMENTBLOCO || token.getTipo()==TokenType.COMENTLINHA)
+//            {
+//                resultado.remove(token);
+//            }
+//        }
+//        return resultado;
+    }
+
+
+
 
     private void inicializarVariaveis()
     {
@@ -642,6 +669,29 @@ public class AnalisadorSintatico {
         else erroSintatico(tokenAtual);
     }
 
+    private void complemento_exp_aritm_parentese_atrib()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ADICAO ||
+             tokenAtual.getTipo() == TokenType.SUB ||
+             tokenAtual.getTipo() == TokenType.MULT   ||
+             tokenAtual.getTipo() == TokenType.DIV  ) {
+
+            operador_aritmetico();
+            expressao_aritmetica();
+        }
+    }
+
+    private void operador_aritmetico()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB ) {
+            operador_soma();
+        }
+        else if ( tokenAtual.getTipo() == TokenType.MULT || tokenAtual.getTipo() == TokenType.DIV  ) {
+             operador_multiplicacao();
+        }
+        else erroSintatico("Esperava um operador aritmético. ",tokenAtual.getLinha());
+    }
+
     private void complemento_exp_aritm_parentese()
     {
         if ( tokenAtual.getTipo() == TokenType.MAIOR ||
@@ -1032,6 +1082,7 @@ public class AnalisadorSintatico {
                 match(TokenType.ABREPAR);
                 expressao_aritmetica();
                 match(TokenType.FECHAPAR);
+                complemento_exp_aritm_parentese_atrib();
                 break;
              }
              case INCR: {
@@ -1104,9 +1155,18 @@ public class AnalisadorSintatico {
 
     private void match(TokenType esperado)
     {
+        //checarComentarios();
         if(tokenAtual.getTipo() == esperado) proxToken();
         else erroSintatico(esperado, tokenAtual);
     }
+
+//    private void checarComentarios()
+//    {
+//        while( tokenAtual.getTipo() == TokenType.COMENTBLOCO || tokenAtual.getTipo() == TokenType.COMENTLINHA )
+//        {
+//            proxToken();
+//        }
+//    }
 
     //exibe token esperado na mensagem de erro
     private void erroSintatico(TokenType esperado, Token obtido)
