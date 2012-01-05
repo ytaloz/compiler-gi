@@ -194,7 +194,9 @@ public class AnalisadorSintatico {
             match(TokenType.ID);
             match(TokenType.ID);
             complemento_variavel_instanciar_obj();
+            match(TokenType.PONTOVIRGULA);
         }
+        else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
     }
 
     private void lista_decl_variaveis()
@@ -208,38 +210,37 @@ public class AnalisadorSintatico {
         switch( tokenAtual.getTipo() )
         {
             case VIRGULA: {
-                loop_lista_decl_variaveis();
+                prox_trecho_lista_decl_variaveis();
+                break;
+            }
+            case PONTOVIRGULA: {
+                prox_trecho_lista_decl_variaveis();
                 break;
             }
             case ATRIB: {
                 match(TokenType.ATRIB);
                 segundo_membro_atribuicao();
-                loop_lista_decl_variaveis();
+                prox_trecho_lista_decl_variaveis();
                 break;
             }
             case ABRECOLCH: {
                 match(TokenType.ABRECOLCH);
                 expressao_aritmetica();
                 match(TokenType.FECHACOLCH);
+                prox_trecho_lista_decl_variaveis();
                 break;
             }
-            //default : erroSintatico("Erro sintático no complemento_decl_variavel!", tokenAtual.getLinha());
         }
     }
 
-    private void loop_lista_decl_variaveis()
+    private void prox_trecho_lista_decl_variaveis()
     {
-        if(tokenAtual.getTipo() == TokenType.VIRGULA) {
+        if( tokenAtual.getTipo() == TokenType.VIRGULA ) {
             match(TokenType.VIRGULA);
-           lista_decl_variaveis();
+            lista_decl_variaveis();
         }
-        else if(tokenAtual.getTipo() == TokenType.ID) {
-            match(TokenType.VIRGULA);
-        }
-        //else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
     }
 
-   
 
     // DECLARAÇÃO DE CLASSES
 
