@@ -64,7 +64,7 @@ public class AnalisadorSintatico {
         inicializarVariaveis();
         
         proxToken();
-        //programa();
+        programa();
         //bloco_constantes();
         //bloco_variaveis();
         //instanciar_obj();
@@ -72,7 +72,7 @@ public class AnalisadorSintatico {
         //expressao();
         //atribuicao();
         //comandos();
-        bloco_metodos();
+        // bloco_metodos();
 
         if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
             erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
@@ -88,20 +88,31 @@ public class AnalisadorSintatico {
 
 //-------- MÉTODOS CORRESPONDENTES AOS NÃO-TERMINAIS DA GRAMÁTICA --------------
 
-//    private void programa()
-//    {
-//        if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
-//            bloco_constantes();
-//            //outros_blocos_programa();
-//        }
-//        else if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
-//            bloco_variaveis();
-//            classes();
-//        }
-//        else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
-//            classes();
-//        }
-//    }
+    private void programa()
+    {
+        if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
+            bloco_constantes();
+            outros_blocos_programa();
+        }
+        else if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
+            bloco_variaveis();
+            classes();
+        }
+        else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
+            classes();
+        }
+    }
+
+    private void outros_blocos_programa()
+    {
+        if(tokenAtual.getTipo() == TokenType.VARIAVEIS) {
+            bloco_variaveis();
+            classes();
+        }
+        else if(tokenAtual.getTipo() == TokenType.CLASSE) {
+            classes();
+        }
+    }
 
 
     // DECLARAÇÃO DE CONSTANTES
@@ -212,7 +223,7 @@ public class AnalisadorSintatico {
                 match(TokenType.FECHACOLCH);
                 break;
             }
-            default : erroSintatico("Erro sintático no complemento_decl_variavel!", tokenAtual.getLinha());
+            //default : erroSintatico("Erro sintático no complemento_decl_variavel!", tokenAtual.getLinha());
         }
     }
 
@@ -222,6 +233,10 @@ public class AnalisadorSintatico {
             match(TokenType.VIRGULA);
            lista_decl_variaveis();
         }
+        else if(tokenAtual.getTipo() == TokenType.ID) {
+            match(TokenType.VIRGULA);
+        }
+        //else erroSintatico("Token inesperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
     }
 
    
@@ -370,11 +385,6 @@ public class AnalisadorSintatico {
             match(TokenType.VIRGULA);
             lista_parametros();
         }
-    }
-
-    private void outros_blocos_programa()
-    {
-
     }
 
     // OBJETOS
