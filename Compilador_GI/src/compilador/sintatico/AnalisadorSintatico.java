@@ -882,7 +882,6 @@ public class AnalisadorSintatico {
         match(TokenType.ABREPAR);
         atribuicao();
         match(TokenType.PONTOVIRGULA);
-        //expressao_logica();
         expressao_relacional();
         match(TokenType.PONTOVIRGULA);
         atribuicao();
@@ -1033,18 +1032,6 @@ public class AnalisadorSintatico {
 
     private void loop_acesso_atributo_obj()
     {
-//        switch(tokenAtual.getTipo())
-//        {
-//            case PONTO: {
-//                match(TokenType.PONTO);
-//                complemento_ponto_comando();
-//                break;
-//            }
-//            case ID: {
-//                match(TokenType.ID);
-//                break;
-//            }
-//        }
         if ( tokenAtual.getTipo() == TokenType.PONTO  ) {
             match(TokenType.PONTO);
             complemento_ponto_comando();
