@@ -65,12 +65,12 @@ public class AnalisadorSintatico {
         inicializarVariaveis();
         
         proxToken();
-        //programa();
+        programa();
         //bloco_constantes();
         //bloco_variaveis();
         //instanciar_obj();
         //classes();
-        expressao();
+        //expressao();
         //atribuicao();
         //comandos();
         // bloco_metodos();
@@ -1086,54 +1086,19 @@ public class AnalisadorSintatico {
 
      private void segundo_membro_atribuicao()
      {
-         switch(tokenAtual.getTipo())
-         {
-             case ID: {
-                match(TokenType.ID);
-                complemento_variavel_atribuicao();
-                break;
-             }
-             case NUM: {
-                match(TokenType.NUM);
-                prox_trecho_multiplicacao();
-                prox_trecho_soma();
-                break;
-             }
-             case ABREPAR: {
-                match(TokenType.ABREPAR);
-                expressao_aritmetica();
-                match(TokenType.FECHAPAR);
-                complemento_exp_aritm_parentese_atrib();
-                break;
-             }
-             case INCR: {
-                incremento_decremento();
-                match(TokenType.ID);
-                break;
-             }
-             case DECR: {
-                incremento_decremento();
-                match(TokenType.ID);
-                break;
-             }
-             case VERDADEIRO: {
-                expressao_booleana();
-                break;
-             }
-             case FALSO: {
-                expressao_booleana();
-                break;
-             }
-             case LITERAL: {
-                match(TokenType.LITERAL);
-                break;
-             }
-             case CARACTER: {
-                match(TokenType.CARACTER);
-                break;
-             }
-             default: erroSintatico(tokenAtual);
-         }
+          if(tokenAtual.getTipo() == TokenType.ABREPAR ||
+           tokenAtual.getTipo() == TokenType.ID ||
+           tokenAtual.getTipo() == TokenType.NUM ||
+           tokenAtual.getTipo() == TokenType.VERDADEIRO ||
+           tokenAtual.getTipo() == TokenType.FALSO)  {
+              expressao();
+          }
+          else if( tokenAtual.getTipo() == TokenType.CARACTER || tokenAtual.getTipo() == TokenType.LITERAL ) {
+              proxToken();
+          }
+          else if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) {
+              incremento_decremento();
+          }
      }
 
      private void complemento_variavel_atribuicao()
