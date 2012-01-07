@@ -543,6 +543,7 @@ public class AnalisadorSintatico {
         if(tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB) {
             operador_soma();
             expressao_aritmetica();
+            prox_trecho_multiplicacao();
         }
     }
 
