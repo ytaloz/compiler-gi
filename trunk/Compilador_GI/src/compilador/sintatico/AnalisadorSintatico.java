@@ -419,7 +419,7 @@ public class AnalisadorSintatico {
     private void complemento_variavel_instanciar_obj()
     {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match(TokenType.ABREPAR);
+           match(TokenType.ABREPAR);
            parametros_reais_instanciar_obj();
            match(TokenType.FECHAPAR);
         }
@@ -428,7 +428,7 @@ public class AnalisadorSintatico {
     private void parametros_reais_instanciar_obj()
     {
         parametro_real();
-        loop_parametros_reais();
+        loop_parametros_reais_instanciar_obj();
     }
 
     private void parametro_real()
@@ -443,7 +443,7 @@ public class AnalisadorSintatico {
         else erroSintatico("<parametro_real> esperado; ", tokenAtual.getLinha());
     }
 
-    private void loop_parametros_reais()
+    private void loop_parametros_reais_instanciar_obj()
     {
         if(tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
@@ -755,6 +755,27 @@ public class AnalisadorSintatico {
          }
     }
 
+// --------------CHAMDA DE MÉTODOS ---------------------------------------------
+
+    private void chamada_metodo()
+    {
+        match( TokenType.ID );
+        complemento_chamada_metodo();
+    }
+
+    private void complemento_chamada_metodo()
+    {
+        if (tokenAtual.getTipo() == TokenType.ABREPAR) {
+            match(TokenType.ABREPAR);
+            parametros_reais();
+            match(TokenType.FECHAPAR);
+        }
+        else if(tokenAtual.getTipo() == TokenType.PONTO) {
+            match(TokenType.PONTO);
+            chamada_metodo();
+        }
+
+    }
 
 // -------------------- COMANDOS -----------------------------------------------
 
@@ -955,8 +976,7 @@ public class AnalisadorSintatico {
         switch(tokenAtual.getTipo())
         {
             case PONTO: {
-                match(TokenType.PONTO);
-                complemento_ponto_comando();
+                complemento_chamada_metodo();
                 break;
             }
             case ABRECOLCH: {
@@ -1003,20 +1023,33 @@ public class AnalisadorSintatico {
         }
     }
 
+    private void loop_parametros_reais()
+    {
+        if ( tokenAtual.getTipo() == TokenType.VIRGULA ) {
+            match(TokenType.VIRGULA);
+            parametros_reais();
+        }
+    }
+
     private void loop_acesso_atributo_obj()
     {
-        switch(tokenAtual.getTipo())
-        {
-            case PONTO: {
-                match(TokenType.PONTO);
-                complemento_ponto_comando();
-                break;
-            }
-            case ID: {
-                match(TokenType.ID);
-                break;
-            }
+//        switch(tokenAtual.getTipo())
+//        {
+//            case PONTO: {
+//                match(TokenType.PONTO);
+//                complemento_ponto_comando();
+//                break;
+//            }
+//            case ID: {
+//                match(TokenType.ID);
+//                break;
+//            }
+//        }
+        if ( tokenAtual.getTipo() == TokenType.PONTO  ) {
+            match(TokenType.PONTO);
+            complemento_ponto_comando();
         }
+
     }
 
 // ------------------- ATRIBUIÇÃO ----------------------------------------------
