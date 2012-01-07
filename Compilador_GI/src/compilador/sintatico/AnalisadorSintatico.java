@@ -94,9 +94,6 @@ public class AnalisadorSintatico {
         return resultado;
     }
 
-
-
-
     private void inicializarVariaveis()
     {
         this.ponteiro = -1;
@@ -108,7 +105,7 @@ public class AnalisadorSintatico {
 /******************************************************************************/
 
 
-//-------- INÍCIO DO PROGRAMA --------------
+//-------- INÍCIO DO PROGRAMA --------------------------------------------------
 
     private void programa()
     {
