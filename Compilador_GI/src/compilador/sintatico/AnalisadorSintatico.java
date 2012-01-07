@@ -65,12 +65,12 @@ public class AnalisadorSintatico {
         inicializarVariaveis();
         
         proxToken();
-        programa();
+        //programa();
         //bloco_constantes();
         //bloco_variaveis();
         //instanciar_obj();
         //classes();
-        //expressao();
+        expressao();
         //atribuicao();
         //comandos();
         // bloco_metodos();
@@ -526,6 +526,7 @@ public class AnalisadorSintatico {
         if(tokenAtual.getTipo() == TokenType.MULT || tokenAtual.getTipo() == TokenType.DIV) {
             operador_multiplicacao();
             expressao_aritmetica();
+            prox_trecho_multiplicacao();
         }
     }
 
