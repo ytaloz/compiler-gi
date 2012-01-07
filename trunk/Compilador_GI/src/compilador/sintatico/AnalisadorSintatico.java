@@ -622,14 +622,29 @@ public class AnalisadorSintatico {
 
     private void termo_l_parentesis()
     {
-        if(primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
-            expressao_aritmetica();
-            match(TokenType.FECHAPAR);
+        expressao_aritmetica();
+        complemento_termo_l_parentesis();
+    }
+
+    private void complemento_termo_l_parentesis()
+    {
+        if ( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            match(TokenType.ABREPAR);
             operador_relacional();
             expressao_aritmetica();
         }
-        else if( tokenAtual.getTipo() == TokenType.E || tokenAtual.getTipo() == TokenType.OU  ) {
+        else if (tokenAtual.getTipo() == TokenType.E || tokenAtual.getTipo() == TokenType.OU) {
             prox_trecho_expl();
+            match(TokenType.FECHAPAR);
+        }
+        else if ( tokenAtual.getTipo() == TokenType.MAIOR ||
+             tokenAtual.getTipo() == TokenType.MENOR ||
+             tokenAtual.getTipo() == TokenType.MAIORIGUAL   ||
+             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
+             tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) {
+
+            prox_trecho_relacional();
             match(TokenType.FECHAPAR);
         }
     }
@@ -641,6 +656,7 @@ public class AnalisadorSintatico {
         termo_l_parentesis();
         prox_trecho_expl();
         match(TokenType.FECHAPAR);
+        prox_trecho_expl();
     }
 
     private void prox_trecho_geral()
@@ -655,6 +671,7 @@ public class AnalisadorSintatico {
             expressao_aritmetica();
             prox_trecho_expl();
             match(TokenType.FECHAPAR);
+            prox_trecho_expl();
         }
         else if( tokenAtual.getTipo() == TokenType.FECHAPAR ) {
             match(TokenType.FECHAPAR);
