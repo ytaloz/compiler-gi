@@ -715,6 +715,16 @@ public class AnalisadorSintatico {
             expressao_aritmetica();
             prox_trecho_expl();
         }
+        else if ( tokenAtual.getTipo() == TokenType.ADICAO ||
+             tokenAtual.getTipo() == TokenType.SUB ||
+             tokenAtual.getTipo() == TokenType.MULT   ||
+             tokenAtual.getTipo() == TokenType.DIV ) {
+
+            operador_aritmetico();
+            expressao_aritmetica();
+            complemento_exp_aritm_parentese();
+        }
+
     }
 
     private void expressao_aritmetica()
