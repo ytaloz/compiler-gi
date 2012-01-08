@@ -881,14 +881,15 @@ public class AnalisadorSintatico {
     private void complemento_chamada_metodo()
     {
         if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match(TokenType.ABREPAR);
+            match2(TokenType.ABREPAR);
             parametros_reais();
-            match(TokenType.FECHAPAR);
+            match2(TokenType.FECHAPAR);
         }
         else if(tokenAtual.getTipo() == TokenType.PONTO) {
-            match(TokenType.PONTO);
+            match2(TokenType.PONTO);
             chamada_metodo();
         }
+        else throw new ErroSintaticoException("esperava parentese ou ponto para chamada de método: ");
 
     }
 
@@ -904,14 +905,20 @@ public class AnalisadorSintatico {
 
     private void comando_geral()
     {
-        if(primeiro(COMANDO_LINHA).contains(tokenAtual.getTipo())) {
-            comando_linha();
-            match(TokenType.PONTOVIRGULA);
+        try {
+            if (primeiro(COMANDO_LINHA).contains(tokenAtual.getTipo())) {
+                comando_linha();
+                match2(TokenType.PONTOVIRGULA);
+            } else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
+                comando_bloco();
+            } else {
+                throw new ErroSintaticoException("esperava o início de um comando de linha ou comando de bloco: ");
+            }
         }
-        else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
-            comando_bloco();
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(COMANDO_GERAL));
         }
-        else erroSintatico(tokenAtual);
     }
 
     private void comando_linha()
@@ -932,16 +939,16 @@ public class AnalisadorSintatico {
             }
             case INCR: {
                 incremento_decremento();
-                match(TokenType.ID);
+                match2(TokenType.ID);
                 break;
             }
             case DECR: {
                 incremento_decremento();
-                match(TokenType.ID);
+                match2(TokenType.ID);
                 break;
             }
             case ID: {
-                match(TokenType.ID);
+                match2(TokenType.ID);
                 complemento_variavel_comando();
                 break;
             }
@@ -970,59 +977,59 @@ public class AnalisadorSintatico {
     
     private void comando_se()
     {
-        match(TokenType.SE);
-        match(TokenType.ABREPAR);
+        match2(TokenType.SE);
+        match2(TokenType.ABREPAR);
         expressao_logica();
-        match(TokenType.FECHAPAR);
-        match(TokenType.ENTAO);
-        match(TokenType.ABRECHAVE);
+        match2(TokenType.FECHAPAR);
+        match2(TokenType.ENTAO);
+        match2(TokenType.ABRECHAVE);
         comandos();
-        match(TokenType.FECHACHAVE);
+        match2(TokenType.FECHACHAVE);
         complemento_comando_se();
     }
     
     private void complemento_comando_se()
     {
         if(tokenAtual.getTipo() == TokenType.SENAO) {
-            match(TokenType.SENAO);
-            match(TokenType.ABRECHAVE);
+            match2(TokenType.SENAO);
+            match2(TokenType.ABRECHAVE);
             comandos();
-            match(TokenType.FECHACHAVE);
+            match2(TokenType.FECHACHAVE);
         }
     }
     
     private void comando_para()
     {
-        match(TokenType.PARA);
-        match(TokenType.ABREPAR);
+        match2(TokenType.PARA);
+        match2(TokenType.ABREPAR);
         atribuicao();
-        match(TokenType.PONTOVIRGULA);
+        match2(TokenType.PONTOVIRGULA);
         expressao_relacional();
-        match(TokenType.PONTOVIRGULA);
+        match2(TokenType.PONTOVIRGULA);
         atribuicao();
-        match(TokenType.FECHAPAR);
-        match(TokenType.ABRECHAVE);
+        match2(TokenType.FECHAPAR);
+        match2(TokenType.ABRECHAVE);
         comandos();
-        match(TokenType.FECHACHAVE);
+        match2(TokenType.FECHACHAVE);
     }
     
     private void comando_enquanto()
     {
-        match(TokenType.ENQUANTO);
-        match(TokenType.ABREPAR);
+        match2(TokenType.ENQUANTO);
+        match2(TokenType.ABREPAR);
         expressao_logica();
-        match(TokenType.FECHAPAR);
-        match(TokenType.ABRECHAVE);
+        match2(TokenType.FECHAPAR);
+        match2(TokenType.ABRECHAVE);
         comandos();
-        match(TokenType.FECHACHAVE);
+        match2(TokenType.FECHACHAVE);
     }
 
     private void comando_escreva()
     {
-        match(TokenType.ESCREVA);
-        match(TokenType.ABREPAR);
+        match2(TokenType.ESCREVA);
+        match2(TokenType.ABREPAR);
         params_escreva();
-        match(TokenType.FECHAPAR);
+        match2(TokenType.FECHAPAR);
     }
 
     private void params_escreva()
@@ -1057,10 +1064,10 @@ public class AnalisadorSintatico {
 
     private void comando_leia()
     {
-        match(TokenType.LEIA);
-        match(TokenType.ABREPAR);
+        match2(TokenType.LEIA);
+        match2(TokenType.ABREPAR);
         params_leia();
-        match(TokenType.FECHAPAR);
+        match2(TokenType.FECHAPAR);
     }
 
     private void params_leia()
@@ -1079,10 +1086,10 @@ public class AnalisadorSintatico {
 
     private void retorno()
     {
-        match(TokenType.RETORNO);
-        match(TokenType.ABREPAR);
+        match2(TokenType.RETORNO);
+        match2(TokenType.ABREPAR);
         expressao();
-        match(TokenType.FECHAPAR);
+        match2(TokenType.FECHAPAR);
     }
 
     private void complemento_variavel_comando()
@@ -1120,12 +1127,13 @@ public class AnalisadorSintatico {
                 incremento_decremento();
                 break;
             }
+            default: throw new ErroSintaticoException("esperava uma atribuição ou chamada de método: ");
         }
     }
 
     private void complemento_ponto_comando()
     {
-        match(TokenType.ID);
+        match2(TokenType.ID);
         loop_acesso_atributo_obj();
     }
 
