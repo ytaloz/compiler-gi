@@ -156,10 +156,10 @@ public class AnalisadorSintatico {
     private void bloco_constantes()
     {
         try {
-            match2(TokenType.CONSTANTES);
-            match2(TokenType.ABRECHAVE);
+            match(TokenType.CONSTANTES);
+            match(TokenType.ABRECHAVE);
             declaracao_constantes();
-            match2(TokenType.FECHACHAVE);
+            match(TokenType.FECHACHAVE);
         }
         catch( ErroSintaticoException ex ) {
             erroSintatico(ex);
@@ -180,7 +180,7 @@ public class AnalisadorSintatico {
         try {
             tipo_variavel();
             lista_decl_constantes();
-            match2(TokenType.PONTOVIRGULA);
+            match(TokenType.PONTOVIRGULA);
         }
         catch (ErroSintaticoException ex) {
             erroSintatico(ex);
@@ -227,10 +227,10 @@ public class AnalisadorSintatico {
     private void bloco_variaveis()
     {
         try {
-            match2(TokenType.VARIAVEIS);
-            match2(TokenType.ABRECHAVE);
+            match(TokenType.VARIAVEIS);
+            match(TokenType.ABRECHAVE);
             declaracao_variaveis();
-            match2(TokenType.FECHACHAVE);
+            match(TokenType.FECHACHAVE);
         } 
         catch (ErroSintaticoException ex) {
             erroSintatico(ex);
@@ -252,13 +252,13 @@ public class AnalisadorSintatico {
             if(primeiro(TIPO_VARIAVEL).contains(tokenAtual.getTipo())) {
                 tipo_variavel();
                 lista_decl_variaveis();
-                match2(TokenType.PONTOVIRGULA);
+                match(TokenType.PONTOVIRGULA);
             }
             else if(tokenAtual.getTipo() == TokenType.ID) {
-                match2(TokenType.ID);
-                match2(TokenType.ID);
+                match(TokenType.ID);
+                match(TokenType.ID);
                 complemento_variavel_instanciar_obj();
-                match2(TokenType.PONTOVIRGULA);
+                match(TokenType.PONTOVIRGULA);
             }
             else throw new ErroSintaticoException("esperando declaração de tipo (primitivo ou objeto): ");
         }
@@ -327,8 +327,8 @@ public class AnalisadorSintatico {
     private void classe()
     {
         try{
-            match2(TokenType.CLASSE);
-            match2(TokenType.ID);
+            match(TokenType.CLASSE);
+            match(TokenType.ID);
             complemento_decl_classe();
         }
         catch (ErroSintaticoException ex) {
@@ -340,17 +340,17 @@ public class AnalisadorSintatico {
     private void complemento_decl_classe()
     {
          if(tokenAtual.getTipo() == TokenType.ABRECHAVE) {
-           match2(TokenType.ABRECHAVE);
+           match(TokenType.ABRECHAVE);
            blocos_classe();
-           match2(TokenType.FECHACHAVE);
+           match(TokenType.FECHACHAVE);
         }
          else if(tokenAtual.getTipo() == TokenType.HERDA_DE)
          {
-             match2(TokenType.HERDA_DE);
-             match2(TokenType.ID);
-             match2(TokenType.ABRECHAVE);
+             match(TokenType.HERDA_DE);
+             match(TokenType.ID);
+             match(TokenType.ABRECHAVE);
              blocos_classe();
-             match2(TokenType.FECHACHAVE);
+             match(TokenType.FECHACHAVE);
          }
          else throw new ErroSintaticoException("esperava a chave de abertura do corpo da classe ou a declaração de herança herda_de :");
     }
@@ -395,10 +395,10 @@ public class AnalisadorSintatico {
     {
         try {
             if (tokenAtual.getTipo() == TokenType.METODOS) {
-                match2(TokenType.METODOS);
-                match2(TokenType.ABRECHAVE);
+                match(TokenType.METODOS);
+                match(TokenType.ABRECHAVE);
                 declaracao_metodos();
-                match2(TokenType.FECHACHAVE);
+                match(TokenType.FECHACHAVE);
             }
         }
         catch(ErroSintaticoException ex) {
@@ -439,14 +439,14 @@ public class AnalisadorSintatico {
     private void declaracao_metodo()
     {
         try {
-            match2(TokenType.ID);
-            match2(TokenType.ABREPAR);
+            match(TokenType.ID);
+            match(TokenType.ABREPAR);
             parametros_formais();
-            match2(TokenType.FECHAPAR);
-            match2(TokenType.ABRECHAVE);
+            match(TokenType.FECHAPAR);
+            match(TokenType.ABRECHAVE);
             dec_var_metodo();
             comandos();
-            match2(TokenType.FECHACHAVE);
+            match(TokenType.FECHACHAVE);
         }
          catch(ErroSintaticoException ex) {
             erroSintatico(ex);
@@ -468,14 +468,14 @@ public class AnalisadorSintatico {
                 declaracao_metodo();
                 declaracao_metodos();
             } else if (tokenAtual.getTipo() == TokenType.PRINCIPAL) {
-                match2(TokenType.PRINCIPAL);
-                match2(TokenType.ABREPAR);
-                match2(TokenType.VAZIO);
-                match2(TokenType.FECHAPAR);
-                match2(TokenType.ABRECHAVE);
+                match(TokenType.PRINCIPAL);
+                match(TokenType.ABREPAR);
+                match(TokenType.VAZIO);
+                match(TokenType.FECHAPAR);
+                match(TokenType.ABRECHAVE);
                 dec_var_metodo();
                 comandos();
-                match2(TokenType.FECHACHAVE);
+                match(TokenType.FECHACHAVE);
             }
         }
         catch(ErroSintaticoException ex) {
@@ -496,7 +496,7 @@ public class AnalisadorSintatico {
             parametros_formais();
         }
         else if (tokenAtual.getTipo() == TokenType.VAZIO) {
-             match2(TokenType.VAZIO);
+             match(TokenType.VAZIO);
         }
     }
 
@@ -505,7 +505,7 @@ public class AnalisadorSintatico {
         try {
             tipo_variavel();
             lista_parametros();
-            match2(TokenType.PONTOVIRGULA);
+            match(TokenType.PONTOVIRGULA);
         }
         catch(ErroSintaticoException ex) {
             erroSintatico(ex);
@@ -516,14 +516,14 @@ public class AnalisadorSintatico {
 
     private void lista_parametros()
     {
-        match2(TokenType.ID);
+        match(TokenType.ID);
         loop_lista_parametros();
     }
 
     private void loop_lista_parametros()
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
-            match2(TokenType.VIRGULA);
+            match(TokenType.VIRGULA);
             lista_parametros();
         }
     }
@@ -561,7 +561,7 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.VERDADEIRO ||
              tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
 
-        else erroSintatico("<parametro_real> esperado; ", tokenAtual.getLinha());
+        else throw new ErroSintaticoException("esperava uma variável ou valor como parâmetro: ");
     }
 
     private void loop_parametros_reais_instanciar_obj()
@@ -578,7 +578,7 @@ public class AnalisadorSintatico {
     {
         try {
             if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-                match2(TokenType.ABREPAR);
+                match(TokenType.ABREPAR);
                 expressao_parentese();
             }
             else if (tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM) {
@@ -605,7 +605,7 @@ public class AnalisadorSintatico {
     {
         try {
             if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-                match2(TokenType.ABREPAR);
+                match(TokenType.ABREPAR);
                 complemento_expressao_parentese();
             }
             else if (tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM) {
@@ -616,7 +616,7 @@ public class AnalisadorSintatico {
             else if (tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
                 expressao_booleana();
                 prox_trecho_expl();
-                match2(TokenType.FECHAPAR);
+                match(TokenType.FECHAPAR);
             }
             else {
                 throw new ErroSintaticoException("esperava uma expressão, variável ou valor: ");
@@ -637,11 +637,11 @@ public class AnalisadorSintatico {
     private void fator()
     {
          if(tokenAtual.getTipo() == TokenType.ID) {
-            match2(TokenType.ID);
+            match(TokenType.ID);
             complemento_fator_variavel();
         }
         else if(tokenAtual.getTipo() == TokenType.NUM ) {
-            match2(TokenType.NUM);
+            match(TokenType.NUM);
         }
         else throw new ErroSintaticoException("esperava um identificador ou número: ");
     }
@@ -652,9 +652,9 @@ public class AnalisadorSintatico {
             loop_acesso_atributo_obj();
         }
         else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
-            match2(TokenType.ABRECOLCH);
+            match(TokenType.ABRECOLCH);
             expressao_aritmetica();
-            match2(TokenType.FECHACOLCH);
+            match(TokenType.FECHACOLCH);
         }
     }
 
@@ -772,13 +772,13 @@ public class AnalisadorSintatico {
     private void complemento_termo_l_parentesis()
     {
         if ( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            match2(TokenType.ABREPAR);
+            match(TokenType.ABREPAR);
             operador_relacional();
             expressao_aritmetica();
         }
         else if (tokenAtual.getTipo() == TokenType.E || tokenAtual.getTipo() == TokenType.OU) {
             prox_trecho_expl();
-            match2(TokenType.FECHAPAR);
+            match(TokenType.FECHAPAR);
         }
         else if ( tokenAtual.getTipo() == TokenType.MAIOR ||
              tokenAtual.getTipo() == TokenType.MENOR ||
@@ -788,7 +788,7 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.DIF  ) {
 
             prox_trecho_relacional();
-            match2(TokenType.FECHAPAR);
+            match(TokenType.FECHAPAR);
         }
     }
 
@@ -798,7 +798,7 @@ public class AnalisadorSintatico {
     {
         termo_l_parentesis();
         prox_trecho_expl();
-        match2(TokenType.FECHAPAR);
+        match(TokenType.FECHAPAR);
         prox_trecho_expl();
     }
 
@@ -877,9 +877,9 @@ public class AnalisadorSintatico {
              prox_trecho_soma();
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match2( TokenType.ABREPAR );
+            match( TokenType.ABREPAR );
             expressao_aritmetica();
-            match2( TokenType.FECHAPAR );
+            match( TokenType.FECHAPAR );
         }
         else throw new ErroSintaticoException("esperava o início de uma expressão aritmética: ");
     }
@@ -909,12 +909,12 @@ public class AnalisadorSintatico {
     private void complemento_chamada_metodo()
     {
         if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match2(TokenType.ABREPAR);
+            match(TokenType.ABREPAR);
             parametros_reais();
-            match2(TokenType.FECHAPAR);
+            match(TokenType.FECHAPAR);
         }
         else if(tokenAtual.getTipo() == TokenType.PONTO) {
-            match2(TokenType.PONTO);
+            match(TokenType.PONTO);
             chamada_metodo();
         }
         else throw new ErroSintaticoException("esperava parentese ou ponto para chamada de método: ");
@@ -936,7 +936,7 @@ public class AnalisadorSintatico {
         try {
             if (primeiro(COMANDO_LINHA).contains(tokenAtual.getTipo())) {
                 comando_linha();
-                match2(TokenType.PONTOVIRGULA);
+                match(TokenType.PONTOVIRGULA);
             } else if (primeiro(COMANDO_BLOCO).contains(tokenAtual.getTipo())) {
                 comando_bloco();
             } else {
@@ -967,16 +967,16 @@ public class AnalisadorSintatico {
             }
             case INCR: {
                 incremento_decremento();
-                match2(TokenType.ID);
+                match(TokenType.ID);
                 break;
             }
             case DECR: {
                 incremento_decremento();
-                match2(TokenType.ID);
+                match(TokenType.ID);
                 break;
             }
             case ID: {
-                match2(TokenType.ID);
+                match(TokenType.ID);
                 complemento_variavel_comando();
                 break;
             }
@@ -1005,59 +1005,59 @@ public class AnalisadorSintatico {
     
     private void comando_se()
     {
-        match2(TokenType.SE);
-        match2(TokenType.ABREPAR);
+        match(TokenType.SE);
+        match(TokenType.ABREPAR);
         expressao_logica();
-        match2(TokenType.FECHAPAR);
-        match2(TokenType.ENTAO);
-        match2(TokenType.ABRECHAVE);
+        match(TokenType.FECHAPAR);
+        match(TokenType.ENTAO);
+        match(TokenType.ABRECHAVE);
         comandos();
-        match2(TokenType.FECHACHAVE);
+        match(TokenType.FECHACHAVE);
         complemento_comando_se();
     }
     
     private void complemento_comando_se()
     {
         if(tokenAtual.getTipo() == TokenType.SENAO) {
-            match2(TokenType.SENAO);
-            match2(TokenType.ABRECHAVE);
+            match(TokenType.SENAO);
+            match(TokenType.ABRECHAVE);
             comandos();
-            match2(TokenType.FECHACHAVE);
+            match(TokenType.FECHACHAVE);
         }
     }
     
     private void comando_para()
     {
-        match2(TokenType.PARA);
-        match2(TokenType.ABREPAR);
+        match(TokenType.PARA);
+        match(TokenType.ABREPAR);
         atribuicao();
-        match2(TokenType.PONTOVIRGULA);
+        match(TokenType.PONTOVIRGULA);
         expressao_relacional();
-        match2(TokenType.PONTOVIRGULA);
+        match(TokenType.PONTOVIRGULA);
         atribuicao();
-        match2(TokenType.FECHAPAR);
-        match2(TokenType.ABRECHAVE);
+        match(TokenType.FECHAPAR);
+        match(TokenType.ABRECHAVE);
         comandos();
-        match2(TokenType.FECHACHAVE);
+        match(TokenType.FECHACHAVE);
     }
     
     private void comando_enquanto()
     {
-        match2(TokenType.ENQUANTO);
-        match2(TokenType.ABREPAR);
+        match(TokenType.ENQUANTO);
+        match(TokenType.ABREPAR);
         expressao_logica();
-        match2(TokenType.FECHAPAR);
-        match2(TokenType.ABRECHAVE);
+        match(TokenType.FECHAPAR);
+        match(TokenType.ABRECHAVE);
         comandos();
-        match2(TokenType.FECHACHAVE);
+        match(TokenType.FECHACHAVE);
     }
 
     private void comando_escreva()
     {
-        match2(TokenType.ESCREVA);
-        match2(TokenType.ABREPAR);
+        match(TokenType.ESCREVA);
+        match(TokenType.ABREPAR);
         params_escreva();
-        match2(TokenType.FECHAPAR);
+        match(TokenType.FECHAPAR);
     }
 
     private void params_escreva()
@@ -1079,7 +1079,7 @@ public class AnalisadorSintatico {
         else if ( tokenAtual.getTipo() == TokenType.LITERAL ) {
             match(TokenType.LITERAL);
         }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("esperava um valor ou expressão como argumento: ");
     }
 
     private void loop_params_escreva()
@@ -1092,10 +1092,10 @@ public class AnalisadorSintatico {
 
     private void comando_leia()
     {
-        match2(TokenType.LEIA);
-        match2(TokenType.ABREPAR);
+        match(TokenType.LEIA);
+        match(TokenType.ABREPAR);
         params_leia();
-        match2(TokenType.FECHAPAR);
+        match(TokenType.FECHAPAR);
     }
 
     private void params_leia()
@@ -1114,10 +1114,10 @@ public class AnalisadorSintatico {
 
     private void retorno()
     {
-        match2(TokenType.RETORNO);
-        match2(TokenType.ABREPAR);
+        match(TokenType.RETORNO);
+        match(TokenType.ABREPAR);
         expressao();
-        match2(TokenType.FECHAPAR);
+        match(TokenType.FECHAPAR);
     }
 
     private void complemento_variavel_comando()
@@ -1161,7 +1161,7 @@ public class AnalisadorSintatico {
 
     private void complemento_ponto_comando()
     {
-        match2(TokenType.ID);
+        match(TokenType.ID);
         loop_acesso_atributo_obj();
     }
 
@@ -1202,7 +1202,6 @@ public class AnalisadorSintatico {
             incremento_decremento();
             match( TokenType.ID );
         }
-        //else erroSintatico(tokenAtual);
         else throw new ErroSintaticoException("Esperando início de atribuição ou operador de incremento/decremento: ");
     }
 
@@ -1294,7 +1293,7 @@ public class AnalisadorSintatico {
     private void incremento_decremento()
     {
         if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) proxToken();
-        else erroSintatico("<incremento_decremento> esperado: " + tokenAtual.getTipo(), tokenAtual.getLinha());
+        else throw new ErroSintaticoException("esperando operador de incremento ou decremento: ");
     }
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
@@ -1312,13 +1311,13 @@ public class AnalisadorSintatico {
         tokenAtual = tokens.get(ponteiro);
     }
 
-    private void match(TokenType esperado)
-    {
-        if(tokenAtual.getTipo() == esperado) proxToken();
-        else erroSintatico(esperado, tokenAtual);
-    }
+//    private void match(TokenType esperado)
+//    {
+//        if(tokenAtual.getTipo() == esperado) proxToken();
+//        else erroSintatico(esperado, tokenAtual);
+//    }
 
-    private void match2(TokenType esperado)
+    private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
         else if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException();
