@@ -94,7 +94,6 @@ public class AnalisadorSintatico {
             erroSintatico(e.getMessage(), tokenAtual.getLinha());
         }
 
-        if(tokenAtual.getTipo() != TokenType.EOF) erroSintatico(TokenType.EOF, tokenAtual);
     }
 
     private List<Token> removerErrosEComentarios(ArrayList<Token> tokens)
@@ -126,17 +125,24 @@ public class AnalisadorSintatico {
 
     private void programa()
     {
-        if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
-            bloco_constantes();
-            outros_blocos_programa();
+        try {
+            if (primeiro(BLOCO_CONSTANTES).contains(tokenAtual.getTipo())) {
+                bloco_constantes();
+                outros_blocos_programa();
+            }
+            else if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
+                bloco_variaveis();
+                classes();
+            }
+            else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
+                classes();
+            }
+            else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou declaração de classe: ");
         }
-        else if (primeiro(BLOCO_VARIAVEIS).contains(tokenAtual.getTipo())) {
-            bloco_variaveis();
-            classes();
-        }
-        else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
-            classes();
-        }
+        catch( ErroSintaticoException ex ) {
+                erroSintatico(ex);
+                //panico(conjuntoSequencia.getConjunto(BLOCO_CONSTANTES));
+            }
     }
 
     private void outros_blocos_programa()
@@ -148,6 +154,7 @@ public class AnalisadorSintatico {
         else if(tokenAtual.getTipo() == TokenType.CLASSE) {
             classes();
         }
+        else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de variaveis ou declaração de classe: ");
     }
 
 
@@ -187,15 +194,6 @@ public class AnalisadorSintatico {
             panico(conjuntoSequencia.getConjunto(DECL_CONSTANTES_MESMO_TIPO));
         }
     }
-
-//    private void decl_constantes_mesmo_tipo()
-//    {
-//
-//            tipo_variavel();
-//            lista_decl_constantes();
-//            match(TokenType.PONTOVIRGULA);
-//
-//    }
 
     private void tipo_variavel()
     {
@@ -322,6 +320,7 @@ public class AnalisadorSintatico {
            classe();
            classes();
         }
+        else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava declaração de classe: ");
     }
 
     private void classe()
@@ -354,15 +353,6 @@ public class AnalisadorSintatico {
          }
          else throw new ErroSintaticoException("esperava a chave de abertura do corpo da classe ou a declaração de herança herda_de :");
     }
-
-//    private void blocos_classe()
-//    {
-//         if(tokenAtual.getTipo() == TokenType.CONSTANTES) {
-//          bloco_constantes();
-//          bloco_variaveis();
-//          bloco_metodos();
-//        }
-//    }
 
     private void blocos_classe()
     {
@@ -1333,9 +1323,6 @@ public class AnalisadorSintatico {
     private void panico(Set<TokenType> conjuntoSincronizacao)
     {
         while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
-//        if (tokenAtual.getTipo() == TokenType.EOF) {
-//            throw new RuntimeException("Fim inesperado de arquivo!");
-//        }
     }
 
     //exibe token esperado na mensagem de erro
