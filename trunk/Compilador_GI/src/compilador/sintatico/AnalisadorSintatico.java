@@ -33,7 +33,9 @@ public class AnalisadorSintatico {
     public static final String PARAMETRO_REAL = "parametro_real";
     public static final String PARAMETROS_MESMO_TIPO = "parametros_mesmo_tipo";
     public static final String EXPRESSAO = "expressao";
+    public static final String EXPRESSAO_PARENTESE = "expressao_parentese";
     public static final String EXPRESSAO_ARITMETICA = "expressao_aritmetica";
+    public static final String PROX_TRECHO_SOMA = "prox_trecho_soma";
     public static final String COMANDO_GERAL = "comando_geral";
     public static final String COMANDO_LINHA = "comando_linha";
     public static final String COMANDO_BLOCO = "comando_bloco";
@@ -601,21 +603,29 @@ public class AnalisadorSintatico {
 
     private void expressao_parentese()
     {
-        if(tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match(TokenType.ABREPAR);
-            complemento_expressao_parentese();
+        try {
+            if (tokenAtual.getTipo() == TokenType.ABREPAR) {
+                match2(TokenType.ABREPAR);
+                complemento_expressao_parentese();
+            }
+            else if (tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM) {
+                termo();
+                prox_trecho_soma();
+                prox_trecho_geral();
+            }
+            else if (tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
+                expressao_booleana();
+                prox_trecho_expl();
+                match2(TokenType.FECHAPAR);
+            }
+            else {
+                throw new ErroSintaticoException("esperava uma expressão, variável ou valor: ");
+            }
         }
-        else if(tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM ) {
-            termo();
-            prox_trecho_soma();
-            prox_trecho_geral();
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(EXPRESSAO_PARENTESE));
         }
-        else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO ) {
-            expressao_booleana();
-            prox_trecho_expl();
-            match(TokenType.FECHAPAR);
-        }
-        else throw new ErroSintaticoException("esperava uma expressão, variável ou valor: ");
     }
 
     private void termo()
@@ -627,13 +637,13 @@ public class AnalisadorSintatico {
     private void fator()
     {
          if(tokenAtual.getTipo() == TokenType.ID) {
-            match(TokenType.ID);
+            match2(TokenType.ID);
             complemento_fator_variavel();
         }
         else if(tokenAtual.getTipo() == TokenType.NUM ) {
-            match(TokenType.NUM);
+            match2(TokenType.NUM);
         }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("esperava um identificador ou número: ");
     }
 
     private void complemento_fator_variavel()
@@ -642,9 +652,9 @@ public class AnalisadorSintatico {
             loop_acesso_atributo_obj();
         }
         else if(tokenAtual.getTipo() == TokenType.ABRECOLCH) {
-            match(TokenType.ABRECOLCH);
+            match2(TokenType.ABRECOLCH);
             expressao_aritmetica();
-            match(TokenType.FECHACOLCH);
+            match2(TokenType.FECHACOLCH);
         }
     }
 
@@ -662,15 +672,21 @@ public class AnalisadorSintatico {
         if ( tokenAtual.getTipo() == TokenType.MULT ||
              tokenAtual.getTipo() == TokenType.DIV  ) proxToken();
 
-        else erroSintatico("<operador_multiplicacao> esperado; ", tokenAtual.getLinha());
+        else throw new ErroSintaticoException("operador de multiplicação ou divisão esperado: ");
     }
 
     private void prox_trecho_soma()
     {
-        if(tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB) {
-            operador_soma();
-            expressao_aritmetica();
-            prox_trecho_multiplicacao();
+        try {
+            if (tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB) {
+                operador_soma();
+                expressao_aritmetica();
+                prox_trecho_multiplicacao();
+            }
+        }
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(PROX_TRECHO_SOMA));
         }
     }
 
@@ -679,7 +695,7 @@ public class AnalisadorSintatico {
         if ( tokenAtual.getTipo() == TokenType.ADICAO ||
              tokenAtual.getTipo() == TokenType.SUB  ) proxToken();
 
-        else erroSintatico("<operador_soma> esperado; ", tokenAtual.getLinha());
+        else throw new ErroSintaticoException("operador de soma ou subtração esperado: ");
     }
 
     private void prox_trecho_relacional()
@@ -706,7 +722,7 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.IGUAL ||
              tokenAtual.getTipo() == TokenType.DIF  ) proxToken();
 
-        else erroSintatico("<operador_relacional> esperado; ", tokenAtual.getLinha());
+        else throw new ErroSintaticoException("operador relacional esperado: ");
     }
 
     private void prox_trecho_expl()
@@ -744,7 +760,7 @@ public class AnalisadorSintatico {
              operador_relacional();
              expressao_aritmetica();
          }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("esperava variavel, valor ou termo lógico: ");
     }
 
     private void termo_l_parentesis()
@@ -756,13 +772,13 @@ public class AnalisadorSintatico {
     private void complemento_termo_l_parentesis()
     {
         if ( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            match(TokenType.ABREPAR);
+            match2(TokenType.ABREPAR);
             operador_relacional();
             expressao_aritmetica();
         }
         else if (tokenAtual.getTipo() == TokenType.E || tokenAtual.getTipo() == TokenType.OU) {
             prox_trecho_expl();
-            match(TokenType.FECHAPAR);
+            match2(TokenType.FECHAPAR);
         }
         else if ( tokenAtual.getTipo() == TokenType.MAIOR ||
              tokenAtual.getTipo() == TokenType.MENOR ||
@@ -772,7 +788,7 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.DIF  ) {
 
             prox_trecho_relacional();
-            match(TokenType.FECHAPAR);
+            match2(TokenType.FECHAPAR);
         }
     }
 
@@ -782,7 +798,7 @@ public class AnalisadorSintatico {
     {
         termo_l_parentesis();
         prox_trecho_expl();
-        match(TokenType.FECHAPAR);
+        match2(TokenType.FECHAPAR);
         prox_trecho_expl();
     }
 
@@ -804,7 +820,7 @@ public class AnalisadorSintatico {
             match(TokenType.FECHAPAR);
             complemento_exp_aritm_parentese();
         }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("operador relacional ou fim de expressão esperado: ");
     }
 
     private void complemento_exp_aritm_parentese_atrib()
@@ -827,7 +843,7 @@ public class AnalisadorSintatico {
         else if ( tokenAtual.getTipo() == TokenType.MULT || tokenAtual.getTipo() == TokenType.DIV  ) {
              operador_multiplicacao();
         }
-        else erroSintatico("Esperava um operador aritmético. ",tokenAtual.getLinha());
+        else throw new ErroSintaticoException("esperava um operador aritmético: ");
     }
 
     private void complemento_exp_aritm_parentese()
@@ -861,11 +877,11 @@ public class AnalisadorSintatico {
              prox_trecho_soma();
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match( TokenType.ABREPAR );
+            match2( TokenType.ABREPAR );
             expressao_aritmetica();
-            match( TokenType.FECHAPAR );
+            match2( TokenType.FECHAPAR );
         }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("esperava o início de uma expressão aritmética: ");
     }
 
     private void expressao_relacional()
@@ -882,7 +898,7 @@ public class AnalisadorSintatico {
          }
     }
 
-// --------------CHAMDA DE MÉTODOS ---------------------------------------------
+// --------------CHAMADA DE MÉTODOS ---------------------------------------------
 
     private void chamada_metodo()
     {
