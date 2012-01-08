@@ -23,6 +23,8 @@ public class AnalisadorSintatico {
     
     public static final String BLOCO_CONSTANTES = "bloco_constantes";
     public static final String BLOCO_VARIAVEIS = "bloco_variaveis";
+    public static final String BLOCO_METODOS = "bloco_metodos";
+    public static final String DECLARACAO_METODO = "declaracao_metodo";
     public static final String CLASSES = "classes";
     public static final String CLASSE = "classe";
     public static final String DECL_CONSTANTES_MESMO_TIPO = "decl_constantes_mesmo_tipo";
@@ -384,11 +386,17 @@ public class AnalisadorSintatico {
 
     private void bloco_metodos()
     {
-        if (tokenAtual.getTipo() == TokenType.METODOS) {
-            match(TokenType.METODOS);
-            match(TokenType.ABRECHAVE);
-            declaracao_metodos();
-            match(TokenType.FECHACHAVE);
+        try {
+            if (tokenAtual.getTipo() == TokenType.METODOS) {
+                match2(TokenType.METODOS);
+                match2(TokenType.ABRECHAVE);
+                declaracao_metodos();
+                match2(TokenType.FECHACHAVE);
+            }
+        }
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(BLOCO_METODOS));
         }
     }
 
@@ -418,19 +426,32 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.LOGICO ||
              tokenAtual.getTipo() == TokenType.CARACTERE ||
              tokenAtual.getTipo() == TokenType.CADEIA ) proxToken();
+        else throw new ErroSintaticoException("esperava uma declaração de tipo: ");
     }
 
     private void declaracao_metodo()
     {
-        match(TokenType.ID);
-        match(TokenType.ABREPAR);
-        parametros_formais();
-        match(TokenType.FECHAPAR);
-        match(TokenType.ABRECHAVE);
-        //declaracao_variaveis();
-        bloco_variaveis();
-        comandos();
-        match(TokenType.FECHACHAVE);
+        try {
+            match2(TokenType.ID);
+            match2(TokenType.ABREPAR);
+            parametros_formais();
+            match2(TokenType.FECHAPAR);
+            match2(TokenType.ABRECHAVE);
+            dec_var_metodo();
+            comandos();
+            match2(TokenType.FECHACHAVE);
+        }
+         catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(DECLARACAO_METODO));
+        }
+    }
+
+    private void dec_var_metodo()
+    {
+        if(tokenAtual.getTipo() == TokenType.VARIAVEIS) {
+            bloco_variaveis();
+        }
     }
 
     private void declaracao_metodo_vazio()
