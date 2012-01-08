@@ -32,7 +32,10 @@ public class ConjuntoSequencia {
 
     private Set<TokenType> classe = new HashSet<TokenType>();
     private Set<TokenType> comando_geral = new HashSet<TokenType>();
+
     private Set<TokenType> expressao = new HashSet<TokenType>();
+    private Set<TokenType> expressao_parentese = new HashSet<TokenType>();
+    private Set<TokenType> prox_trecho_soma = new HashSet<TokenType>();
 
     public ConjuntoSequencia()
     {
@@ -46,6 +49,8 @@ public class ConjuntoSequencia {
         init_parametros_mesmo_tipo();
         init_comando_geral();
         init_expressao();
+        init_expressao_parentese();
+        init_prox_trecho_soma();
 
 
         armazenarConjuntos();
@@ -127,6 +132,31 @@ public class ConjuntoSequencia {
         expressao.add(TokenType.FECHAPAR);
         expressao.add(TokenType.VIRGULA);
         expressao.add(TokenType.PONTOVIRGULA);
+        expressao.add(TokenType.EOF);
+    }
+
+    private void init_expressao_parentese()
+    {
+        expressao_parentese.add(TokenType.FECHAPAR);
+        expressao_parentese.add(TokenType.VIRGULA);
+        expressao_parentese.add(TokenType.PONTOVIRGULA);
+        expressao_parentese.add(TokenType.EOF);
+    }
+
+    private void init_prox_trecho_soma()
+    {
+        prox_trecho_soma.add(TokenType.MAIOR);
+        prox_trecho_soma.add(TokenType.MENOR);
+        prox_trecho_soma.add(TokenType.IGUAL);
+        prox_trecho_soma.add(TokenType.DIF);
+        prox_trecho_soma.add(TokenType.MAIORIGUAL);
+        prox_trecho_soma.add(TokenType.MENORIGUAL);
+        //prox_trecho_soma.add(TokenType.FECHAPAR);
+        prox_trecho_soma.add(TokenType.FECHACOLCH);
+        prox_trecho_soma.add(TokenType.MULT);
+        prox_trecho_soma.add(TokenType.DIV);
+        prox_trecho_soma.add(TokenType.OU);
+        prox_trecho_soma.add(TokenType.E);
     }
 
     private void init_decl_constantes_mesmo_tipo()
@@ -170,6 +200,8 @@ public class ConjuntoSequencia {
         conjuntos.put(AnalisadorSintatico.PARAMETROS_MESMO_TIPO, parametros_mesmo_tipo);
         conjuntos.put(AnalisadorSintatico.COMANDO_GERAL, comando_geral);
         conjuntos.put(AnalisadorSintatico.EXPRESSAO, expressao);
+        conjuntos.put(AnalisadorSintatico.EXPRESSAO_PARENTESE, expressao_parentese);
+        conjuntos.put(AnalisadorSintatico.PROX_TRECHO_SOMA, prox_trecho_soma);
     }
 
 }
