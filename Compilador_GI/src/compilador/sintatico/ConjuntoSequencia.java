@@ -124,7 +124,8 @@ public class ConjuntoSequencia {
 
     private void init_expressao()
     {
-        expressao.add(TokenType.ABREPAR);
+        expressao.add(TokenType.FECHAPAR);
+        expressao.add(TokenType.VIRGULA);
         expressao.add(TokenType.PONTOVIRGULA);
     }
 

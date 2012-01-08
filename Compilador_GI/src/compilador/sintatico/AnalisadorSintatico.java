@@ -576,7 +576,7 @@ public class AnalisadorSintatico {
     {
         try {
             if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-                match(TokenType.ABREPAR);
+                match2(TokenType.ABREPAR);
                 expressao_parentese();
             }
             else if (tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM) {
@@ -594,7 +594,7 @@ public class AnalisadorSintatico {
         }
         catch(ErroSintaticoException ex) {
             erroSintatico(ex);
-            panico(conjuntoSequencia.getConjunto(PARAMETROS_MESMO_TIPO));
+            panico(conjuntoSequencia.getConjunto(EXPRESSAO));
         }
 
     }
@@ -615,7 +615,7 @@ public class AnalisadorSintatico {
             prox_trecho_expl();
             match(TokenType.FECHAPAR);
         }
-        else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("esperava uma expressão, variável ou valor: ");
     }
 
     private void termo()
