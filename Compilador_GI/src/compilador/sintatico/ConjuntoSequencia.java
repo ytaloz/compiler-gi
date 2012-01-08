@@ -55,6 +55,7 @@ public class ConjuntoSequencia {
         decl_constantes_mesmo_tipo.add(TokenType.CADEIA);
         //sequencia
         decl_constantes_mesmo_tipo.add(TokenType.FECHACHAVE);
+        decl_constantes_mesmo_tipo.add(TokenType.EOF);
     }
 
      private void armazenarConjuntos()

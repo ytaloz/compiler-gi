@@ -14,10 +14,16 @@ import compilador.token.TokenType;
 public class ErroSintaticoException extends RuntimeException {
     
     public TokenType tokenEsperado;
+    public String mensagem;
 
-    public ErroSintaticoException( TokenType tokenEsperado)
+    public ErroSintaticoException( TokenType tokenEsperado )
     {
         this.tokenEsperado = tokenEsperado;
+    }
+
+    public ErroSintaticoException( String mensagem )
+    {
+        this.mensagem = mensagem;
     }
 
 }
