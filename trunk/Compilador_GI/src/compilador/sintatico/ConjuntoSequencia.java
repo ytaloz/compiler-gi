@@ -32,6 +32,7 @@ public class ConjuntoSequencia {
 
     private Set<TokenType> classe = new HashSet<TokenType>();
     private Set<TokenType> comando_geral = new HashSet<TokenType>();
+    private Set<TokenType> expressao = new HashSet<TokenType>();
 
     public ConjuntoSequencia()
     {
@@ -44,6 +45,7 @@ public class ConjuntoSequencia {
         init_declaracao_metodo();
         init_parametros_mesmo_tipo();
         init_comando_geral();
+        init_expressao();
 
 
         armazenarConjuntos();
@@ -120,6 +122,12 @@ public class ConjuntoSequencia {
         declaracao_metodo.add(TokenType.EOF);
     }
 
+    private void init_expressao()
+    {
+        expressao.add(TokenType.ABREPAR);
+        expressao.add(TokenType.PONTOVIRGULA);
+    }
+
     private void init_decl_constantes_mesmo_tipo()
     {
         //conjunto primeiro
@@ -160,6 +168,7 @@ public class ConjuntoSequencia {
         conjuntos.put(AnalisadorSintatico.DECLARACAO_METODO, declaracao_metodo);
         conjuntos.put(AnalisadorSintatico.PARAMETROS_MESMO_TIPO, parametros_mesmo_tipo);
         conjuntos.put(AnalisadorSintatico.COMANDO_GERAL, comando_geral);
+        conjuntos.put(AnalisadorSintatico.EXPRESSAO, expressao);
     }
 
 }

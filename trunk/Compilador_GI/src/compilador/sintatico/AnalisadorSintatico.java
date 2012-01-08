@@ -32,6 +32,7 @@ public class AnalisadorSintatico {
     public static final String TIPO_VARIAVEL = "tipo_variavel";
     public static final String PARAMETRO_REAL = "parametro_real";
     public static final String PARAMETROS_MESMO_TIPO = "parametros_mesmo_tipo";
+    public static final String EXPRESSAO = "expressao";
     public static final String EXPRESSAO_ARITMETICA = "expressao_aritmetica";
     public static final String COMANDO_GERAL = "comando_geral";
     public static final String COMANDO_LINHA = "comando_linha";
@@ -573,20 +574,28 @@ public class AnalisadorSintatico {
 
     private void expressao()
     {
-        if(tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match(TokenType.ABREPAR);
-            expressao_parentese();
+        try {
+            if (tokenAtual.getTipo() == TokenType.ABREPAR) {
+                match(TokenType.ABREPAR);
+                expressao_parentese();
+            }
+            else if (tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM) {
+                termo();
+                prox_trecho_soma();
+                prox_trecho_relacional();
+            }
+            else if (tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
+                expressao_booleana();
+                prox_trecho_expl();
+            }
+            else {
+                throw new ErroSintaticoException("esperava uma expressão, variável ou valor: ");
+            }
         }
-        else if(tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM ) {
-            termo();
-            prox_trecho_soma();
-            prox_trecho_relacional();
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(PARAMETROS_MESMO_TIPO));
         }
-        else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO ) {
-            expressao_booleana();
-            prox_trecho_expl();
-        }
-        else erroSintatico(tokenAtual);
 
     }
 
