@@ -31,6 +31,7 @@ public class ConjuntoSequencia {
     private Set<TokenType> parametros_mesmo_tipo = new HashSet<TokenType>();
 
     private Set<TokenType> classe = new HashSet<TokenType>();
+    private Set<TokenType> comando_geral = new HashSet<TokenType>();
 
     public ConjuntoSequencia()
     {
@@ -42,6 +43,7 @@ public class ConjuntoSequencia {
         init_bloco_metodos();
         init_declaracao_metodo();
         init_parametros_mesmo_tipo();
+        init_comando_geral();
 
 
         armazenarConjuntos();
@@ -78,6 +80,19 @@ public class ConjuntoSequencia {
     {
         bloco_metodos.add(TokenType.FECHACHAVE);
         bloco_metodos.add(TokenType.EOF);
+    }
+
+    private void init_comando_geral()
+    {
+        comando_geral.add(TokenType.ESCREVA);
+        comando_geral.add(TokenType.LEIA);
+        comando_geral.add(TokenType.RETORNO);
+        //comando_geral.add(TokenType.INCR);
+        //comando_geral.add(TokenType.DECR);
+        comando_geral.add(TokenType.SE);
+        comando_geral.add(TokenType.PARA);
+        comando_geral.add(TokenType.ENQUANTO);
+        comando_geral.add(TokenType.EOF);
     }
 
      private void init_parametros_mesmo_tipo()
@@ -144,6 +159,7 @@ public class ConjuntoSequencia {
         conjuntos.put(AnalisadorSintatico.BLOCO_METODOS, bloco_metodos);
         conjuntos.put(AnalisadorSintatico.DECLARACAO_METODO, declaracao_metodo);
         conjuntos.put(AnalisadorSintatico.PARAMETROS_MESMO_TIPO, parametros_mesmo_tipo);
+        conjuntos.put(AnalisadorSintatico.COMANDO_GERAL, comando_geral);
     }
 
 }
