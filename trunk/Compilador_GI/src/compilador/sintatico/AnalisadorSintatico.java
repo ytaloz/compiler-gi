@@ -68,6 +68,8 @@ public class AnalisadorSintatico {
         inicializarVariaveis();
         
         proxToken();
+
+        try {
         programa();
         //bloco_constantes();
         //bloco_variaveis();
@@ -77,9 +79,9 @@ public class AnalisadorSintatico {
         //atribuicao();
         //comandos();
         // bloco_metodos();
-
-        if (!(tokenAtual.getTipo() == TokenType.EOF) && (erros.size()==0) ) {
-            erroSintatico(tokenAtual);
+        }
+        catch (RuntimeException e) {
+            erroSintatico(e.getMessage(), tokenAtual.getLinha());
         }
     }
 
@@ -148,7 +150,7 @@ public class AnalisadorSintatico {
             match2(TokenType.FECHACHAVE);
         }
         catch( ErroSintaticoException ex ) {
-            erroSintatico(ex.tokenEsperado,tokenAtual);
+            erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(BLOCO_CONSTANTES));
         }
     }
@@ -169,7 +171,7 @@ public class AnalisadorSintatico {
             match2(TokenType.PONTOVIRGULA);
         }
         catch (ErroSintaticoException ex) {
-            erroSintatico(ex.tokenEsperado, tokenAtual);
+            erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(DECL_CONSTANTES_MESMO_TIPO));
         }
     }
@@ -191,7 +193,7 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.CARACTERE ||
              tokenAtual.getTipo() == TokenType.CADEIA  ) proxToken();
             
-        else erroSintatico("<tipo_variavel> esperado; ", tokenAtual.getLinha());
+        else throw new ErroSintaticoException("Faltando declaraçao de tipo");
     }
 
     private void lista_decl_constantes()
@@ -1196,9 +1198,18 @@ public class AnalisadorSintatico {
         else throw new ErroSintaticoException(esperado);
     }
 
+    private void erroSintatico(ErroSintaticoException ex)
+    {
+        if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual);
+        else erroSintatico(ex.mensagem, tokenAtual.getLinha());
+    }
+
     private void panico(Set<TokenType> conjuntoSincronizacao)
     {
         while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
+//        if (tokenAtual.getTipo() == TokenType.EOF) {
+//            throw new RuntimeException("Fim inesperado de arquivo!");
+//        }
     }
 
     //exibe token esperado na mensagem de erro
