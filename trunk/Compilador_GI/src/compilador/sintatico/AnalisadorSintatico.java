@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class AnalisadorSintatico {
 
-    //constantes correspondentes aos nomes dos não terminais que necessitam de conjunto primeiro na análise
+    //constantes correspondentes aos nomes dos não terminais que necessitam de conjunto primeiro e/ou sequencia na análise
     
     public static final String BLOCO_CONSTANTES = "bloco_constantes";
     public static final String BLOCO_VARIAVEIS = "bloco_variaveis";
@@ -50,6 +50,9 @@ public class AnalisadorSintatico {
     //classe que armazena os conjuntos primeiros das produções da gramática
     private ConjuntoPrimeiro conjuntoPrimeiro = new ConjuntoPrimeiro();
 
+    //classe que armazena os conjuntos sequencia das produções da gramática
+    private ConjuntoSequencia conjuntoSequencia = new ConjuntoSequencia();
+
 
     public AnalisadorSintatico(Janela janela)
     {
@@ -75,7 +78,7 @@ public class AnalisadorSintatico {
         //comandos();
         // bloco_metodos();
 
-        if (! (tokenAtual.getTipo() == TokenType.EOF) ) {
+        if (!(tokenAtual.getTipo() == TokenType.EOF) && (erros.size()==0) ) {
             erroSintatico(tokenAtual);
         }
     }
@@ -138,10 +141,16 @@ public class AnalisadorSintatico {
 
     private void bloco_constantes()
     {
-        match(TokenType.CONSTANTES);
-        match(TokenType.ABRECHAVE);
-        declaracao_constantes();
-        match(TokenType.FECHACHAVE);
+        try {
+            match2(TokenType.CONSTANTES);
+            match2(TokenType.ABRECHAVE);
+            declaracao_constantes();
+            match2(TokenType.FECHACHAVE);
+        }
+        catch( ErroSintaticoException ex ) {
+            erroSintatico(ex.tokenEsperado,tokenAtual);
+            panico(conjuntoSequencia.getConjunto(BLOCO_CONSTANTES));
+        }
     }
 
     private void declaracao_constantes()
@@ -154,10 +163,25 @@ public class AnalisadorSintatico {
 
     private void decl_constantes_mesmo_tipo()
     {
-        tipo_variavel();
-        lista_decl_constantes();
-        match(TokenType.PONTOVIRGULA);
+        try {
+            tipo_variavel();
+            lista_decl_constantes();
+            match2(TokenType.PONTOVIRGULA);
+        }
+        catch (ErroSintaticoException ex) {
+            erroSintatico(ex.tokenEsperado, tokenAtual);
+            panico(conjuntoSequencia.getConjunto(DECL_CONSTANTES_MESMO_TIPO));
+        }
     }
+
+//    private void decl_constantes_mesmo_tipo()
+//    {
+//
+//            tipo_variavel();
+//            lista_decl_constantes();
+//            match(TokenType.PONTOVIRGULA);
+//
+//    }
 
     private void tipo_variavel()
     {
@@ -350,7 +374,8 @@ public class AnalisadorSintatico {
         parametros_formais();
         match(TokenType.FECHAPAR);
         match(TokenType.ABRECHAVE);
-        declaracao_variaveis();
+        //declaracao_variaveis();
+        bloco_variaveis();
         comandos();
         match(TokenType.FECHACHAVE);
     }
@@ -1163,6 +1188,17 @@ public class AnalisadorSintatico {
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
         else erroSintatico(esperado, tokenAtual);
+    }
+
+    private void match2(TokenType esperado)
+    {
+        if(tokenAtual.getTipo() == esperado) proxToken();
+        else throw new ErroSintaticoException(esperado);
+    }
+
+    private void panico(Set<TokenType> conjuntoSincronizacao)
+    {
+        while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
     }
 
     //exibe token esperado na mensagem de erro
