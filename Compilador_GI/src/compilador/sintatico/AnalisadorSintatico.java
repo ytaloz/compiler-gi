@@ -31,6 +31,7 @@ public class AnalisadorSintatico {
     public static final String DECL_VARIAVEIS_MESMO_TIPO = "decl_variaveis_mesmo_tipo";
     public static final String TIPO_VARIAVEL = "tipo_variavel";
     public static final String PARAMETRO_REAL = "parametro_real";
+    public static final String PARAMETROS_MESMO_TIPO = "parametros_mesmo_tipo";
     public static final String EXPRESSAO_ARITMETICA = "expressao_aritmetica";
     public static final String COMANDO_GERAL = "comando_geral";
     public static final String COMANDO_LINHA = "comando_linha";
@@ -456,19 +457,24 @@ public class AnalisadorSintatico {
 
     private void declaracao_metodo_vazio()
     {
-        if(tokenAtual.getTipo() == TokenType.ID) {
-            declaracao_metodo();
-            declaracao_metodos();
+        try {
+            if (tokenAtual.getTipo() == TokenType.ID) {
+                declaracao_metodo();
+                declaracao_metodos();
+            } else if (tokenAtual.getTipo() == TokenType.PRINCIPAL) {
+                match2(TokenType.PRINCIPAL);
+                match2(TokenType.ABREPAR);
+                match2(TokenType.VAZIO);
+                match2(TokenType.FECHAPAR);
+                match2(TokenType.ABRECHAVE);
+                dec_var_metodo();
+                comandos();
+                match2(TokenType.FECHACHAVE);
+            }
         }
-        else if(tokenAtual.getTipo() == TokenType.PRINCIPAL) {
-            match(TokenType.PRINCIPAL);
-            match(TokenType.ABREPAR);
-            match(TokenType.VAZIO);
-            match(TokenType.FECHAPAR);
-            match(TokenType.ABRECHAVE);
-            declaracao_variaveis();
-            comandos();
-            match(TokenType.FECHACHAVE);
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(DECLARACAO_METODO));
         }
     }
 
@@ -483,25 +489,35 @@ public class AnalisadorSintatico {
             parametros_mesmo_tipo();
             parametros_formais();
         }
+        else if (tokenAtual.getTipo() == TokenType.VAZIO) {
+             match2(TokenType.VAZIO);
+        }
     }
 
     private void parametros_mesmo_tipo()
     {
-        tipo_variavel();
-        lista_parametros();
-        match(TokenType.PONTOVIRGULA);
+        try {
+            tipo_variavel();
+            lista_parametros();
+            match2(TokenType.PONTOVIRGULA);
+        }
+        catch(ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(PARAMETROS_MESMO_TIPO));
+        }
+
     }
 
     private void lista_parametros()
     {
-        match(TokenType.ID);
+        match2(TokenType.ID);
         loop_lista_parametros();
     }
 
     private void loop_lista_parametros()
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
-            match(TokenType.VIRGULA);
+            match2(TokenType.VIRGULA);
             lista_parametros();
         }
     }
