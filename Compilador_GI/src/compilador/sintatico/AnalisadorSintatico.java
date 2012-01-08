@@ -24,6 +24,7 @@ public class AnalisadorSintatico {
     public static final String BLOCO_CONSTANTES = "bloco_constantes";
     public static final String BLOCO_VARIAVEIS = "bloco_variaveis";
     public static final String CLASSES = "classes";
+    public static final String CLASSE = "classe";
     public static final String DECL_CONSTANTES_MESMO_TIPO = "decl_constantes_mesmo_tipo";
     public static final String DECL_VARIAVEIS_MESMO_TIPO = "decl_variaveis_mesmo_tipo";
     public static final String TIPO_VARIAVEL = "tipo_variavel";
@@ -83,6 +84,8 @@ public class AnalisadorSintatico {
         catch (RuntimeException e) {
             erroSintatico(e.getMessage(), tokenAtual.getLinha());
         }
+
+        if(tokenAtual.getTipo() != TokenType.EOF) erroSintatico(TokenType.EOF, tokenAtual);
     }
 
     private List<Token> removerErrosEComentarios(ArrayList<Token> tokens)
@@ -314,46 +317,79 @@ public class AnalisadorSintatico {
 
     private void classe()
     {
-        match(TokenType.CLASSE);
-        match(TokenType.ID);
-        complemento_decl_classe();
+        try{
+            match2(TokenType.CLASSE);
+            match2(TokenType.ID);
+            complemento_decl_classe();
+        }
+        catch (ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(CLASSE));
+        }
     }
 
     private void complemento_decl_classe()
     {
          if(tokenAtual.getTipo() == TokenType.ABRECHAVE) {
-           match(TokenType.ABRECHAVE);
+           match2(TokenType.ABRECHAVE);
            blocos_classe();
-           match(TokenType.FECHACHAVE);
+           match2(TokenType.FECHACHAVE);
         }
          else if(tokenAtual.getTipo() == TokenType.HERDA_DE)
          {
-             match(TokenType.HERDA_DE);
-             match(TokenType.ID);
-             match(TokenType.ABRECHAVE);
+             match2(TokenType.HERDA_DE);
+             match2(TokenType.ID);
+             match2(TokenType.ABRECHAVE);
              blocos_classe();
-             match(TokenType.FECHACHAVE);
+             match2(TokenType.FECHACHAVE);
          }
-         else erroSintatico(tokenAtual);
+         else throw new ErroSintaticoException("esperava a chave de abertura do corpo da classe ou a declaração de herança herda_de :");
     }
+
+//    private void blocos_classe()
+//    {
+//         if(tokenAtual.getTipo() == TokenType.CONSTANTES) {
+//          bloco_constantes();
+//          bloco_variaveis();
+//          bloco_metodos();
+//        }
+//    }
 
     private void blocos_classe()
     {
          if(tokenAtual.getTipo() == TokenType.CONSTANTES) {
-          bloco_constantes();
-          bloco_variaveis();
-          bloco_metodos();
+             bloco_constantes();
+             outros_blocos_classe();
         }
+         else if(tokenAtual.getTipo() == TokenType.VARIAVEIS) {
+             bloco_variaveis();
+             bloco_metodos();
+         }
+         else if(tokenAtual.getTipo() == TokenType.METODOS) {
+             bloco_metodos();
+         }
+    }
+
+    private void outros_blocos_classe() {
+         if(tokenAtual.getTipo() == TokenType.VARIAVEIS) {
+             bloco_variaveis();
+             bloco_metodos();
+         }
+         else if(tokenAtual.getTipo() == TokenType.METODOS) {
+             bloco_metodos();
+         }
     }
 
 // -------------- METODOS ------------------------------------------------------
 
     private void bloco_metodos()
     {
-        match(TokenType.METODOS);
-        match(TokenType.ABRECHAVE);
-        declaracao_metodos();
-        match(TokenType.FECHACHAVE);
+        if (tokenAtual.getTipo() == TokenType.METODOS) {
+            match(TokenType.METODOS);
+            match(TokenType.ABRECHAVE);
+            declaracao_metodos();
+            match(TokenType.FECHACHAVE);
+        }
     }
 
     private void declaracao_metodos()
