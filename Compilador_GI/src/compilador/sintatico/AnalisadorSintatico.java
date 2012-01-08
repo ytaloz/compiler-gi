@@ -214,10 +214,16 @@ public class AnalisadorSintatico {
 
     private void bloco_variaveis()
     {
-        match(TokenType.VARIAVEIS);
-        match(TokenType.ABRECHAVE);
-        declaracao_variaveis();
-        match(TokenType.FECHACHAVE);
+        try {
+            match2(TokenType.VARIAVEIS);
+            match2(TokenType.ABRECHAVE);
+            declaracao_variaveis();
+            match2(TokenType.FECHACHAVE);
+        } 
+        catch (ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(BLOCO_VARIAVEIS));
+        }
     }
 
     private void declaracao_variaveis()
@@ -230,24 +236,33 @@ public class AnalisadorSintatico {
 
     private void decl_variaveis_mesmo_tipo()
     {
-        if(primeiro(TIPO_VARIAVEL).contains(tokenAtual.getTipo())) {
-            tipo_variavel();
-            lista_decl_variaveis();
-            match(TokenType.PONTOVIRGULA);
+        try {
+            if(primeiro(TIPO_VARIAVEL).contains(tokenAtual.getTipo())) {
+                tipo_variavel();
+                lista_decl_variaveis();
+                match2(TokenType.PONTOVIRGULA);
+            }
+            else if(tokenAtual.getTipo() == TokenType.ID) {
+                match2(TokenType.ID);
+                match2(TokenType.ID);
+                complemento_variavel_instanciar_obj();
+                match2(TokenType.PONTOVIRGULA);
+            }
+            else throw new ErroSintaticoException("esperando declaração de tipo (primitivo ou objeto): ");
         }
-        else if(tokenAtual.getTipo() == TokenType.ID) {
-            match(TokenType.ID);
-            match(TokenType.ID);
-            complemento_variavel_instanciar_obj();
-            match(TokenType.PONTOVIRGULA);
+        catch (ErroSintaticoException ex) {
+            erroSintatico(ex);
+            panico(conjuntoSequencia.getConjunto(DECL_VARIAVEIS_MESMO_TIPO));
         }
-        else erroSintatico(tokenAtual);
     }
 
     private void lista_decl_variaveis()
     {
-        match(TokenType.ID);
-        complemento_decl_variavel();
+        if (tokenAtual.getTipo() == TokenType.ID) {
+            match(TokenType.ID);
+            complemento_decl_variavel();
+        }
+        else throw new ErroSintaticoException("Esperava um identificador na declaração da variável: ");
     }
 
     private void complemento_decl_variavel()
@@ -1078,7 +1093,8 @@ public class AnalisadorSintatico {
             incremento_decremento();
             match( TokenType.ID );
         }
-        else erroSintatico(tokenAtual);
+        //else erroSintatico(tokenAtual);
+        else throw new ErroSintaticoException("Esperando início de atribuição ou operador de incremento/decremento: ");
     }
 
     private void complemento_id_atribuicao()
@@ -1146,6 +1162,7 @@ public class AnalisadorSintatico {
           else if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) {
               incremento_decremento();
           }
+          else throw new ErroSintaticoException("esperando uma expressão, variável ou valor para realizar a atribuição: ");
      }
 
      private void complemento_variavel_atribuicao()
