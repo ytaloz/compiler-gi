@@ -166,6 +166,7 @@ public class AnalisadorSintatico {
             match(TokenType.FECHACHAVE);
         }
         catch( ErroSintaticoException ex ) {
+            ex.mensagemContexto = "Erro na declaração do bloco de constantes - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(BLOCO_CONSTANTES));
         }
@@ -177,7 +178,7 @@ public class AnalisadorSintatico {
             decl_constantes_mesmo_tipo();
             declaracao_constantes();
         }
-        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE) throw new ErroSintaticoException("Esperava uma declaração de constante: ");
+        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE && tokenAtual.getTipo() != TokenType.EOF) throw new ErroSintaticoException("Esperava uma declaração de constante: ");
     }
 
     private void decl_constantes_mesmo_tipo()
@@ -229,6 +230,7 @@ public class AnalisadorSintatico {
             match(TokenType.FECHACHAVE);
         } 
         catch (ErroSintaticoException ex) {
+            ex.mensagemContexto = "Erro na declaração do bloco de variáveis - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(BLOCO_VARIAVEIS));
         }
@@ -240,7 +242,7 @@ public class AnalisadorSintatico {
             decl_variaveis_mesmo_tipo();
             declaracao_variaveis();
         }
-        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE) throw new ErroSintaticoException("Esperava uma declaração de variavel: ");
+        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE && tokenAtual.getTipo() != TokenType.EOF) throw new ErroSintaticoException("Esperava uma declaração de variavel: ");
     }
 
     private void decl_variaveis_mesmo_tipo()
@@ -260,7 +262,7 @@ public class AnalisadorSintatico {
             else throw new ErroSintaticoException("esperando declaração de tipo (primitivo ou classe): ");
         }
         catch (ErroSintaticoException ex) {
-            ex.mensagem = "Erro na declaração de variável - ";
+            ex.mensagemContexto = "Erro na declaração de variável - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(DECL_VARIAVEIS_MESMO_TIPO));
         }
@@ -1444,7 +1446,7 @@ public class AnalisadorSintatico {
 
     private void erroSintatico(ErroSintaticoException ex)
     {
-        if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual, ex.mensagem);
+        if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual, ex.mensagemContexto);
         else erroSintatico(ex.mensagem, tokenAtual.getLinha());
     }
 

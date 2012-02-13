@@ -14,7 +14,8 @@ import compilador.token.TokenType;
 public class ErroSintaticoException extends RuntimeException {
     
     public TokenType tokenEsperado;
-    public String mensagem;
+    public String mensagem = "";
+    public String mensagemContexto = "";
 
     public ErroSintaticoException( TokenType tokenEsperado )
     {
