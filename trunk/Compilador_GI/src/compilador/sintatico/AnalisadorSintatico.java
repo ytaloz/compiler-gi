@@ -139,11 +139,10 @@ public class AnalisadorSintatico {
             else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
                 classes();
             }
-            else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou declaração de classe: ");
+            else if(tokenAtual.getTipo()!= TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou declaração de classe: ");
         }
         catch( ErroSintaticoException ex ) {
                 erroSintatico(ex);
-                //panico(conjuntoSequencia.getConjunto(BLOCO_CONSTANTES));
             }
     }
 
@@ -1447,7 +1446,7 @@ public class AnalisadorSintatico {
     private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
-        else if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException();
+        else if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException(esperado);
         else throw new ErroSintaticoException(esperado);
     }
 
