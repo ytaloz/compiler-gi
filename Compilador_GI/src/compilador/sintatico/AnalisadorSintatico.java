@@ -397,6 +397,7 @@ public class AnalisadorSintatico {
             }
         }
         catch(ErroSintaticoException ex) {
+            ex.mensagemContexto = "Erro no bloco de declaração de métodos: ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(BLOCO_METODOS));
         }
@@ -444,6 +445,7 @@ public class AnalisadorSintatico {
             match(TokenType.FECHACHAVE);
         }
          catch(ErroSintaticoException ex) {
+             ex.mensagemContexto = "Erro na declaração de método: ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(DECLARACAO_METODO));
         }
@@ -493,6 +495,7 @@ public class AnalisadorSintatico {
         else if (tokenAtual.getTipo() == TokenType.VAZIO) {
              match(TokenType.VAZIO);
         }
+        else throw new ErroSintaticoException("esperava declaração de parâmetros formais ou palavra chave 'vazio': ");
     }
 
     private void parametros_mesmo_tipo()
