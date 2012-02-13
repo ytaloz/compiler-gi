@@ -334,6 +334,7 @@ public class AnalisadorSintatico {
             complemento_decl_classe();
         }
         catch (ErroSintaticoException ex) {
+            ex.mensagemContexto = "Erro na declaração de classe - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(CLASSE));
         }
@@ -370,6 +371,7 @@ public class AnalisadorSintatico {
          else if(tokenAtual.getTipo() == TokenType.METODOS) {
              bloco_metodos();
          }
+         else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou métodos: ");
     }
 
     private void outros_blocos_classe() {
