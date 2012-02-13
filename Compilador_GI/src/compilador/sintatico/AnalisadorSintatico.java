@@ -5,7 +5,6 @@
 
 package compilador.sintatico;
 
-import compilador.exception.FinalArquivoException;
 import compilador.exception.ErroSintaticoException;
 import compilador.gui.Janela;
 import compilador.token.Token;
@@ -88,9 +87,6 @@ public class AnalisadorSintatico {
         //atribuicao();
         //comandos();
         // bloco_metodos();
-        }
-        catch (FinalArquivoException e) {
-            if(erros.size() == 0) erroSintatico(e.getMessage(), tokenAtual.getLinha());
         }
         catch (RuntimeException e) {
             erroSintatico(e.getMessage(), tokenAtual.getLinha());
@@ -1440,7 +1436,6 @@ public class AnalisadorSintatico {
     private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
-        else if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException(esperado);
         else throw new ErroSintaticoException(esperado);
     }
 
