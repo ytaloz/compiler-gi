@@ -89,7 +89,7 @@ public class AnalisadorSintatico {
         // bloco_metodos();
         }
         catch (RuntimeException e) {
-            erroSintatico(e.getMessage(), tokenAtual.getLinha());
+            erroSintatico(e.getMessage(),"Exceção no reconhecimento do programa: ", tokenAtual.getLinha());
         }
 
     }
@@ -189,6 +189,7 @@ public class AnalisadorSintatico {
             match(TokenType.PONTOVIRGULA);
         }
         catch (ErroSintaticoException ex) {
+            ex.mensagemContexto = "Erro na declaração de constantes - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(DECL_CONSTANTES_MESMO_TIPO));
         }
@@ -1447,7 +1448,7 @@ public class AnalisadorSintatico {
     private void erroSintatico(ErroSintaticoException ex)
     {
         if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual, ex.mensagemContexto);
-        else erroSintatico(ex.mensagem, tokenAtual.getLinha());
+        else erroSintatico(ex.mensagem, ex.mensagemContexto, tokenAtual.getLinha());
     }
 
     private void panico(Set<TokenType> conjuntoSincronizacao)
@@ -1481,9 +1482,9 @@ public class AnalisadorSintatico {
     }
 
     //exibe uma mensagem livre de erro
-    private void erroSintatico(String msg, int linha)
+    private void erroSintatico(String msg, String msgContexto, int linha)
     {
-        erros.add(new ErroSintatico(msg, linha));
+        erros.add(new ErroSintatico((msgContexto + msg), linha));
     }
 
     public void imprimirSaida()
