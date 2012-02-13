@@ -177,6 +177,7 @@ public class AnalisadorSintatico {
             decl_constantes_mesmo_tipo();
             declaracao_constantes();
         }
+        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE) throw new ErroSintaticoException("Esperava uma declaração de constante: ");
     }
 
     private void decl_constantes_mesmo_tipo()
@@ -239,6 +240,7 @@ public class AnalisadorSintatico {
             decl_variaveis_mesmo_tipo();
             declaracao_variaveis();
         }
+        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE) throw new ErroSintaticoException("Esperava uma declaração de variavel: ");
     }
 
     private void decl_variaveis_mesmo_tipo()
@@ -255,9 +257,10 @@ public class AnalisadorSintatico {
                 complemento_variavel_instanciar_obj();
                 match(TokenType.PONTOVIRGULA);
             }
-            else throw new ErroSintaticoException("esperando declaração de tipo (primitivo ou objeto): ");
+            else throw new ErroSintaticoException("esperando declaração de tipo (primitivo ou classe): ");
         }
         catch (ErroSintaticoException ex) {
+            ex.mensagem = "Erro na declaração de variável - ";
             erroSintatico(ex);
             panico(conjuntoSequencia.getConjunto(DECL_VARIAVEIS_MESMO_TIPO));
         }
@@ -1441,7 +1444,7 @@ public class AnalisadorSintatico {
 
     private void erroSintatico(ErroSintaticoException ex)
     {
-        if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual);
+        if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual, ex.mensagem);
         else erroSintatico(ex.mensagem, tokenAtual.getLinha());
     }
 
@@ -1451,7 +1454,7 @@ public class AnalisadorSintatico {
     }
 
     //exibe token esperado na mensagem de erro
-    private void erroSintatico(TokenType esperado, Token obtido)
+    private void erroSintatico(TokenType esperado, Token obtido, String mensagemContexto)
     {
         String msg = "Token inesperado: " + obtido.getTipo() + " ";
 
@@ -1460,6 +1463,7 @@ public class AnalisadorSintatico {
         }
 
         msg += ", esperava: " + esperado;
+        msg = mensagemContexto + msg;
         erros.add(new ErroSintatico(msg, obtido.getLinha()));
     }
 
