@@ -66,14 +66,14 @@ public class ConjuntoSequencia {
     {
         bloco_constantes.add(TokenType.VARIAVEIS);
         bloco_constantes.add(TokenType.CLASSE);
-        bloco_constantes.add(TokenType.FECHACHAVE);
+        //bloco_constantes.add(TokenType.FECHACHAVE);
         bloco_constantes.add(TokenType.EOF);
     }
 
     private void init_bloco_variaveis()
     {
         bloco_variaveis.add(TokenType.CLASSE);
-        bloco_variaveis.add(TokenType.FECHACHAVE);
+        //bloco_variaveis.add(TokenType.FECHACHAVE);
         bloco_variaveis.add(TokenType.EOF);
     }
 
