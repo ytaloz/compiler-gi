@@ -1437,12 +1437,6 @@ public class AnalisadorSintatico {
         tokenAtual = tokens.get(ponteiro);
     }
 
-//    private void match(TokenType esperado)
-//    {
-//        if(tokenAtual.getTipo() == esperado) proxToken();
-//        else erroSintatico(esperado, tokenAtual);
-//    }
-
     private void match(TokenType esperado)
     {
         if(tokenAtual.getTipo() == esperado) proxToken();
