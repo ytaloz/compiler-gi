@@ -5,6 +5,8 @@
 
 package compilador.sintatico;
 
+import compilador.exception.FinalArquivoException;
+import compilador.exception.ErroSintaticoException;
 import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenType;
