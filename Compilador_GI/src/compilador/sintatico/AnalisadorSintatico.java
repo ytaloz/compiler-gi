@@ -1461,8 +1461,8 @@ public class AnalisadorSintatico {
     {
         String msg = "Token inesperado: " + obtido.getTipo() + " ";
 
-        if(obtido.getTipo() == TokenType.ID || obtido.getTipo() == TokenType.NUM) {
-            msg += "'" + obtido.getLexema() + "'";
+        if(obtido.getTipo() == TokenType.ID || obtido.getTipo() == TokenType.NUM || obtido.getTipo() == TokenType.LITERAL || obtido.getTipo() == TokenType.CARACTER) {
+            msg += "'" + obtido.getLexema().trim() + "'";
         }
 
         msg += ", esperava: " + esperado;
@@ -1475,8 +1475,8 @@ public class AnalisadorSintatico {
     {
         String msg = "Token inesperado: " + obtido.getTipo() + " ";
         
-        if(obtido.getTipo() == TokenType.ID || obtido.getTipo() == TokenType.NUM) {
-            msg += "'" + obtido.getLexema() + "'";
+        if(obtido.getTipo() == TokenType.ID || obtido.getTipo() == TokenType.NUM || obtido.getTipo() == TokenType.LITERAL || obtido.getTipo() == TokenType.CARACTER) {
+            msg += "'" + obtido.getLexema().trim() + "'";
         }
         erros.add(new ErroSintatico(msg, obtido.getLinha()));
     }
