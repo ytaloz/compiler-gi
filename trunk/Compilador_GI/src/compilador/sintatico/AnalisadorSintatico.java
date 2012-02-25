@@ -969,6 +969,14 @@ public class AnalisadorSintatico {
         else throw new ErroSintaticoException("operador relacional esperado: ");
     }
 
+    private void op_relacional_igualdade()
+    {
+        if ( tokenAtual.getTipo() == TokenType.IGUAL ||
+             tokenAtual.getTipo() == TokenType.DIF  ) proxToken();
+
+        else throw new ErroSintaticoException("operador relacional de igualdade esperado: ");
+    }
+
     private void expressao_aritmetica()
     {
         termo_aritm();
@@ -1151,14 +1159,27 @@ public class AnalisadorSintatico {
     {
         match(TokenType.SE);
         match(TokenType.ABREPAR);
-        //expressao_logica();
-        expressao();
+        condicao_comandos();
         match(TokenType.FECHAPAR);
         match(TokenType.ENTAO);
         match(TokenType.ABRECHAVE);
         comandos();
         match(TokenType.FECHACHAVE);
         complemento_comando_se();
+    }
+
+    private void condicao_comandos()
+    {
+        if (primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
+            expressao_relacional();
+            prox_trecho_expl();
+        }
+        else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
+            expressao_booleana();
+            op_relacional_igualdade();
+            match(TokenType.ID);
+        }
+        else throw new ErroSintaticoException("esperava uma expressão lógica ou relacional: ");
     }
     
     private void complemento_comando_se()
@@ -1177,7 +1198,7 @@ public class AnalisadorSintatico {
         match(TokenType.ABREPAR);
         atribuicao();
         match(TokenType.PONTOVIRGULA);
-        expressao_relacional();
+        condicao_comandos();
         match(TokenType.PONTOVIRGULA);
         atribuicao();
         match(TokenType.FECHAPAR);
@@ -1190,8 +1211,7 @@ public class AnalisadorSintatico {
     {
         match(TokenType.ENQUANTO);
         match(TokenType.ABREPAR);
-        //expressao_logica();
-        expressao();
+        condicao_comandos();
         match(TokenType.FECHAPAR);
         match(TokenType.ABRECHAVE);
         comandos();
