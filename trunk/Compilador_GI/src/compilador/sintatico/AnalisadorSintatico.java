@@ -371,7 +371,6 @@ public class AnalisadorSintatico {
          else if(tokenAtual.getTipo() == TokenType.METODOS) {
              bloco_metodos();
          }
-         else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou métodos: ");
     }
 
     private void outros_blocos_classe() {
@@ -495,7 +494,6 @@ public class AnalisadorSintatico {
         else if (tokenAtual.getTipo() == TokenType.VAZIO) {
              match(TokenType.VAZIO);
         }
-        else throw new ErroSintaticoException("esperava declaração de parâmetros formais ou palavra chave 'vazio': ");
     }
 
     private void parametros_mesmo_tipo()
