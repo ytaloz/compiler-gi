@@ -485,11 +485,35 @@ public class AnalisadorSintatico {
              tokenAtual.getTipo() == TokenType.CADEIA ) {
 
             parametros_mesmo_tipo();
-            parametros_formais();
+            //parametros_formais();
+            complemento_parametros_mesmo_tipo();
         }
         else if (tokenAtual.getTipo() == TokenType.VAZIO) {
              match(TokenType.VAZIO);
         }
+        else throw new ErroSintaticoException("esperava declaração de parametros formais ou palavra chave 'vazio': ");
+    }
+
+    private void complemento_parametros_mesmo_tipo()
+    {
+        if ( tokenAtual.getTipo() == TokenType.PONTOVIRGULA ) {
+            match(TokenType.PONTOVIRGULA);
+            loop_parametros_mesmo_tipo();
+        }
+    }
+
+    private void loop_parametros_mesmo_tipo()
+    {
+        if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
+             tokenAtual.getTipo() == TokenType.REAL ||
+             tokenAtual.getTipo() == TokenType.LOGICO ||
+             tokenAtual.getTipo() == TokenType.CARACTERE ||
+             tokenAtual.getTipo() == TokenType.VAZIO ||
+             tokenAtual.getTipo() == TokenType.CADEIA ) {
+            
+            parametros_formais();
+        }
+        else throw new ErroSintaticoException("esperava outra declaração de parametro formal após ponto e vírgula: ");
     }
 
     private void parametros_mesmo_tipo()
@@ -497,7 +521,7 @@ public class AnalisadorSintatico {
         try {
             tipo_variavel();
             lista_parametros();
-            match(TokenType.PONTOVIRGULA);
+            //match(TokenType.PONTOVIRGULA);
         }
         catch(ErroSintaticoException ex) {
             erroSintatico(ex);
