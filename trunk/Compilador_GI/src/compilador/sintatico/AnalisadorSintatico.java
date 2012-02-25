@@ -6,6 +6,7 @@
 package compilador.sintatico;
 
 import compilador.exception.ErroSintaticoException;
+import compilador.exception.FinalArquivoException;
 import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenType;
@@ -79,6 +80,9 @@ public class AnalisadorSintatico {
 
         try {
         programa();
+        }
+        catch (FinalArquivoException e) {
+            //não faz nada
         }
         catch (RuntimeException e) {
             erroSintatico(e.getMessage(),"Exceção no reconhecimento do programa: ", tokenAtual.getLinha());
@@ -1139,6 +1143,7 @@ public class AnalisadorSintatico {
     private void panico(Set<TokenType> conjuntoSincronizacao)
     {
         while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
+        if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException();
     }
 
     //exibe token esperado na mensagem de erro
