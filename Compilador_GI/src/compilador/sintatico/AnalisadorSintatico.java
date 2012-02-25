@@ -79,7 +79,7 @@ public class AnalisadorSintatico {
         proxToken();
 
         try {
-        programa();
+           programa();
         }
         catch (FinalArquivoException e) {
             //não faz nada
