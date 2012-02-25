@@ -66,14 +66,12 @@ public class ConjuntoSequencia {
     {
         bloco_constantes.add(TokenType.VARIAVEIS);
         bloco_constantes.add(TokenType.CLASSE);
-        //bloco_constantes.add(TokenType.FECHACHAVE);
         bloco_constantes.add(TokenType.EOF);
     }
 
     private void init_bloco_variaveis()
     {
         bloco_variaveis.add(TokenType.CLASSE);
-        //bloco_variaveis.add(TokenType.FECHACHAVE);
         bloco_variaveis.add(TokenType.EOF);
     }
 
@@ -94,8 +92,6 @@ public class ConjuntoSequencia {
         comando_geral.add(TokenType.ESCREVA);
         comando_geral.add(TokenType.LEIA);
         comando_geral.add(TokenType.RETORNO);
-        //comando_geral.add(TokenType.INCR);
-        //comando_geral.add(TokenType.DECR);
         comando_geral.add(TokenType.SE);
         comando_geral.add(TokenType.PARA);
         comando_geral.add(TokenType.ENQUANTO);
@@ -109,9 +105,7 @@ public class ConjuntoSequencia {
         parametros_mesmo_tipo.add(TokenType.CADEIA);
         parametros_mesmo_tipo.add(TokenType.LOGICO);
         parametros_mesmo_tipo.add(TokenType.CARACTERE);
-        //parametros_mesmo_tipo.add(TokenType.VAZIO);
         parametros_mesmo_tipo.add(TokenType.FECHAPAR);
-        //declaracao_metodo.add(TokenType.FECHACHAVE);
         parametros_mesmo_tipo.add(TokenType.EOF);
     }
 
@@ -123,7 +117,6 @@ public class ConjuntoSequencia {
         declaracao_metodo.add(TokenType.LOGICO);
         declaracao_metodo.add(TokenType.CARACTERE);
         declaracao_metodo.add(TokenType.VAZIO);
-        //declaracao_metodo.add(TokenType.FECHACHAVE);
         declaracao_metodo.add(TokenType.EOF);
     }
 
@@ -151,7 +144,6 @@ public class ConjuntoSequencia {
         prox_trecho_soma.add(TokenType.DIF);
         prox_trecho_soma.add(TokenType.MAIORIGUAL);
         prox_trecho_soma.add(TokenType.MENORIGUAL);
-        //prox_trecho_soma.add(TokenType.FECHAPAR);
         prox_trecho_soma.add(TokenType.FECHACOLCH);
         prox_trecho_soma.add(TokenType.MULT);
         prox_trecho_soma.add(TokenType.DIV);
