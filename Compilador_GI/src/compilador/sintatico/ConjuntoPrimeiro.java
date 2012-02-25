@@ -103,7 +103,7 @@ public class ConjuntoPrimeiro {
     {
         parametro_real.add(TokenType.ID);
         parametro_real.add(TokenType.NUM);
-        parametro_real.add(TokenType.CADEIA);
+        parametro_real.add(TokenType.LITERAL);
         parametro_real.add(TokenType.CARACTER);
         parametro_real.add(TokenType.VERDADEIRO);
         parametro_real.add(TokenType.FALSO);
