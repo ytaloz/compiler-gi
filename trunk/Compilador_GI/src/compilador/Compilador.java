@@ -27,7 +27,6 @@ public class Compilador implements Runnable {
     public Compilador()
     {
         janela = new Janela(this);
-        
         analisadorLexico = new AnalisadorLexico(janela);
         analisadorSintatico = new AnalisadorSintatico(janela);
     }
@@ -36,9 +35,7 @@ public class Compilador implements Runnable {
     {
         analiseLexica();
         analiseSintatica();
-        
         pararAnalise();
-
         imprimirSaida();
     }
 
