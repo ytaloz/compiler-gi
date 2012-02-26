@@ -1144,6 +1144,14 @@ public class AnalisadorSintatico {
         return conjuntoPrimeiro.getConjunto(producao);
     }
 
+//------------------ MÉTODO DE RECUPERAÇÃO DE ERRO - PÂNICO --------------------
+
+    private void panico(Set<TokenType> conjuntoSincronizacao)
+    {
+        while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
+        if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException();
+    }
+
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
 
     private void proxToken()
@@ -1158,16 +1166,33 @@ public class AnalisadorSintatico {
         else throw new ErroSintaticoException(esperado);
     }
 
+    public void imprimirSaida()
+    {
+        if (temErros()) janela.imprimirCabecalhoErrosSintaticos();
+
+        for (ErroSintatico erro : erros) {
+            janela.imprimirErroSintatico(erro);
+        }
+    }
+
+    public boolean temErros()
+    {
+        if( erros==null ) return false;
+        return erros.size() > 0;
+    }
+
+    public int getErros()
+    {
+        return erros.size();
+    }
+
+
+//--------------------------- MÉTODOS DE ERRO SINTÁTICO ------------------------
+
     private void erroSintatico(ErroSintaticoException ex)
     {
         if(ex.tokenEsperado != null) erroSintatico(ex.tokenEsperado, tokenAtual, ex.mensagemContexto);
         else erroSintatico(ex.mensagem, ex.mensagemContexto, tokenAtual.getLinha());
-    }
-
-    private void panico(Set<TokenType> conjuntoSincronizacao)
-    {
-        while(!conjuntoSincronizacao.contains(tokenAtual.getTipo())) proxToken();
-        if(tokenAtual.getTipo() == TokenType.EOF) throw new FinalArquivoException();
     }
 
     //exibe token esperado na mensagem de erro
@@ -1201,24 +1226,6 @@ public class AnalisadorSintatico {
         erros.add(new ErroSintatico((msgContexto + msg), linha));
     }
 
-    public void imprimirSaida()
-    {
-        if (temErros()) janela.imprimirCabecalhoErrosSintaticos();
-
-        for (ErroSintatico erro : erros) {
-            janela.imprimirErroSintatico(erro);
-        }
-    }
-
-    public boolean temErros()
-    {
-        if( erros==null ) return false;
-        return erros.size() > 0;
-    }
-
-    public int getErros()
-    {
-        return erros.size();
-    }
+    
 
 }
