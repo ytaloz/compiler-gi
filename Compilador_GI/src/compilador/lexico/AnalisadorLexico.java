@@ -62,8 +62,6 @@ public class AnalisadorLexico {
                 janela.imprimirErroLexico((TokenErro) token);
             }
         }
-
-        //if (temErros()) janela.imprimirTotalDeErrosLexicos(erros);
     }
 
     public boolean temErros()
