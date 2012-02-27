@@ -1081,9 +1081,6 @@ public class AnalisadorSintatico {
     {
         if( tokenAtual.getTipo() == TokenType.PONTO ) {
             loop_acesso_atributo_obj();
-
-            complemento_referencia_variavel();
-
             match(TokenType.ATRIB);
             segundo_membro_atribuicao();
         }
@@ -1098,6 +1095,7 @@ public class AnalisadorSintatico {
             match(TokenType.ATRIB);
             segundo_membro_atribuicao();
         }
+        else throw new ErroSintaticoException("Esperando início de operador ponto, abre-colchete ou atribuição: ");
     }
 
     private void complemento_referencia_variavel()
