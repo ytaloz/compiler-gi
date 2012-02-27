@@ -842,8 +842,22 @@ public class AnalisadorSintatico {
     {
         match(TokenType.RETORNO);
         match(TokenType.ABREPAR);
-        expressao();
+        param_retorno();
         match(TokenType.FECHAPAR);
+    }
+
+    private void param_retorno()
+    {
+        if( tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM || tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            expressao();
+        }
+        else if (  tokenAtual.getTipo() == TokenType.NUM ||
+                   tokenAtual.getTipo() == TokenType.LITERAL ||
+                   tokenAtual.getTipo() == TokenType.CARACTER ||
+                   tokenAtual.getTipo() == TokenType.VERDADEIRO ||
+                   tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
+
+        else throw new ErroSintaticoException("esperava uma expressão ou valor como retorno: ");
     }
 
     private void incremento_decremento()
