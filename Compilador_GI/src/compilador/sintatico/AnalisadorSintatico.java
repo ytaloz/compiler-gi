@@ -855,8 +855,7 @@ public class AnalisadorSintatico {
             tokenAtual.getTipo() == TokenType.ABREPAR ) {
             expressao();
         }
-        else if (  tokenAtual.getTipo() == TokenType.NUM ||
-                   tokenAtual.getTipo() == TokenType.LITERAL ||
+        else if (  tokenAtual.getTipo() == TokenType.LITERAL ||
                    tokenAtual.getTipo() == TokenType.CARACTER  ) proxToken();
 
         else throw new ErroSintaticoException("esperava uma expressão ou valor como retorno: ");
