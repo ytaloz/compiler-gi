@@ -848,14 +848,16 @@ public class AnalisadorSintatico {
 
     private void param_retorno()
     {
-        if( tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM || tokenAtual.getTipo() == TokenType.ABREPAR ) {
+        if( tokenAtual.getTipo() == TokenType.ID || 
+            tokenAtual.getTipo() == TokenType.NUM ||
+            tokenAtual.getTipo() == TokenType.VERDADEIRO ||
+            tokenAtual.getTipo() == TokenType.FALSO ||
+            tokenAtual.getTipo() == TokenType.ABREPAR ) {
             expressao();
         }
         else if (  tokenAtual.getTipo() == TokenType.NUM ||
                    tokenAtual.getTipo() == TokenType.LITERAL ||
-                   tokenAtual.getTipo() == TokenType.CARACTER ||
-                   tokenAtual.getTipo() == TokenType.VERDADEIRO ||
-                   tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
+                   tokenAtual.getTipo() == TokenType.CARACTER  ) proxToken();
 
         else throw new ErroSintaticoException("esperava uma expressão ou valor como retorno: ");
     }
