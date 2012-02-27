@@ -735,10 +735,6 @@ public class AnalisadorSintatico {
          }
     }
 
-
-// --------------CHAMADA DE MÉTODOS ---------------------------------------------
-
-
 // -------------------- COMANDOS -----------------------------------------------
 
     private void comandos()
