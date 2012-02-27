@@ -762,6 +762,7 @@ public class AnalisadorSintatico {
             match(TokenType.PONTO);
             chamada_metodo();
         }
+        else throw new ErroSintaticoException("esperava chamada de método: ");
     }
 
 // -------------------- COMANDOS -----------------------------------------------
@@ -1100,13 +1101,40 @@ public class AnalisadorSintatico {
 
     private void complemento_referencia_variavel()
     {
-        if( tokenAtual.getTipo() == TokenType.PONTO ) {
-            loop_acesso_atributo_obj();
+        if( tokenAtual.getTipo() == TokenType.PONTO || tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            acesso_objeto();
         }
         else if( tokenAtual.getTipo() == TokenType.ABRECOLCH ) {
             match(TokenType.ABRECOLCH);
             expressao_aritmetica();
             match(TokenType.FECHACOLCH);
+        }
+    }
+
+    private void acesso_objeto()
+    {
+        if( tokenAtual.getTipo() == TokenType.PONTO ) {
+            match(TokenType.PONTO);
+            match(TokenType.ID);
+            loop_acesso_objeto();
+        }
+        else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            match(TokenType.ABREPAR);
+            parametros_reais();
+            match(TokenType.FECHAPAR);
+        }
+        else throw new ErroSintaticoException("Esperando acesso a atributo ou chamada de método: ");
+    }
+
+    private void loop_acesso_objeto()
+    {
+         if( tokenAtual.getTipo() == TokenType.PONTO ) {
+            acesso_objeto();
+        }
+         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            match(TokenType.ABREPAR);
+            parametros_reais();
+            match(TokenType.FECHAPAR);
         }
     }
 
