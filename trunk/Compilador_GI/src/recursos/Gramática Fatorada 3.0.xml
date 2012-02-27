@@ -1,0 +1,152 @@
+
+
+
+<!-------------------------------------------------- BLOCOS E ESTRUTURAS GERAIS ------------------------------------------------------------>
+
+<programa> ::= <bloco_constantes> <outros_blocos_programa> | <bloco_variaveis> <classes> | <classes>
+		<outros_blocos_programa> ::= <bloco_variaveis> <classes> | <classes>
+
+		<tipo_variavel> ::= 'inteiro' | 'real' | 'logico' | 'caractere' | 'cadeia'
+
+<!-- DECLARAÇÃO DE CONSTANTES -->
+
+		<bloco_constantes> ::= 'constantes' '{' <declaracao_constantes> '}'
+			<declaracao_constantes> ::= <decl_constantes_mesmo_tipo> <declaracao_constantes> | vazio
+				<decl_constantes_mesmo_tipo> ::= <tipo_variavel> <lista_decl_constantes> ';'
+					<lista_decl_constantes> ::= <atribuicao> <loop_lista_decl_constantes>
+						<loop_lista_decl_constantes> ::= ',' <lista_decl_constantes> | vazio
+
+<!-- DECLARAÇÃO DE VARIÁVEIS -->
+
+		<bloco_variaveis> ::= 'variaveis' '{' <declaracao_variaveis> '}'
+			<declaracao_variaveis> ::= <decl_variaveis_mesmo_tipo> <declaracao_variaveis> | vazio
+				<decl_variaveis_mesmo_tipo> ::= <tipo_variavel> <lista_decl_variaveis> ';' | 'ID' 'ID' <complemento_variavel_instanciar_obj> ';'
+					<lista_decl_variaveis> ::= 'ID' <complemento_decl_variavel>
+						<complemento_decl_variavel> ::= <prox_trecho_lista_decl_variaveis> |
+														'=' <segundo_membro_atribuicao> <prox_trecho_lista_decl_variaveis> |
+														'[' <expressao_aritmetica> ']' <prox_trecho_lista_decl_variaveis> |
+														vazio
+
+							<prox_trecho_lista_decl_variaveis> ::= ',' <lista_decl_variaveis> | vazio
+
+<!-- DECLARAÇÃO DE CLASSES -->
+
+		<classes> ::= <classe> <classes> | vazio
+			<classe> ::= 'classe' 'ID' <complemento_decl_classe>
+				<complemento_decl_classe> ::= '{' <blocos_classe> '}' | 'herda_de' 'ID' '{' <blocos_classe> '}'
+					<blocos_classe> ::= <bloco_constantes> <outros_blocos_classe> | <bloco_variaveis> <bloco_metodos> | <bloco_metodos> | vazio
+							<outros_blocos_classe> ::= <bloco_variaveis> <bloco_metodos> | <bloco_bloco_metodos>
+
+<!-- DECLARAÇÃO DE MÉTODOS -->
+
+<bloco_metodos> ::= 'metodos' '{' <declaracao_metodos> '}' | vazio
+	<declaracao_metodos> ::= <tipo_metodo_menos_vazio> <declaracao_metodo> <declaracao_metodos> | 'vazio' <declaracao_metodo_vazio> | vazio
+			<declaracao_metodo> ::=	'ID' '(' <parametros_formais> ')' '{' <dec_var_metodo> <comandos> '}'
+				<dec_var_metodo> ::= <bloco_variaveis> | vazio
+		<declaracao_metodo_vazio> ::= <declaracao_metodo> <declaracao_metodos> | 'principal' '(' 'vazio' ')' '{' <dec_var_metodo> <comandos> '}'
+		<tipo_metodo_menos_vazio> ::= 'inteiro' | 'real' | 'logico' | 'caractere' | 'cadeia'
+
+				<parametros_formais> ::= <parametros_mesmo_tipo> <complemento_parametros_mesmo_tipo> | 'vazio'
+					<complemento_parametros_mesmo_tipo> ::= ';' <loop_parametros_mesmo_tipo> | vazio
+						<loop_parametros_mesmo_tipo> ::= <parametros_formais>
+					<parametros_mesmo_tipo> ::= <tipo_variavel> <lista_parametros>
+						<lista_parametros> ::= 'ID' <loop_lista_parametros>
+							<loop_lista_parametros> ::= ',' <lista_parametros> | vazio
+
+
+<!-- DECLARAÇÃO DE OBJETOS -->
+
+	<complemento_variavel_instanciar_obj> ::= '(' <parametros_reais_instanciar_obj> ')' | vazio
+		<parametros_reais_instanciar_obj> ::= <parametro_real> <loop_parametros_reais_instanciar_obj>
+			<loop_parametros_reais_instanciar_obj> ::= ',' <parametros_reais_instanciar_obj> | vazio
+			<parametro_real>  ::= 'ID' | 'NUM' | 'CADEIA_CONSTANTE' | 'CADEIA_CARACTERE' | 'verdadeiro' | 'falso'
+
+
+<!------------------------------------------------------- COMANDOS -------------------------------------------------------------------------------->
+
+<comandos> ::= <comando_geral> <comandos> | vazio
+	<comando_geral> ::= <comando_linha> ';' | <comando_bloco>
+		<comando_linha> ::= <comando_escreva> | <comando_leia> | <retorno> | <incremento_decremento> 'ID' | 'ID' <complemento_variavel_comando>
+		<comando_bloco> ::= <comando_se> | <comando_para> | <comando_enquanto>
+
+			<complemento_variavel_comando> ::= <acesso_objeto_comando> |
+											  '[' <expressao_aritmetica> ']' '=' <segundo_membro_atribuicao> |
+											  '=' <segundo_membro_atribuicao> |
+										      '(' <parametros_reais> ')' |
+											  <incremento_decremento>
+
+				<acesso_objeto_comando> ::= '.' 'ID' <loop_acesso_objeto_comando>
+					<loop_acesso_objeto_comando> ::= <acesso_objeto_comando> | '(' <parametros_reais> ')' | '=' <segundo_membro_atribuicao>
+
+			<comando_se> ::= 'se' '(' <condicao_comandos> ')' 'entao' '{' <comandos> '}' <complemento_comando_se>
+				<complemento_comando_se> ::= 'senao' '{' <comandos> '}' | vazio
+
+			<comando_para> ::= 'para' '(' <atribuicao> ';' <condicao_comandos> ';' <atribuicao> ')' '{ <comandos>'}'
+
+			<comando_enquanto> ::= 'enquanto' '(' <condicao_comandos> ')' '{' <comandos> '}'
+
+				<condicao_comandos> ::= <expressao_relacional> <prox_trecho_expl> | <expressao_booleana> <op_relacional_igualdade> 'ID'
+
+			<comando_escreva> ::= 'escreva' '(' <params_escreva> ')'
+				<params_escreva> ::= <param_escreva> <loop_params_escreva>
+					<param_escreva> ::=  'CADEIA_CONSTANTE' | <expressao>
+					<loop_params_escreva> ::= ',' <params_escreva> | vazio
+
+			<comando_leia> ::= 'leia' '(' <params_leia> ')'
+				<params_leia> ::= 'ID' <loop_params_leia>
+					<loop_params_leia> ::= ',' <params_leia> | vazio
+
+			<retorno> ::= 	'retorno' '(' <expressao> ')'
+
+			<incremento_decremento> ::= '++' | '--'
+
+<!------------------------------------------------------ EXPRESSÕES --------------------------------------------------------------------------->
+
+<expressao> ::= <expressao_aritmetica> <complemento_exp_aritmetica> | <expressao_booleana> <prox_trecho_expl>
+	<complemento_exp_aritmetica> ::= <operador_relacional> <expressao_aritmetica> <prox_trecho_expl> | vazio
+	<prox_trecho_expl> ::= <operador_logico> <termo_l> | vazio
+		<operador_logico> ::=  'OU' | 'E'
+		<termo_l> ::= <expressao_relacional> <prox_trecho_expl> | <expressao_booleana> <prox_trecho_expl>
+
+
+	<expressao_relacional> ::= 	<expressao_aritmetica> <operador_relacional> <expressao_aritmetica>
+		<operador_relacional> ::= 'MAIOR_QUE' | 'MENOR_QUE' | 'MAIOR_IGUAL' | 'MENOR_IGUAL' | '==' | '!='
+		<op_relacional_igualdade> ::= '==' | '!='
+
+	<expressao_aritmetica> ::= 	<termo_aritm> <prox_trecho_exp_aritm>
+		 <termo_aritm> ::= <fator> <complemento_fator>
+			<fator> ::= 'ID' <complemento_referencia_variavel> | 'NUM' | '(' <expressao_aritmetica> ')'
+			<complemento_fator> ::= <operador_multiplicacao> <termo_aritm> | vazio
+
+				<complemento_referencia_variavel> ::= <acesso_objeto> | '[' <expressao_aritmetica> ']' | vazio
+						<acesso_objeto> ::= '.' 'ID' <loop_acesso_objeto> | '(' <parametros_reais> ')'
+							<loop_acesso_objeto> ::= <acesso_objeto> | '(' <parametros_reais> ')' | vazio
+
+								<parametros_reais> ::= <parametro_real> <loop_parametros_reais> | vazio
+									<loop_parametros_reais> ::= ',' <parametros_reais> | vazio
+									<parametro_real>  ::= 'ID' | 'NUM' | 'CADEIA_CONSTANTE' | 'CADEIA_CARACTERE' | 'verdadeiro' | 'falso'
+
+				<operador_multiplicacao> ::= '*' | '/'
+
+		<prox_trecho_exp_aritm>	::= <operador_soma> <expressao_aritmetica> | vazio
+			<operador_soma> ::= '+' | '-'
+
+
+	<expressao_booleana> ::= 'verdadeiro' | 'falso'
+
+
+<!------------------------------------------------------ ATRIBUIÇÃO ------------------------------------------------------------------------------>
+
+<atribuicao> ::= 'ID' <complemento_id_atribuicao> | <incremento_decremento> 'ID'
+	<complemento_id_atribuicao> ::= <complemento_referencia_variavel_atrib> | <incremento_decremento>
+		<complemento_referencia_variavel_atrib> ::=	<loop_acesso_atributo_obj> '=' <segundo_membro_atribuicao> |
+													'[' <expressao_aritmetica> ']' '=' <segundo_membro_atribuicao> |
+													'=' <segundo_membro_atribuicao>	|
+
+			<loop_acesso_atributo_obj> ::= '.' <complemento_ponto_comando> | vazio
+					<complemento_ponto_comando> ::= 'ID' <loop_acesso_atributo_obj>
+
+			<segundo_membro_atribuicao> ::= <expressao> | <incremento_decremento> 'ID' | 'CADEIA_CONSTANTE' | 'CARACTER_CONSTANTE' |
+
+
+ 
