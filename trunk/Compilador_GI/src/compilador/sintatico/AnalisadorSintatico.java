@@ -1041,7 +1041,7 @@ public class AnalisadorSintatico {
             match( TokenType.ATRIB );
             segundo_membro_atribuicao();
         }
-        else throw new ErroSintaticoException("Esperando chamada de método ou acesso a atributo: ");
+        else throw new ErroSintaticoException("Esperando chamada de método ou atribuição: ");
     }
 
     private void complemento_ponto_comando()
