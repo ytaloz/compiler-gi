@@ -983,7 +983,8 @@ public class AnalisadorSintatico {
         switch(tokenAtual.getTipo())
         {
             case PONTO: {
-                complemento_chamada_metodo();
+                //complemento_chamada_metodo();
+                acesso_objeto_comando();
                 break;
             }
             case ABRECOLCH: {
@@ -1015,6 +1016,32 @@ public class AnalisadorSintatico {
             }
             default: throw new ErroSintaticoException("esperava uma atribuição ou chamada de método: ");
         }
+    }
+
+    private void acesso_objeto_comando()
+    {
+        if ( tokenAtual.getTipo() == TokenType.PONTO ) {
+            match(TokenType.PONTO);
+            match(TokenType.ID);
+            loop_acesso_objeto_comando();
+        }
+    }
+
+    private void loop_acesso_objeto_comando()
+    {
+        if ( tokenAtual.getTipo() == TokenType.PONTO  ) {
+            acesso_objeto_comando();
+         }
+        else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            match( TokenType.ABREPAR );
+            parametros_reais();
+            match( TokenType.FECHAPAR );
+        }
+        else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
+            match( TokenType.ATRIB );
+            segundo_membro_atribuicao();
+        }
+        else throw new ErroSintaticoException("Esperando chamada de método ou acesso a atributo: ");
     }
 
     private void complemento_ponto_comando()
