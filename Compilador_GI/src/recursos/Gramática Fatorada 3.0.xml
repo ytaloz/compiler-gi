@@ -96,7 +96,8 @@
 				<params_leia> ::= 'ID' <loop_params_leia>
 					<loop_params_leia> ::= ',' <params_leia> | vazio
 
-			<retorno> ::= 	'retorno' '(' <expressao> ')'
+			<retorno> ::= 	'retorno' '(' <param_retorno> ')'
+				<param_retorno> ::= <expressao> | 'CADEIA_CONSTANTE' | 'CADEIA_CARACTERE' | 'verdadeiro' | 'falso'
 
 			<incremento_decremento> ::= '++' | '--'
 
