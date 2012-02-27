@@ -546,13 +546,6 @@ public class AnalisadorSintatico {
 
  // ------------------- OBJETOS ------------------------------------------------
 
-    private void instanciar_obj()
-    {
-        match(TokenType.ID);
-        match(TokenType.ID);
-        complemento_variavel_instanciar_obj();
-    }
-
     private void complemento_variavel_instanciar_obj()
     {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
@@ -745,25 +738,6 @@ public class AnalisadorSintatico {
 
 // --------------CHAMADA DE MÉTODOS ---------------------------------------------
 
-    private void chamada_metodo()
-    {
-        match( TokenType.ID );
-        complemento_chamada_metodo();
-    }
-
-    private void complemento_chamada_metodo()
-    {
-        if (tokenAtual.getTipo() == TokenType.ABREPAR) {
-            match(TokenType.ABREPAR);
-            parametros_reais();
-            match(TokenType.FECHAPAR);
-        }
-        else if(tokenAtual.getTipo() == TokenType.PONTO) {
-            match(TokenType.PONTO);
-            chamada_metodo();
-        }
-        else throw new ErroSintaticoException("esperava chamada de método: ");
-    }
 
 // -------------------- COMANDOS -----------------------------------------------
 
