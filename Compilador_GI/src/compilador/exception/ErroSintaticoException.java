@@ -27,4 +27,9 @@ public class ErroSintaticoException extends RuntimeException {
         this.mensagem = mensagem;
     }
 
+    public ErroSintaticoException()
+    {
+
+    }
+ 
 }

@@ -7,6 +7,7 @@ package compilador;
 
 import compilador.gui.Janela;
 import compilador.lexico.AnalisadorLexico;
+import compilador.semantico.AnalisadorSemantico;
 import compilador.sintatico.AnalisadorSintatico;
 import compilador.token.Token;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Compilador implements Runnable {
 
     AnalisadorLexico analisadorLexico;
     AnalisadorSintatico analisadorSintatico;
+    AnalisadorSemantico analisadorSemantico;
 
     public Compilador()
     {
@@ -35,6 +37,7 @@ public class Compilador implements Runnable {
     {
         analiseLexica();
         analiseSintatica();
+        analiseSemantica();
         pararAnalise();
         imprimirSaida();
     }
@@ -49,6 +52,11 @@ public class Compilador implements Runnable {
         analisadorSintatico.analisar(tokens);
     }
 
+    private void analiseSemantica()
+    {
+        analisadorSemantico.analisar(tokens);
+    }
+
     private void imprimirSaida() 
     {
         Runnable runnable = new Runnable() {
@@ -61,11 +69,14 @@ public class Compilador implements Runnable {
                 }
 
                 analisadorLexico.imprimirSaida();
-                if(analisadorLexico.getErros()>0) janela.imprimirLinha();
+                if(analisadorLexico.getErros()>0) janela.pularLinhaSaida();
                 analisadorSintatico.imprimirSaida();
+                if(analisadorSintatico.getErros()>0) janela.pularLinhaSaida();
+                analisadorSemantico.imprimirSaida();
        
                 janela.imprimirTotalDeErrosLexicos(analisadorLexico.getErros());
                 janela.imprimirTotalDeErrosSintaticos(analisadorSintatico.getErros());
+                janela.imprimirTotalDeErrosSemanticos(analisadorSemantico.getErros());
                 janela.imprimirTotalDeTokens(tokens.size());
             }
         };
@@ -80,7 +91,7 @@ public class Compilador implements Runnable {
 
     private boolean existemErros()
     {
-        return ( analisadorLexico.temErros() || analisadorSintatico.temErros() );
+        return ( analisadorLexico.temErros() || analisadorSintatico.temErros() || analisadorSemantico.temErros() );
     }
 
     public void run() {
