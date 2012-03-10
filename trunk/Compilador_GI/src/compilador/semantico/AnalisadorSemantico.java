@@ -43,6 +43,8 @@ public class AnalisadorSemantico {
     //classe que armazena os conjuntos sequencia das produções da gramática
     private ConjuntoSequencia conjuntoSequencia = new ConjuntoSequencia();
 
+    
+
     public AnalisadorSemantico(Janela janela)
     {
         this.janela = janela;
@@ -91,7 +93,7 @@ public class AnalisadorSemantico {
             else if (primeiro(CLASSES).contains(tokenAtual.getTipo())) {
                 classes();
             }
-            else if(tokenAtual.getTipo()!= TokenType.EOF) throw new ErroSintaticoException("esperava bloco de constantes, variáveis ou declaração de classe: ");
+            else if(tokenAtual.getTipo()!= TokenType.EOF) throw new ErroSintaticoException();
         }
         catch( ErroSintaticoException ex ) {
                 
@@ -107,7 +109,7 @@ public class AnalisadorSemantico {
         else if(tokenAtual.getTipo() == TokenType.CLASSE) {
             classes();
         }
-        else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException("esperava bloco de variaveis ou declaração de classe: ");
+        else if(tokenAtual.getTipo()!=TokenType.EOF) throw new ErroSintaticoException();
     }
 
 
@@ -132,7 +134,7 @@ public class AnalisadorSemantico {
             decl_constantes_mesmo_tipo();
             declaracao_constantes();
         }
-        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE && tokenAtual.getTipo() != TokenType.EOF) throw new ErroSintaticoException("Esperava uma declaração de constante: ");
+        else if (tokenAtual.getTipo() != TokenType.FECHACHAVE && tokenAtual.getTipo() != TokenType.EOF) throw new ErroSintaticoException();
     }
 
     private void decl_constantes_mesmo_tipo()
