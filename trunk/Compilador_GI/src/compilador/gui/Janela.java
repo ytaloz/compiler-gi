@@ -15,6 +15,7 @@ import compilador.gui.utils.CellRenderer;
 import compilador.gui.utils.CorSintaxeDocument;
 import compilador.gui.utils.NumberedBorder;
 import compilador.lexico.AnalisadorLexico;
+import compilador.semantico.ErroSemantico;
 import compilador.sintatico.ErroSintatico;
 import compilador.token.Token;
 import compilador.token.TokenErro;
@@ -664,11 +665,20 @@ public class Janela extends javax.swing.JFrame {
         jTextAreaErros.append(" ERROS SINTÁTICOS\n");
     }
 
+    public void imprimirCabecalhoErrosSemanticos() {
+        jTextAreaErros.append(" ERROS SEMÂNTICOS\n");
+    }
+
     public void imprimirErroLexico(TokenErro token) {
         imprimirErro(token.getMensagem());
     }
 
     public void imprimirErroSintatico(ErroSintatico erro)
+    {
+        imprimirErro(erro.getMensagem());
+    }
+
+    public void imprimirErroSemantico(ErroSemantico erro)
     {
         imprimirErro(erro.getMensagem());
     }
@@ -702,11 +712,15 @@ public class Janela extends javax.swing.JFrame {
         jTextAreaErros.append("\n Total de erros sintáticos: " + total);
     }
 
+    public void imprimirTotalDeErrosSemanticos(int total) {
+        jTextAreaErros.append("\n Total de erros semânticos: " + total);
+    }
+
     public void imprimirTotalDeTokens(int total) {
         jTextAreaErros.append("\n Total de tokens analisados: " + total);
     }
 
-    public void imprimirLinha() {
+    public void pularLinhaSaida() {
         jTextAreaErros.append("\n");
     }
     
