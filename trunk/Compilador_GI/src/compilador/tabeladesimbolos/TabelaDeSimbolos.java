@@ -14,12 +14,25 @@ import java.util.HashMap;
  */
 public class TabelaDeSimbolos {
 
-    private HashMap<String,String> palavrasChave;
+    //palavras chave da linguagem
+    private HashMap<String,String> palavrasChave = new HashMap<String,String>();
 
-    public TabelaDeSimbolos(){
-        palavrasChave = new HashMap<String,String>();
+    //classes do programa
+    private HashMap<String,Classe> classes = new HashMap<String,Classe>();
+
+    //constantes globais
+    private HashMap<String,Constante> constantes = new HashMap<String,Constante>();
+
+    //variaveis globais
+    private HashMap<String,Variavel> variaveis = new HashMap<String,Variavel>();
+
+    public TabelaDeSimbolos()
+    {
         inicializarPalavrasChave();
     }
+
+
+//--------------------------- PALAVRAS CHAVE -----------------------------------
 
     private void inserirPalavraChave(String lexema)
     {
