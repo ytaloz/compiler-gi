@@ -5,7 +5,7 @@
 
 package compilador.lexico;
 
-import compilador.TabelaDeSimbolos;
+import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.token.Token;
 import compilador.token.TokenCategory;
 import compilador.token.TokenErro;
@@ -505,7 +505,7 @@ public class Automato {
 
     private boolean ehPalavraReservada(String lexema)
     {
-        return simbolos.getSimbolo(lexema) != null;
+        return simbolos.getPalavraChave(lexema) != null;
     }
 
     private boolean ehSimboloInvalido(char c) {

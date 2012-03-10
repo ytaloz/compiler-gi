@@ -5,7 +5,7 @@
 
 package compilador.gui.utils;
 
-import compilador.TabelaDeSimbolos;
+import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import java.awt.Color;
 import java.util.Hashtable;
 //import javax.print.attribute.AttributeSet;
@@ -415,7 +415,7 @@ public class CorSintaxeDocument extends DefaultStyledDocument {
 	 */
 	protected boolean isKeyword(String token) {
 		//Object o = keywords.get(token.toUpperCase());
-                Object o = tabela.getSimbolo(token);
+                Object o = tabela.getPalavraChave(token);
 		return o == null ? false : true;
 	}
 

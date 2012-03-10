@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package compilador;
+package compilador.tabeladesimbolos;
 
 import compilador.token.TokenType;
 import java.util.HashMap;
@@ -14,21 +14,21 @@ import java.util.HashMap;
  */
 public class TabelaDeSimbolos {
 
-    private HashMap<String,String> tabela;
+    private HashMap<String,String> palavrasChave;
 
     public TabelaDeSimbolos(){
-        tabela = new HashMap<String,String>();
+        palavrasChave = new HashMap<String,String>();
         inicializarPalavrasChave();
     }
 
-    public void inserir(String lexema)
+    private void inserirPalavraChave(String lexema)
     {
-        tabela.put(lexema, lexema);
+        palavrasChave.put(lexema, lexema);
     }
 
-    public String getSimbolo(String chave)
+    public String getPalavraChave(String chave)
     {
-        return tabela.get(chave);
+        return palavrasChave.get(chave);
     }
 
     public TokenType getTokenPalavraChave(String palavraChave)
@@ -61,28 +61,28 @@ public class TabelaDeSimbolos {
 
     private void inicializarPalavrasChave()
     {
-        inserir("variaveis");
-        inserir("metodos");
-        inserir("constantes");
-        inserir("classe");
-        inserir("retorno");
-        inserir("vazio");
-        inserir("principal");
-        inserir("se");
-        inserir("entao");
-        inserir("senao");
-        inserir("enquanto");
-        inserir("para");
-        inserir("leia");
-        inserir("escreva");
-        inserir("inteiro");
-        inserir("real");
-        inserir("logico");
-        inserir("caractere");
-        inserir("cadeia");
-        inserir("verdadeiro");
-        inserir("falso");
-        inserir("herda_de");
+        inserirPalavraChave("variaveis");
+        inserirPalavraChave("metodos");
+        inserirPalavraChave("constantes");
+        inserirPalavraChave("classe");
+        inserirPalavraChave("retorno");
+        inserirPalavraChave("vazio");
+        inserirPalavraChave("principal");
+        inserirPalavraChave("se");
+        inserirPalavraChave("entao");
+        inserirPalavraChave("senao");
+        inserirPalavraChave("enquanto");
+        inserirPalavraChave("para");
+        inserirPalavraChave("leia");
+        inserirPalavraChave("escreva");
+        inserirPalavraChave("inteiro");
+        inserirPalavraChave("real");
+        inserirPalavraChave("logico");
+        inserirPalavraChave("caractere");
+        inserirPalavraChave("cadeia");
+        inserirPalavraChave("verdadeiro");
+        inserirPalavraChave("falso");
+        inserirPalavraChave("herda_de");
     }
 
 
