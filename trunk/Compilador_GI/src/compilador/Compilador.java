@@ -9,6 +9,7 @@ import compilador.gui.Janela;
 import compilador.lexico.AnalisadorLexico;
 import compilador.semantico.AnalisadorSemantico;
 import compilador.sintatico.AnalisadorSintatico;
+import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.token.Token;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -21,6 +22,7 @@ public class Compilador implements Runnable {
 
     Janela janela;
     List<Token> tokens;
+    TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
 
     AnalisadorLexico analisadorLexico;
     AnalisadorSintatico analisadorSintatico;
@@ -29,9 +31,9 @@ public class Compilador implements Runnable {
     public Compilador()
     {
         janela = new Janela(this);
-        analisadorLexico = new AnalisadorLexico(janela);
+        analisadorLexico = new AnalisadorLexico(janela, tabelaDeSimbolos);
         analisadorSintatico = new AnalisadorSintatico(janela);
-        analisadorSemantico = new AnalisadorSemantico(janela);
+        analisadorSemantico = new AnalisadorSemantico(janela, tabelaDeSimbolos);
     }
 
     public void analisar(String codigoFonte)

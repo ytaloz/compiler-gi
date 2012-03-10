@@ -11,6 +11,7 @@ import compilador.exception.FinalArquivoException;
 import compilador.gui.Janela;
 import compilador.sintatico.ConjuntoPrimeiro;
 import compilador.sintatico.ConjuntoSequencia;
+import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.token.Token;
 import compilador.token.TokenType;
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ import java.util.Set;
 public class AnalisadorSemantico {
 
     private Janela janela;
+
+    TabelaDeSimbolos tabelaDeSimbolos;
 
     //lista de tokens representando o codigo fonte
     private List<Token> tokens;
@@ -45,9 +48,10 @@ public class AnalisadorSemantico {
 
     
 
-    public AnalisadorSemantico(Janela janela)
+    public AnalisadorSemantico(Janela janela, TabelaDeSimbolos tabela)
     {
         this.janela = janela;
+        this.tabelaDeSimbolos = tabela;
     }
 
     public void analisar(List<Token> tokens)
