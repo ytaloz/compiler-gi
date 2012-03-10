@@ -5,7 +5,7 @@
 
 package compilador.lexico;
 
-import compilador.TabelaDeSimbolos;
+import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.gui.Janela;
 import compilador.token.Token;
 import compilador.token.TokenErro;
