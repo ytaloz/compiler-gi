@@ -13,7 +13,7 @@
 		<bloco_constantes> ::= 'constantes' '{' <declaracao_constantes> '}'
 			<declaracao_constantes> ::= <decl_constantes_mesmo_tipo> <declaracao_constantes> | vazio
 				<decl_constantes_mesmo_tipo> ::= <tipo_variavel> <lista_decl_constantes> ';'
-					<lista_decl_constantes> ::= <atribuicao> <loop_lista_decl_constantes>
+					<lista_decl_constantes> ::= <atribuicao_constante> <loop_lista_decl_constantes>
 						<loop_lista_decl_constantes> ::= ',' <lista_decl_constantes> | vazio
 
 <!-- DECLARAÇÃO DE VARIÁVEIS -->
@@ -150,4 +150,6 @@
 			<segundo_membro_atribuicao> ::= <expressao> | <incremento_decremento> 'ID' | 'CADEIA_CONSTANTE' | 'CARACTER_CONSTANTE' |
 
 
- 
+
+<atribuicao_constante> ::= 'ID' '=' <segundo_membro_atribuicao>
+	
