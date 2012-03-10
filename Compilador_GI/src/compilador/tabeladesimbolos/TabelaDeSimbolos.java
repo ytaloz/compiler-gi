@@ -26,6 +26,8 @@ public class TabelaDeSimbolos {
     //variaveis globais
     private HashMap<String,Variavel> variaveis = new HashMap<String,Variavel>();
 
+
+
     public TabelaDeSimbolos()
     {
         inicializarPalavrasChave();

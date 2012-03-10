@@ -22,14 +22,15 @@ public class AnalisadorLexico {
     Janela janela;
 
     List<Token> tokens = new ArrayList<Token>();
-    TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
+    TabelaDeSimbolos tabelaDeSimbolos;
 
     //total de erros computados
     private int erros = 0;
 
-    public AnalisadorLexico(Janela janela)
+    public AnalisadorLexico(Janela janela, TabelaDeSimbolos tabela)
     {
         this.janela = janela;
+        this.tabelaDeSimbolos = tabela;
     }
 
     public List<Token> analisarTokens()
