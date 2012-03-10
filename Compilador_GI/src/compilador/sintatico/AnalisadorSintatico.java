@@ -204,7 +204,7 @@ public class AnalisadorSintatico {
 
     private void lista_decl_constantes()
     {
-        atribuicao();
+        atribuicao_constante();
         loop_lista_decl_constantes();
     }
 
@@ -1173,6 +1173,14 @@ public class AnalisadorSintatico {
               match(TokenType.ID);
           }
           else throw new ErroSintaticoException("esperando uma expressão, variável ou valor para realizar a atribuição: ");
+    }
+
+
+    private void atribuicao_constante()
+    {
+        match(TokenType.ID);
+        match(TokenType.ATRIB);
+        segundo_membro_atribuicao();
     }
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------

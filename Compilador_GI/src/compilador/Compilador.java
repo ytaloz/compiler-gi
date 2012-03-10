@@ -31,6 +31,7 @@ public class Compilador implements Runnable {
         janela = new Janela(this);
         analisadorLexico = new AnalisadorLexico(janela);
         analisadorSintatico = new AnalisadorSintatico(janela);
+        analisadorSemantico = new AnalisadorSemantico(janela);
     }
 
     public void analisar(String codigoFonte)
