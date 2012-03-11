@@ -5,13 +5,21 @@
 
 package compilador.tabeladesimbolos;
 
+import java.util.HashMap;
+
 /**
  *
  * @author Gabriel
  */
-public abstract class Escopo {
+public class Escopo {
 
-    Escopo escopoPai;
+    //escopo no qual está aninhado
+    private Escopo escopoPai;
+
+    //simbolos pertencentes a esse escopo
+    private HashMap<String,Simbolo> simbolos = new HashMap<String,Simbolo>();
+
+
 
     protected Escopo(Escopo escopoPai)
     {
@@ -21,6 +29,11 @@ public abstract class Escopo {
     public Escopo getEscopoPai()
     {
         return this.escopoPai;
+    }
+
+    public void addSimbolo(Simbolo simbolo)
+    {
+        simbolos.put(simbolo.getLexema(), simbolo);
     }
 
 }
