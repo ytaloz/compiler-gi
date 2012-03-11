@@ -240,17 +240,17 @@ public class AnalisadorSemantico {
         switch( tokenAtual.getTipo() )
         {
             case VIRGULA: {
-                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+                addVariavel(tokens.get(ponteiro-1).getLexema(), tipo);//método semântico
                 prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
             case PONTOVIRGULA: {
-                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+                addVariavel(tokens.get(ponteiro-1).getLexema(), tipo);//método semântico
                 prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
             case ATRIB: {
-                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+                addVariavel(tokens.get(ponteiro-1).getLexema(), tipo);//método semântico
                 match(TokenType.ATRIB);
                 segundo_membro_atribuicao();
                 prox_trecho_lista_decl_variaveis(tipo);
@@ -263,7 +263,7 @@ public class AnalisadorSemantico {
                 prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
-            default: tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+            default: addVariavel(tokens.get(ponteiro-1).getLexema(), tipo);//método semântico
         }
     }
 
@@ -1138,7 +1138,7 @@ public class AnalisadorSemantico {
     private void atribuicao_constante(String tipo)
     {
         match(TokenType.ID);
-        tabelaDeSimbolos.addConstante(tokens.get(ponteiro-1).getLexema(), tipo);
+        addConstante(tokens.get(ponteiro-1).getLexema(), tipo);
         match(TokenType.ATRIB);
         segundo_membro_atribuicao();
     }
@@ -1195,7 +1195,25 @@ public class AnalisadorSemantico {
 
     private void checarSeIdentificadorFoiDeclarado(String id)
     {
-        if (!ehOperandoValido(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
+        if (!ehIdentificadorDeclarado(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
+    }
+
+    private void addConstante(String id, String tipo)
+    {
+        if(ehIdentificadorDeclarado(id)) {
+            erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
+        } else {
+            tabelaDeSimbolos.addConstante(id, tipo);
+        }
+    }
+
+    private void addVariavel(String id, String tipo)
+    {
+        if(ehIdentificadorDeclarado(id)) {
+            erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
+        } else {
+            tabelaDeSimbolos.addVariavel(id, tipo);
+        }
     }
 
     private void erroSemantico(String msg)
@@ -1203,7 +1221,7 @@ public class AnalisadorSemantico {
         erros.add(new ErroSemantico(msg,tokenAtual.getLinha()));
     }
 
-    private boolean ehOperandoValido(String id)
+    private boolean ehIdentificadorDeclarado(String id)
     {
         return tabelaDeSimbolos.ehOperandoValido(id);
     }
