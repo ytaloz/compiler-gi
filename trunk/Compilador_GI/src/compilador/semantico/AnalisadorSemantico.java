@@ -957,7 +957,7 @@ public class AnalisadorSemantico {
             expressao_aritmetica();
             match(TokenType.FECHACOLCH);
         }
-        checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+        else checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
     }
 
     private void acesso_objeto()
@@ -968,6 +968,7 @@ public class AnalisadorSemantico {
             loop_acesso_objeto();
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
             match(TokenType.ABREPAR);
             parametros_reais();
             match(TokenType.FECHAPAR);
