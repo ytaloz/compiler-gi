@@ -144,8 +144,8 @@ public class AnalisadorSemantico {
     private void decl_constantes_mesmo_tipo()
     {
         try {
-            tipo_variavel();
-            lista_decl_constantes();
+            String tipo = tipo_variavel();
+            lista_decl_constantes(tipo);
             match(TokenType.PONTOVIRGULA);
         }
         catch (ErroSintaticoException ex) {
@@ -153,7 +153,7 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void tipo_variavel()
+    private String tipo_variavel()
     {
         if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
              tokenAtual.getTipo() == TokenType.REAL ||
@@ -162,19 +162,21 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.CADEIA  ) proxToken();
 
         else throw new ErroSintaticoException();
+
+        return tokens.get(ponteiro-1).getLexema();
     }
 
-    private void lista_decl_constantes()
+    private void lista_decl_constantes(String tipo)
     {
-        atribuicao_constante();
-        loop_lista_decl_constantes();
+        atribuicao_constante(tipo);
+        loop_lista_decl_constantes(tipo);
     }
 
-    private void loop_lista_decl_constantes()
+    private void loop_lista_decl_constantes(String tipo)
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
-            lista_decl_constantes();
+            lista_decl_constantes(tipo);
         }
     }
 
@@ -572,6 +574,7 @@ public class AnalisadorSemantico {
                 break;
             }
             case ID: {
+                checarSeIdentificadorFoiDeclarado(tokenAtual.getLexema()); //método semântico
                 match(TokenType.ID);
                 complemento_variavel_comando();
                 break;
@@ -949,6 +952,7 @@ public class AnalisadorSemantico {
             expressao_aritmetica();
             match(TokenType.FECHACOLCH);
         }
+        checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
     }
 
     private void acesso_objeto()
@@ -1045,6 +1049,7 @@ public class AnalisadorSemantico {
     {
         if ( tokenAtual.getTipo() == TokenType.ID  ) {
             match( TokenType.ID );
+            checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
             complemento_id_atribuicao();
          }
         else if( tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR ) {
@@ -1124,9 +1129,10 @@ public class AnalisadorSemantico {
           else throw new ErroSintaticoException();
     }
 
-    private void atribuicao_constante()
+    private void atribuicao_constante(String tipo)
     {
         match(TokenType.ID);
+        tabelaDeSimbolos.addConstante(tokens.get(ponteiro-1).getLexema(), tipo);
         match(TokenType.ATRIB);
         segundo_membro_atribuicao();
     }
@@ -1179,6 +1185,21 @@ public class AnalisadorSemantico {
     public int getErros()
     {
         return erros.size();
+    }
+
+    private void checarSeIdentificadorFoiDeclarado(String id)
+    {
+        if (!ehOperandoValido(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
+    }
+
+    private void erroSemantico(String msg)
+    {
+        erros.add(new ErroSemantico(msg,tokenAtual.getLinha()));
+    }
+
+    private boolean ehOperandoValido(String id)
+    {
+        return tabelaDeSimbolos.ehOperandoValido(id);
     }
 
 }

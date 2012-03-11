@@ -19,6 +19,9 @@ public class TabelaDeSimbolos {
     //palavras chave da linguagem
     private HashMap<String,String> palavrasChave = new HashMap<String,String>();
 
+    //todos os simbolos declarados
+    private HashMap<String,Simbolo> simbolos = new HashMap<String,Simbolo>();
+
     //escopos do programa, recuperados pelo lexema
     private HashMap<String,Escopo> escopos = new HashMap<String,Escopo>();
 
@@ -43,7 +46,7 @@ public class TabelaDeSimbolos {
         escopos.put(id,escopoAtual);
     }
 
-    //cria novo escopo, especificando o escopo pai - para herança de classes
+    //cria novo escopo, especificando o escopo pai -> usado para herança de classes
     public void aninhaNovoEscopo(String id, String pai)
     {
         escopoAtual = new Escopo(getEscopo(pai));
@@ -59,31 +62,91 @@ public class TabelaDeSimbolos {
 //------------------------------ SIMBOLOS DECLARADOS ---------------------------
 
 
-    public void addConstante(String id, TipoDado tipoDado)
+    public void addConstante(String id, String tipoDado)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CONSTANTE, tipoDado);
-        escopoAtual.addSimbolo(simbolo);
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CONSTANTE, getTipoDado(tipoDado));
+        addSimbolo(simbolo);
     }
 
-    public void addVariavel(String id, TipoDado tipoDado)
+    public void addVariavel(String id, String tipoDado)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.VARIAVEL, tipoDado);
-        escopoAtual.addSimbolo(simbolo);
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.VARIAVEL, getTipoDado(tipoDado));
+        addSimbolo(simbolo);
     }
 
-    public void addClasse(String id, TipoDado tipoDado)
+    public void addClasse(String id, String tipoDado)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, tipoDado);
-        escopoAtual.addSimbolo(simbolo);
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, getTipoDado(tipoDado));
+        addSimbolo(simbolo);
     }
 
-    public void addMetodo(String id, TipoDado tipoDado)
+    public void addMetodo(String id, String tipoDado)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.METODO, tipoDado);
-        escopoAtual.addSimbolo(simbolo);
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.METODO, getTipoDado(tipoDado));
+        addSimbolo(simbolo);
     }
 
 
+
+//--------------------------- MÉTODOS AUXILIARES -------------------------------
+
+    private TipoDado getTipoDado(String tipo)
+    {
+        if(tipo.equals("inteiro")) return TipoDado.INTEIRO;
+        if(tipo.equals("real")) return TipoDado.REAL;
+        if(tipo.equals("logico")) return TipoDado.LOGICO;
+        if(tipo.equals("cadeia")) return TipoDado.CADEIA;
+        if(tipo.equals("caractere")) return TipoDado.CARACTERE;
+        else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
+    }
+
+    public boolean foiDeclarado(String id)
+    {
+        return simbolos.get(id) != null;
+    }
+
+    public boolean ehOperandoValido(String id)
+    {
+        return ehConstante(id) || ehVariavel(id) || ehMetodo(id);
+    }
+
+    private boolean ehConstante(String id)
+    {
+        if(simbolos.get(id) != null) {
+            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
+        }
+        return false;
+    }
+
+    private boolean ehVariavel(String id)
+    {
+        if(simbolos.get(id) != null) {
+            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
+        }
+        return false;
+    }
+
+    private boolean ehMetodo(String id)
+    {
+        if(simbolos.get(id) != null) {
+            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.METODO;
+        }
+        return false;
+    }
+
+    private boolean ehClasse(String id)
+    {
+        if(simbolos.get(id) != null) {
+            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
+        }
+        return false;
+    }
+
+    private void addSimbolo(Simbolo simbolo)
+    {
+        escopoAtual.addSimbolo(simbolo);
+        simbolos.put(simbolo.getLexema(), simbolo);
+    }
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------
 

@@ -30,6 +30,11 @@ public class Simbolo {
         return lexema;
     }
 
+    public TipoSimbolo getTipoSimbolo()
+    {
+        return tipoSimbolo;
+    }
+
     enum TipoSimbolo
     {
         CONSTANTE, VARIAVEL, METODO, CLASSE
@@ -37,7 +42,7 @@ public class Simbolo {
 
     enum TipoDado
     {
-        INTEIRO, REAL, LOGICO, CADEIA, CARACTER
+        INTEIRO, REAL, LOGICO, CADEIA, CARACTERE
     }
 
 }

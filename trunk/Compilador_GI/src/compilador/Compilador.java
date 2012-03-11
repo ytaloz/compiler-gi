@@ -22,7 +22,7 @@ public class Compilador implements Runnable {
 
     Janela janela;
     List<Token> tokens;
-    TabelaDeSimbolos tabelaDeSimbolos = new TabelaDeSimbolos();
+    TabelaDeSimbolos tabelaDeSimbolos;
 
     AnalisadorLexico analisadorLexico;
     AnalisadorSintatico analisadorSintatico;
@@ -31,6 +31,7 @@ public class Compilador implements Runnable {
     public Compilador()
     {
         janela = new Janela(this);
+        tabelaDeSimbolos = new TabelaDeSimbolos();
         analisadorLexico = new AnalisadorLexico(janela, tabelaDeSimbolos);
         analisadorSintatico = new AnalisadorSintatico(janela);
         analisadorSemantico = new AnalisadorSemantico(janela, tabelaDeSimbolos);
