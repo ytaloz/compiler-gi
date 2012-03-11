@@ -73,6 +73,7 @@ public class AnalisadorSemantico {
     private void inicializarVariaveis()
     {
         this.ponteiro = -1;
+        tabelaDeSimbolos = new TabelaDeSimbolos();
         erros.clear();
     }
 
@@ -208,8 +209,8 @@ public class AnalisadorSemantico {
     {
         try {
             if(primeiro(TIPO_VARIAVEL).contains(tokenAtual.getTipo())) {
-                tipo_variavel();
-                lista_decl_variaveis();
+                String tipo = tipo_variavel();
+                lista_decl_variaveis(tipo);
                 match(TokenType.PONTOVIRGULA);
             }
             else if(tokenAtual.getTipo() == TokenType.ID) {
@@ -225,48 +226,52 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void lista_decl_variaveis()
+    private void lista_decl_variaveis(String tipo)
     {
         if (tokenAtual.getTipo() == TokenType.ID) {
             match(TokenType.ID);
-            complemento_decl_variavel();
+            complemento_decl_variavel(tipo);
         }
         else throw new ErroSintaticoException();
     }
 
-    private void complemento_decl_variavel()
+    private void complemento_decl_variavel(String tipo)
     {
         switch( tokenAtual.getTipo() )
         {
             case VIRGULA: {
-                prox_trecho_lista_decl_variaveis();
+                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+                prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
             case PONTOVIRGULA: {
-                prox_trecho_lista_decl_variaveis();
+                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
+                prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
             case ATRIB: {
+                tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
                 match(TokenType.ATRIB);
                 segundo_membro_atribuicao();
-                prox_trecho_lista_decl_variaveis();
+                prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
             case ABRECOLCH: {
                 match(TokenType.ABRECOLCH);
                 expressao_aritmetica();
                 match(TokenType.FECHACOLCH);
-                prox_trecho_lista_decl_variaveis();
+                prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
+            default: tabelaDeSimbolos.addVariavel(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
         }
     }
 
-    private void prox_trecho_lista_decl_variaveis()
+    private void prox_trecho_lista_decl_variaveis(String tipo)
     {
         if( tokenAtual.getTipo() == TokenType.VIRGULA ) {
             match(TokenType.VIRGULA);
-            lista_decl_variaveis();
+            lista_decl_variaveis(tipo);
         }
     }
 
