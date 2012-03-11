@@ -5,6 +5,8 @@
 
 package compilador.tabeladesimbolos;
 
+import compilador.tabeladesimbolos.Simbolo.TipoDado;
+import compilador.tabeladesimbolos.Simbolo.TipoSimbolo;
 import compilador.token.TokenType;
 import java.util.HashMap;
 
@@ -17,21 +19,70 @@ public class TabelaDeSimbolos {
     //palavras chave da linguagem
     private HashMap<String,String> palavrasChave = new HashMap<String,String>();
 
-    //classes do programa
-    private HashMap<String,Classe> classes = new HashMap<String,Classe>();
+    //escopos do programa, recuperados pelo lexema
+    private HashMap<String,Escopo> escopos = new HashMap<String,Escopo>();
 
-    //constantes globais
-    private HashMap<String,Constante> constantes = new HashMap<String,Constante>();
-
-    //variaveis globais
-    private HashMap<String,Variavel> variaveis = new HashMap<String,Variavel>();
+    //escopo atual no qual os simbolos serão inseridos
+    private Escopo escopoAtual = new Escopo(null);
 
 
 
     public TabelaDeSimbolos()
     {
         inicializarPalavrasChave();
+        escopos.put("programa",escopoAtual);
     }
+
+
+//------------------------------ ESCOPOS ---------------------------------------
+
+    //cria novo escopo, aninhado ao escopo atual
+    public void aninharNovoEscopo(String id)
+    {
+        escopoAtual = new Escopo(escopoAtual);
+        escopos.put(id,escopoAtual);
+    }
+
+    //cria novo escopo, especificando o escopo pai - para herança de classes
+    public void aninhaNovoEscopo(String id, String pai)
+    {
+        escopoAtual = new Escopo(getEscopo(pai));
+        escopos.put(id,escopoAtual);
+    }
+
+    private Escopo getEscopo(String id)
+    {
+        return escopos.get(id);
+    }
+
+
+//------------------------------ SIMBOLOS DECLARADOS ---------------------------
+
+
+    public void addConstante(String id, TipoDado tipoDado)
+    {
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CONSTANTE, tipoDado);
+        escopoAtual.addSimbolo(simbolo);
+    }
+
+    public void addVariavel(String id, TipoDado tipoDado)
+    {
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.VARIAVEL, tipoDado);
+        escopoAtual.addSimbolo(simbolo);
+    }
+
+    public void addClasse(String id, TipoDado tipoDado)
+    {
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, tipoDado);
+        escopoAtual.addSimbolo(simbolo);
+    }
+
+    public void addMetodo(String id, TipoDado tipoDado)
+    {
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.METODO, tipoDado);
+        escopoAtual.addSimbolo(simbolo);
+    }
+
 
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------
@@ -99,6 +150,8 @@ public class TabelaDeSimbolos {
         inserirPalavraChave("falso");
         inserirPalavraChave("herda_de");
     }
+
+    
 
 
 }
