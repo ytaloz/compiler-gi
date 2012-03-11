@@ -47,7 +47,7 @@ public class TabelaDeSimbolos {
     }
 
     //cria novo escopo, especificando o escopo pai -> usado para herança de classes
-    public void aninhaNovoEscopo(String id, String pai)
+    public void aninharNovoEscopo(String id, String pai)
     {
         escopoAtual = new Escopo(getEscopo(pai));
         escopos.put(id,escopoAtual);
