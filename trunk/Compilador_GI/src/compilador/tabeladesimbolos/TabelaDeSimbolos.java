@@ -19,9 +19,6 @@ public class TabelaDeSimbolos {
     //palavras chave da linguagem
     private HashMap<String,String> palavrasChave = new HashMap<String,String>();
 
-    //todos os simbolos declarados
-    private HashMap<String,Simbolo> simbolos = new HashMap<String,Simbolo>();
-
     //escopos do programa, recuperados pelo lexema
     private HashMap<String,Escopo> escopos = new HashMap<String,Escopo>();
 
@@ -86,7 +83,11 @@ public class TabelaDeSimbolos {
         addSimbolo(simbolo);
     }
 
-
+    private void addSimbolo(Simbolo simbolo)
+    {
+        escopoAtual.addSimbolo(simbolo);
+    }
+    
 
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
 
@@ -100,7 +101,7 @@ public class TabelaDeSimbolos {
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
     }
 
-    public Simbolo getSimbolo(String id)
+    public Simbolo getSimboloNoEscopo(String id)
     {
         if (escopoAtual.getSimbolo(id) != null) {
             return escopoAtual.getSimbolo(id);
@@ -115,51 +116,46 @@ public class TabelaDeSimbolos {
         }
     }
 
-    public boolean foiDeclarado(String id)
+    public boolean foiDeclaradoNoEscopo(String id)
     {
-        return getSimbolo(id) != null;
+        return getSimboloNoEscopo(id) != null;
     }
 
     public boolean ehOperandoValido(String id)
     {
-        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) || ehClasse(id);
+        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) ;
     }
 
     private boolean ehConstante(String id)
     {
-        if(foiDeclarado(id)) {
-            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
+        if(foiDeclaradoNoEscopo(id)) {
+            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
         }
         return false;
     }
 
     private boolean ehVariavel(String id)
     {
-        if(foiDeclarado(id)) {
-            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
+        if(foiDeclaradoNoEscopo(id)) {
+            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
         }
         return false;
     }
 
     private boolean ehMetodo(String id)
     {
-        if(foiDeclarado(id)) {
-            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.METODO;
+        if(foiDeclaradoNoEscopo(id)) {
+            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.METODO;
         }
         return false;
     }
 
     private boolean ehClasse(String id)
     {
-        if(foiDeclarado(id)) {
-            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
+        if(foiDeclaradoNoEscopo(id)) {
+            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
         }
         return false;
-    }
-
-    private void addSimbolo(Simbolo simbolo)
-    {
-        escopoAtual.addSimbolo(simbolo);
     }
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------
