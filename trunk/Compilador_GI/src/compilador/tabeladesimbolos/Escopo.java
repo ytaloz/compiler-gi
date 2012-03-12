@@ -36,4 +36,9 @@ public class Escopo {
         simbolos.put(simbolo.getLexema(), simbolo);
     }
 
+    public Simbolo getSimbolo(String id)
+    {
+        return simbolos.get(id);
+    }
+
 }

@@ -59,7 +59,7 @@ public class TabelaDeSimbolos {
     }
 
 
-//------------------------------ SIMBOLOS DECLARADOS ---------------------------
+//------------------------ ADICIONAR SIMBOLOS DECLARADOS -----------------------
 
 
     public void addConstante(String id, String tipoDado)
@@ -74,9 +74,9 @@ public class TabelaDeSimbolos {
         addSimbolo(simbolo);
     }
 
-    public void addClasse(String id, String tipoDado)
+    public void addClasse(String id)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, getTipoDado(tipoDado));
+        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, null);
         addSimbolo(simbolo);
     }
 
@@ -100,44 +100,59 @@ public class TabelaDeSimbolos {
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
     }
 
+    public Simbolo getSimbolo(String id)
+    {
+        if (escopoAtual.getSimbolo(id) != null) {
+            return escopoAtual.getSimbolo(id);
+        }
+        else {
+            while(escopoAtual.getEscopoPai() != null) {
+                Escopo pai = escopoAtual.getEscopoPai();
+                if(pai.getSimbolo(id) != null) return pai.getSimbolo(id);
+                else pai = pai.getEscopoPai();
+            }
+            return null;
+        }
+    }
+
     public boolean foiDeclarado(String id)
     {
-        return simbolos.get(id) != null;
+        return getSimbolo(id) != null;
     }
 
     public boolean ehOperandoValido(String id)
     {
-        return ehConstante(id) || ehVariavel(id) || ehMetodo(id);
+        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) || ehClasse(id);
     }
 
     private boolean ehConstante(String id)
     {
-        if(simbolos.get(id) != null) {
-            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
+        if(foiDeclarado(id)) {
+            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
         }
         return false;
     }
 
     private boolean ehVariavel(String id)
     {
-        if(simbolos.get(id) != null) {
-            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
+        if(foiDeclarado(id)) {
+            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
         }
         return false;
     }
 
     private boolean ehMetodo(String id)
     {
-        if(simbolos.get(id) != null) {
-            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.METODO;
+        if(foiDeclarado(id)) {
+            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.METODO;
         }
         return false;
     }
 
     private boolean ehClasse(String id)
     {
-        if(simbolos.get(id) != null) {
-            return simbolos.get(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
+        if(foiDeclarado(id)) {
+            return getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
         }
         return false;
     }
@@ -145,7 +160,6 @@ public class TabelaDeSimbolos {
     private void addSimbolo(Simbolo simbolo)
     {
         escopoAtual.addSimbolo(simbolo);
-        simbolos.put(simbolo.getLexema(), simbolo);
     }
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------

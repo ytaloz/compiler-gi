@@ -1216,6 +1216,15 @@ public class AnalisadorSemantico {
         }
     }
 
+    private void addClasse(String id)
+    {
+        if(ehIdentificadorDeclarado(id)) {
+            erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
+        } else {
+            tabelaDeSimbolos.addClasse(id);
+        }
+    }
+
     private void erroSemantico(String msg)
     {
         erros.add(new ErroSemantico(msg,tokenAtual.getLinha()));
