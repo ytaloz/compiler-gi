@@ -19,60 +19,34 @@ public class TabelaDeSimbolos {
     //palavras chave da linguagem
     private HashMap<String,String> palavrasChave = new HashMap<String,String>();
 
-    //escopos do programa, recuperados pelo lexema
-    private HashMap<String,Escopo> escopos = new HashMap<String,Escopo>();
-
-    //escopo atual no qual os simbolos serão inseridos
-    private Escopo escopoAtual = new Escopo(null);
+    //estrutura de dados onde os simbolos serão armazenados e recuperados, levando em consideração o escopo
+    private ArvoreDeEscopo arvoreDeEscopo = new ArvoreDeEscopo();
 
 
 
     public TabelaDeSimbolos()
     {
         inicializarPalavrasChave();
-        escopos.put("programa",escopoAtual);
     }
 
 
 //------------------------------ ESCOPOS ---------------------------------------
 
-    //cria novo escopo, aninhado ao escopo atual
-    public void aninharNovoEscopo(String id)
-    {
-        escopoAtual = new Escopo(escopoAtual);
-        escopos.put(id,escopoAtual);
-    }
-
-    //cria novo escopo, especificando o escopo pai -> usado para herança de classes
-    public void aninharNovoEscopo(String id, String pai)
-    {
-        escopoAtual = new Escopo(getEscopo(pai));
-        escopos.put(id,escopoAtual);
-    }
-
-    public Simbolo getSimboloNoEscopo(String id)
-    {
-        if (escopoAtual.getSimbolo(id) != null) {
-            return escopoAtual.getSimbolo(id);
-        }
-        else {
-            while(escopoAtual.getEscopoPai() != null) {
-                Escopo pai = escopoAtual.getEscopoPai();
-                if(pai.getSimbolo(id) != null) return pai.getSimbolo(id);
-                else pai = pai.getEscopoPai();
-            }
-            return null;
-        }
-    }
+    
 
     public boolean foiDeclaradoNoEscopo(String id)
     {
-        return getSimboloNoEscopo(id) != null;
+        return arvoreDeEscopo.getSimbolo(id) != null;
     }
 
-    private Escopo getEscopo(String id)
+    public void empilharNovoEscopo()
     {
-        return escopos.get(id);
+        arvoreDeEscopo.empilharNovoEscopo();
+    }
+
+    public void desempilharEscopo()
+    {
+        arvoreDeEscopo.desempilharEscopo();
     }
 
 
@@ -105,7 +79,7 @@ public class TabelaDeSimbolos {
 
     private void addSimbolo(Simbolo simbolo)
     {
-        escopoAtual.addSimbolo(simbolo);
+        arvoreDeEscopo.addSimbolo(simbolo);
     }
     
 
@@ -121,15 +95,20 @@ public class TabelaDeSimbolos {
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
     }
 
-    public boolean jaFoiDeclarado(String id)
+    public boolean jaFoiDeclaradoNoEscopo(String id)
     {
         return ehConstante(id) || ehVariavel(id) || ehMetodo(id) || ehClasse(id) ;
+    }
+
+    public boolean jaFoiDeclaradoNoBlocoAtual(String id)
+    {
+        return arvoreDeEscopo.getEscopoAtual().getSimbolo(id) != null;
     }
 
     public boolean ehConstante(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
-            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
+            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
         }
         return false;
     }
@@ -137,7 +116,7 @@ public class TabelaDeSimbolos {
     public boolean ehVariavel(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
-            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
+            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
         }
         return false;
     }
@@ -145,7 +124,7 @@ public class TabelaDeSimbolos {
     public boolean ehMetodo(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
-            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.METODO;
+            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.METODO;
         }
         return false;
     }
@@ -153,7 +132,7 @@ public class TabelaDeSimbolos {
     public boolean ehClasse(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
-            return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
+            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
         }
         return false;
     }

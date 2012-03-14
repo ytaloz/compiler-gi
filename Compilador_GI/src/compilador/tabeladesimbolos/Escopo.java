@@ -5,7 +5,9 @@
 
 package compilador.tabeladesimbolos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -15,6 +17,9 @@ public class Escopo {
 
     //escopo no qual está aninhado
     private Escopo escopoPai;
+
+    //escopos incluidos nesse escopo
+    private List<Escopo> subEscopos = new ArrayList<Escopo>();
 
     //simbolos pertencentes a esse escopo
     private HashMap<String,Simbolo> simbolos = new HashMap<String,Simbolo>();
@@ -39,6 +44,13 @@ public class Escopo {
     public Simbolo getSimbolo(String id)
     {
         return simbolos.get(id);
+    }
+
+    public Escopo addSubEscopo()
+    {
+        Escopo sub = new Escopo(this);
+        subEscopos.add(sub);
+        return sub;
     }
 
 }
