@@ -97,7 +97,7 @@ public class TabelaDeSimbolos {
 
     public boolean jaFoiDeclaradoNoEscopo(String id)
     {
-        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) || ehClasse(id) ;
+        return arvoreDeEscopo.getSimbolo(id)!=null;
     }
 
     public boolean jaFoiDeclaradoNoBlocoAtual(String id)
