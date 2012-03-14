@@ -50,6 +50,26 @@ public class TabelaDeSimbolos {
         escopos.put(id,escopoAtual);
     }
 
+    public Simbolo getSimboloNoEscopo(String id)
+    {
+        if (escopoAtual.getSimbolo(id) != null) {
+            return escopoAtual.getSimbolo(id);
+        }
+        else {
+            while(escopoAtual.getEscopoPai() != null) {
+                Escopo pai = escopoAtual.getEscopoPai();
+                if(pai.getSimbolo(id) != null) return pai.getSimbolo(id);
+                else pai = pai.getEscopoPai();
+            }
+            return null;
+        }
+    }
+
+    public boolean foiDeclaradoNoEscopo(String id)
+    {
+        return getSimboloNoEscopo(id) != null;
+    }
+
     private Escopo getEscopo(String id)
     {
         return escopos.get(id);
@@ -99,26 +119,6 @@ public class TabelaDeSimbolos {
         if(tipo.equals("cadeia")) return TipoDado.CADEIA;
         if(tipo.equals("caractere")) return TipoDado.CARACTERE;
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
-    }
-
-    public Simbolo getSimboloNoEscopo(String id)
-    {
-        if (escopoAtual.getSimbolo(id) != null) {
-            return escopoAtual.getSimbolo(id);
-        }
-        else {
-            while(escopoAtual.getEscopoPai() != null) {
-                Escopo pai = escopoAtual.getEscopoPai();
-                if(pai.getSimbolo(id) != null) return pai.getSimbolo(id);
-                else pai = pai.getEscopoPai();
-            }
-            return null;
-        }
-    }
-
-    public boolean foiDeclaradoNoEscopo(String id)
-    {
-        return getSimboloNoEscopo(id) != null;
     }
 
     public boolean ehOperandoValido(String id)
