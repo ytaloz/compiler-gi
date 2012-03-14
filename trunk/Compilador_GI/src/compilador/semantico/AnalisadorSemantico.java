@@ -302,6 +302,7 @@ public class AnalisadorSemantico {
     private void complemento_decl_classe()
     {
          if(tokenAtual.getTipo() == TokenType.ABRECHAVE) {
+           //metodo semântico classe
            match(TokenType.ABRECHAVE);
            blocos_classe();
            match(TokenType.FECHACHAVE);
@@ -1138,7 +1139,7 @@ public class AnalisadorSemantico {
     private void atribuicao_constante(String tipo)
     {
         match(TokenType.ID);
-        addConstante(tokens.get(ponteiro-1).getLexema(), tipo);
+        addConstante(tokens.get(ponteiro-1).getLexema(), tipo); //método semântico
         match(TokenType.ATRIB);
         segundo_membro_atribuicao();
     }
