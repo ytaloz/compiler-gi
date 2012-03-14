@@ -1194,10 +1194,12 @@ public class AnalisadorSemantico {
         return erros.size();
     }
 
-    private void checarSeIdentificadorFoiDeclarado(String id)
-    {
-        if (!ehIdentificadorDeclarado(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
-    }
+/******************************************************************************
+ ********************* MÉTODOS DO ANALISADOR SEMANTICO ************************
+/******************************************************************************/
+
+
+//------------------- DECLARAÇÃO DE IDENTIFICADORES ----------------------------
 
     private void addConstante(String id, String tipo)
     {
@@ -1226,9 +1228,12 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void erroSemantico(String msg)
+
+//------------------- CHECAGEM DE IDENTIFICADORES ------------------------------
+
+    private void checarSeIdentificadorFoiDeclarado(String id)
     {
-        erros.add(new ErroSemantico(msg,tokenAtual.getLinha()));
+        if (!ehIdentificadorDeclarado(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
     }
 
     private boolean ehIdentificadorDeclarado(String id)
@@ -1236,4 +1241,8 @@ public class AnalisadorSemantico {
         return tabelaDeSimbolos.ehOperandoValido(id);
     }
 
+    private void erroSemantico(String msg)
+    {
+        erros.add(new ErroSemantico(msg,tokenAtual.getLinha()));
+    }
 }
