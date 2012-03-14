@@ -11,6 +11,7 @@ import compilador.exception.FinalArquivoException;
 import compilador.gui.Janela;
 import compilador.sintatico.ConjuntoPrimeiro;
 import compilador.sintatico.ConjuntoSequencia;
+import compilador.tabeladesimbolos.ArvoreDeEscopo;
 import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.token.Token;
 import compilador.token.TokenType;
@@ -301,19 +302,25 @@ public class AnalisadorSemantico {
 
     private void complemento_decl_classe()
     {
-         if(tokenAtual.getTipo() == TokenType.ABRECHAVE) {
-           //metodo semântico classe
+         if(tokenAtual.getTipo() == TokenType.ABRECHAVE)
+         {
+           addClasse(tokens.get(ponteiro-1).getLexema()); //metodo semantico
+           tabelaDeSimbolos.empilharNovoEscopo(); //metodo semântico classe
            match(TokenType.ABRECHAVE);
            blocos_classe();
            match(TokenType.FECHACHAVE);
+           tabelaDeSimbolos.desempilharEscopo();
         }
          else if(tokenAtual.getTipo() == TokenType.HERDA_DE)
          {
+             addClasse(tokens.get(ponteiro-1).getLexema()); //metodo semantico
+             tabelaDeSimbolos.empilharNovoEscopo();
              match(TokenType.HERDA_DE);
              match(TokenType.ID);
              match(TokenType.ABRECHAVE);
              blocos_classe();
              match(TokenType.FECHACHAVE);
+             tabelaDeSimbolos.desempilharEscopo();
          }
          else throw new ErroSintaticoException();
     }
@@ -1203,7 +1210,7 @@ public class AnalisadorSemantico {
 
     private void addConstante(String id, String tipo)
     {
-        if(jaFoiDeclarado(id)) {
+        if(jaFoiDeclaradoNoBlocoAtual(id)) {
             erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
         } else {
             tabelaDeSimbolos.addConstante(id, tipo);
@@ -1212,7 +1219,7 @@ public class AnalisadorSemantico {
 
     private void addVariavel(String id, String tipo)
     {
-        if(jaFoiDeclarado(id)) {
+        if(jaFoiDeclaradoNoBlocoAtual(id)) {
             erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
         } else {
             tabelaDeSimbolos.addVariavel(id, tipo);
@@ -1221,7 +1228,7 @@ public class AnalisadorSemantico {
 
     private void addClasse(String id)
     {
-        if(jaFoiDeclarado(id) && tabelaDeSimbolos.ehClasse(id)) {
+        if(jaFoiDeclaradoNoEscopo(id) && tabelaDeSimbolos.ehClasse(id)) {
             erroSemantico("Classe já foi declarada: " + "'" + id + "'");
         } else {
             tabelaDeSimbolos.addClasse(id);
@@ -1233,12 +1240,17 @@ public class AnalisadorSemantico {
 
     private void checarSeIdentificadorFoiDeclarado(String id)
     {
-        if (!jaFoiDeclarado(id) || tabelaDeSimbolos.ehClasse(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
+        if (!jaFoiDeclaradoNoEscopo(id) || tabelaDeSimbolos.ehClasse(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
     }
 
-    private boolean jaFoiDeclarado(String id)
+    private boolean jaFoiDeclaradoNoEscopo(String id)
     {
-        return tabelaDeSimbolos.jaFoiDeclarado(id);
+        return tabelaDeSimbolos.jaFoiDeclaradoNoEscopo(id);
+    }
+    
+    private boolean jaFoiDeclaradoNoBlocoAtual(String id)
+    {
+        return tabelaDeSimbolos.jaFoiDeclaradoNoBlocoAtual(id);
     }
 
     private void erroSemantico(String msg)
