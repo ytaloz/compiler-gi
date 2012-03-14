@@ -1221,8 +1221,8 @@ public class AnalisadorSemantico {
 
     private void addClasse(String id)
     {
-        if(jaFoiDeclarado(id)) {
-            erroSemantico("Identificador já foi declarado: " + "'" + id + "'");
+        if(jaFoiDeclarado(id) && tabelaDeSimbolos.ehClasse(id)) {
+            erroSemantico("Classe já foi declarada: " + "'" + id + "'");
         } else {
             tabelaDeSimbolos.addClasse(id);
         }
@@ -1233,12 +1233,12 @@ public class AnalisadorSemantico {
 
     private void checarSeIdentificadorFoiDeclarado(String id)
     {
-        if (!jaFoiDeclarado(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
+        if (!jaFoiDeclarado(id) || tabelaDeSimbolos.ehClasse(id)) erroSemantico("Identificador não declarado: " + "'" + id + "'");
     }
 
     private boolean jaFoiDeclarado(String id)
     {
-        return tabelaDeSimbolos.ehOperandoValido(id);
+        return tabelaDeSimbolos.jaFoiDeclarado(id);
     }
 
     private void erroSemantico(String msg)

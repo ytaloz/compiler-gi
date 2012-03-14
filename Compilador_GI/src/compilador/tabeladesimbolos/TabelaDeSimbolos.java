@@ -121,12 +121,12 @@ public class TabelaDeSimbolos {
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
     }
 
-    public boolean ehOperandoValido(String id)
+    public boolean jaFoiDeclarado(String id)
     {
-        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) ;
+        return ehConstante(id) || ehVariavel(id) || ehMetodo(id) || ehClasse(id) ;
     }
 
-    private boolean ehConstante(String id)
+    public boolean ehConstante(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
             return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
@@ -134,7 +134,7 @@ public class TabelaDeSimbolos {
         return false;
     }
 
-    private boolean ehVariavel(String id)
+    public boolean ehVariavel(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
             return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
@@ -142,7 +142,7 @@ public class TabelaDeSimbolos {
         return false;
     }
 
-    private boolean ehMetodo(String id)
+    public boolean ehMetodo(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
             return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.METODO;
@@ -150,7 +150,7 @@ public class TabelaDeSimbolos {
         return false;
     }
 
-    private boolean ehClasse(String id)
+    public boolean ehClasse(String id)
     {
         if(foiDeclaradoNoEscopo(id)) {
             return getSimboloNoEscopo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
