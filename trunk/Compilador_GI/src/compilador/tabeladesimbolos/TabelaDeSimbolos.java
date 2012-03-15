@@ -30,14 +30,9 @@ public class TabelaDeSimbolos {
     }
 
 
-//------------------------------ ESCOPOS ---------------------------------------
+//---------------- MÉTODOS RELACIONADOS A ESCOPOS ------------------------------
 
     
-
-    public boolean foiDeclaradoNoEscopo(String id)
-    {
-        return arvoreDeEscopo.getSimbolo(id) != null;
-    }
 
     public void empilharNovoEscopo()
     {
@@ -49,6 +44,15 @@ public class TabelaDeSimbolos {
         arvoreDeEscopo.desempilharEscopo();
     }
 
+    public boolean jaFoiDeclaradoNoEscopo(String id)
+    {
+        return arvoreDeEscopo.getSimbolo(id)!=null;
+    }
+
+    public boolean jaFoiDeclaradoNoBlocoAtual(String id)
+    {
+        return arvoreDeEscopo.getEscopoAtual().getSimbolo(id) != null;
+    }
 
 //------------------------ ADICIONAR SIMBOLOS DECLARADOS -----------------------
 
@@ -95,19 +99,10 @@ public class TabelaDeSimbolos {
         else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
     }
 
-    public boolean jaFoiDeclaradoNoEscopo(String id)
-    {
-        return arvoreDeEscopo.getSimbolo(id)!=null;
-    }
-
-    public boolean jaFoiDeclaradoNoBlocoAtual(String id)
-    {
-        return arvoreDeEscopo.getEscopoAtual().getSimbolo(id) != null;
-    }
 
     public boolean ehConstante(String id)
     {
-        if(foiDeclaradoNoEscopo(id)) {
+        if(jaFoiDeclaradoNoEscopo(id)) {
             return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
         }
         return false;
@@ -115,7 +110,7 @@ public class TabelaDeSimbolos {
 
     public boolean ehVariavel(String id)
     {
-        if(foiDeclaradoNoEscopo(id)) {
+        if(jaFoiDeclaradoNoEscopo(id)) {
             return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
         }
         return false;
@@ -123,7 +118,7 @@ public class TabelaDeSimbolos {
 
     public boolean ehMetodo(String id)
     {
-        if(foiDeclaradoNoEscopo(id)) {
+        if(jaFoiDeclaradoNoEscopo(id)) {
             return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.METODO;
         }
         return false;
@@ -131,7 +126,7 @@ public class TabelaDeSimbolos {
 
     public boolean ehClasse(String id)
     {
-        if(foiDeclaradoNoEscopo(id)) {
+        if(jaFoiDeclaradoNoEscopo(id)) {
             return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
         }
         return false;
