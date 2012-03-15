@@ -5,6 +5,8 @@
 
 package compilador.tabeladesimbolos;
 
+import compilador.tabeladesimbolos.simbolos.Programa;
+
 /**
  *
  * @author Gabriel
@@ -20,7 +22,7 @@ public class ArvoreDeEscopo {
 
     public ArvoreDeEscopo()
     {
-        raiz = new Escopo(null);
+        raiz = new Programa();
         escopoAtual = raiz;
     }
 
