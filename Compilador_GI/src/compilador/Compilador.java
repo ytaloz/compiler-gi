@@ -31,14 +31,12 @@ public class Compilador implements Runnable {
     public Compilador()
     {
         janela = new Janela(this);
-        tabelaDeSimbolos = new TabelaDeSimbolos();
-        analisadorLexico = new AnalisadorLexico(janela, tabelaDeSimbolos);
-        analisadorSintatico = new AnalisadorSintatico(janela);
-        analisadorSemantico = new AnalisadorSemantico(janela, tabelaDeSimbolos);
+        inicializarVariaveis();
     }
 
     public void analisar(String codigoFonte)
     {
+        inicializarVariaveis();
         analiseLexica();
         analiseSintatica();
         analiseSemantica();
@@ -96,6 +94,14 @@ public class Compilador implements Runnable {
     private boolean existemErros()
     {
         return ( analisadorLexico.temErros() || analisadorSintatico.temErros() || analisadorSemantico.temErros() );
+    }
+
+    private void inicializarVariaveis()
+    {
+        tabelaDeSimbolos = new TabelaDeSimbolos();
+        analisadorLexico = new AnalisadorLexico(janela, tabelaDeSimbolos);
+        analisadorSintatico = new AnalisadorSintatico(janela);
+        analisadorSemantico = new AnalisadorSemantico(janela, tabelaDeSimbolos);
     }
 
     public void run() {
