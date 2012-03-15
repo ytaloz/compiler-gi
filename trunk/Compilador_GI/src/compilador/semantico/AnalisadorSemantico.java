@@ -16,6 +16,7 @@ import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.token.Token;
 import compilador.token.TokenType;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class AnalisadorSemantico {
 
     public void analisar(List<Token> tokens)
     {
-        this.tokens = tokens;
+        this.tokens = removerErrosEComentarios((ArrayList)tokens);
         inicializarVariaveis();
 
         proxToken();
@@ -69,6 +70,20 @@ public class AnalisadorSemantico {
             //não faz nada
         }
 
+    }
+
+    private List<Token> removerErrosEComentarios(ArrayList<Token> tokens)
+    {
+        List<Token> resultado = (List) tokens.clone();
+
+        for (Iterator<Token> i = resultado.iterator(); i.hasNext();) {
+            Token token = i.next();
+            if (token.getTipo()==TokenType.ERRO || token.getTipo()==TokenType.COMENTBLOCO || token.getTipo()==TokenType.COMENTLINHA) {
+                i.remove();
+            }
+        }
+
+        return resultado;
     }
 
     private void inicializarVariaveis()
