@@ -5,7 +5,12 @@
 
 package compilador.tabeladesimbolos;
 
+import compilador.tabeladesimbolos.simbolos.Classe;
+import compilador.tabeladesimbolos.simbolos.Constante;
+import compilador.tabeladesimbolos.simbolos.Metodo;
+import compilador.tabeladesimbolos.simbolos.Simbolo;
 import compilador.tabeladesimbolos.simbolos.Programa;
+import compilador.tabeladesimbolos.simbolos.Variavel;
 
 /**
  *
@@ -26,9 +31,10 @@ public class ArvoreDeEscopo {
         escopoAtual = raiz;
     }
 
-    public void empilharNovoEscopo()
+    public void empilharNovoEscopo(Escopo sub)
     {
-        escopoAtual = escopoAtual.addSubEscopo();
+        escopoAtual.addSubEscopo(sub);
+        escopoAtual = sub;
     }
 
     public void desempilharEscopo()
@@ -53,9 +59,61 @@ public class ArvoreDeEscopo {
         }
     }
 
-    public void addSimbolo(Simbolo simbolo)
+    public void addConstante(Constante con)
     {
-        escopoAtual.addSimbolo(simbolo);
+        if(escopoAtual instanceof Programa) {
+            Programa programa = (Programa) escopoAtual;
+            programa.addConstante(con);
+        }
+        else if(escopoAtual instanceof Classe) {
+            Classe classe = (Classe) escopoAtual;
+            classe.addConstante(con);
+        }
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de constante");
+
+        escopoAtual.addSimbolo(con);
+    }
+
+
+    public void addVariavel(Variavel var)
+    {
+        if(escopoAtual instanceof Programa) {
+            Programa programa = (Programa) escopoAtual;
+            programa.addVariavel(var);
+        }
+        else if(escopoAtual instanceof Classe) {
+            Classe classe = (Classe) escopoAtual;
+            classe.addVariavel(var);
+        }
+        else if(escopoAtual instanceof Metodo) {
+            Metodo metodo = (Metodo) escopoAtual;
+            metodo.addVariavel(var);
+        }
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de variável");
+
+        escopoAtual.addSimbolo(var);
+    }
+
+    public void addClasse(Classe classe)
+    {
+        if(escopoAtual instanceof Programa) {
+            Programa programa = (Programa) escopoAtual;
+            programa.addClasse(classe);
+        }
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de classe");
+
+        escopoAtual.addSimbolo(classe);
+    }
+
+    public void addMetodo(Metodo met)
+    {
+        if(escopoAtual instanceof Classe) {
+            Classe classe = (Classe) escopoAtual;
+            classe.addMetodo(met);
+        }
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de classe");
+
+        escopoAtual.addSimbolo(met);
     }
 
     public Escopo getEscopoAtual()

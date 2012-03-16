@@ -9,6 +9,11 @@ package compilador.tabeladesimbolos.simbolos;
  *
  * @author Gabriel
  */
-public class Variavel {
+public class Variavel extends Simbolo {
+
+    public Variavel(String id, String tipoDado)
+    {
+        super(id,tipoDado);
+    }
 
 }
