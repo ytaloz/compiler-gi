@@ -236,8 +236,14 @@ public class AnalisadorSemantico {
             }
             else if(tokenAtual.getTipo() == TokenType.ID) {
                 match(TokenType.ID);
+
                 checarSeClasseFoiDefinida(tokens.get(ponteiro-1).getLexema()); //metodo semantico
+
                 match(TokenType.ID);
+
+                Variavel obj = new Variavel(tokens.get(ponteiro-1).getLexema(),tokens.get(ponteiro-2).getLexema()); //método semantico
+                addVariavel(obj); //método semantico
+
                 complemento_variavel_instanciar_obj();
                 match(TokenType.PONTOVIRGULA);
             }
