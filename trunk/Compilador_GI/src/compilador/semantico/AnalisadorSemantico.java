@@ -348,7 +348,11 @@ public class AnalisadorSemantico {
              tabelaDeSimbolos.empilharNovoEscopo(classe); //metodo semântico classe
 
              match(TokenType.HERDA_DE);
-             match(TokenType.ID);
+             match(TokenType.ID); 
+
+             Classe pai = checarSeClasseFoiDefinida(tokens.get(ponteiro-1).getLexema()); //método semantico
+             if(pai!=null) classe.setEscopoPai(pai); //método semantico
+
              match(TokenType.ABRECHAVE);
              blocos_classe();
              match(TokenType.FECHACHAVE);
@@ -1330,13 +1334,15 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void checarSeClasseFoiDefinida(String classeID)
+    private Classe checarSeClasseFoiDefinida(String classeID)
     {
         Simbolo simbolo = tabelaDeSimbolos.getSimbolo(classeID);
         if(simbolo!=null) {
             if(!(simbolo instanceof Classe)) erroSemantico("classe '" + classeID + "' não declarada");
+            else return (Classe) simbolo;
         }
         else erroSemantico("classe '" + classeID + "' não declarada");
+        return null;
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)
