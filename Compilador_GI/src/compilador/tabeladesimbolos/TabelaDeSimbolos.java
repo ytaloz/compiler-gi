@@ -25,6 +25,8 @@ public class TabelaDeSimbolos {
     //estrutura de dados onde os simbolos serão armazenados e recuperados, levando em consideração o escopo
     private ArvoreDeEscopo arvoreDeEscopo = new ArvoreDeEscopo();
 
+    //flag referente à declaração do método principal
+    private boolean metodoPrincipalFoiDeclarado = false;
 
 
     public TabelaDeSimbolos()
@@ -86,7 +88,15 @@ public class TabelaDeSimbolos {
     
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
 
- 
+    public boolean metodoPrincipalFoiDeclarado()
+    {
+        return metodoPrincipalFoiDeclarado;
+    }
+
+    public void setMetodoPrincipal(boolean flag)
+    {
+        metodoPrincipalFoiDeclarado = flag;
+    }
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------
 

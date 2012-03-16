@@ -406,8 +406,8 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.CARACTERE ||
              tokenAtual.getTipo() == TokenType.CADEIA ) {
 
-           tipo_metodo_menos_vazio();
-           declaracao_metodo();
+           String tipo = tipo_metodo_menos_vazio();
+           declaracao_metodo(tipo);
            declaracao_metodos();
         }
         else if( tokenAtual.getTipo() == TokenType.VAZIO ) {
@@ -416,10 +416,14 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void declaracao_metodo()
+    private void declaracao_metodo(String tipo)
     {
         try {
             match(TokenType.ID);
+            Metodo metodo = new Metodo(tokens.get(ponteiro-1).getLexema(),tipo);
+            addMetodo(metodo); //método semantico
+            tabelaDeSimbolos.empilharNovoEscopo(metodo); //método semantico
+            
             match(TokenType.ABREPAR);
             parametros_formais();
             match(TokenType.FECHAPAR);
@@ -427,6 +431,8 @@ public class AnalisadorSemantico {
             dec_var_metodo();
             comandos();
             match(TokenType.FECHACHAVE);
+
+            tabelaDeSimbolos.desempilharEscopo();
         }
          catch(ErroSintaticoException ex) {
             panico(conjuntoSequencia.getConjunto(DECLARACAO_METODO));
@@ -441,7 +447,7 @@ public class AnalisadorSemantico {
     }
 
 
-    private void tipo_metodo_menos_vazio()
+    private String tipo_metodo_menos_vazio()
     {
         if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
              tokenAtual.getTipo() == TokenType.REAL ||
@@ -449,6 +455,8 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.CARACTERE ||
              tokenAtual.getTipo() == TokenType.CADEIA ) proxToken();
         else throw new ErroSintaticoException();
+
+        return tokens.get(ponteiro-1).getLexema();
     }
 
 
@@ -456,9 +464,14 @@ public class AnalisadorSemantico {
     {
         try {
             if (tokenAtual.getTipo() == TokenType.ID) {
-                declaracao_metodo();
+                declaracao_metodo("vazio");
                 declaracao_metodos();
             } else if (tokenAtual.getTipo() == TokenType.PRINCIPAL) {
+                
+                Metodo principal = new Metodo("principal","vazio");
+                addMetodoPrincipal(principal); //método semantico
+                tabelaDeSimbolos.empilharNovoEscopo(principal); //método semantico
+
                 match(TokenType.PRINCIPAL);
                 match(TokenType.ABREPAR);
                 match(TokenType.VAZIO);
@@ -467,6 +480,8 @@ public class AnalisadorSemantico {
                 dec_var_metodo();
                 comandos();
                 match(TokenType.FECHACHAVE);
+
+                tabelaDeSimbolos.desempilharEscopo();
             }
         }
         catch(ErroSintaticoException ex) {
@@ -1264,6 +1279,25 @@ public class AnalisadorSemantico {
             erroSemantico("Classe já foi declarada: " + "'" + classe.getId() + "'");
         } else {
             tabelaDeSimbolos.addClasse(classe);
+        }
+    }
+
+    private void addMetodo(Metodo metodo)
+    {
+        if(jaFoiDeclaradoNoEscopo(metodo.getId())) {
+            erroSemantico("Classe já foi declarada: " + "'" + metodo.getId() + "'");
+        } else {
+            tabelaDeSimbolos.addMetodo(metodo);
+        }
+    }
+
+    private void addMetodoPrincipal(Metodo metodo)
+    {
+        if(tabelaDeSimbolos.metodoPrincipalFoiDeclarado()) {
+            erroSemantico("Método Principal não pode ser declarado mais de uma vez!");
+        } else {
+            tabelaDeSimbolos.addMetodo(metodo);
+            tabelaDeSimbolos.setMetodoPrincipal(true);
         }
     }
 
