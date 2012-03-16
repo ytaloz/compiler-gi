@@ -85,6 +85,11 @@ public class TabelaDeSimbolos {
     {
         arvoreDeEscopo.addMetodo(metodo);
     }
+
+    public void addParametro(Variavel param)
+    {
+        arvoreDeEscopo.addParametro(param);
+    }
     
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
 
