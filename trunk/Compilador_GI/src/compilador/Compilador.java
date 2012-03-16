@@ -34,6 +34,7 @@ public class Compilador implements Runnable {
         inicializarVariaveis();
     }
 
+    //método de análise
     public void analisar(String codigoFonte)
     {
         inicializarVariaveis();
