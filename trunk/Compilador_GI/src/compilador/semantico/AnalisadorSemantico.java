@@ -1276,7 +1276,7 @@ public class AnalisadorSemantico {
     private void addClasse(Classe classe)
     {
         if(jaFoiDeclaradoNoEscopo(classe.getId())) {
-            erroSemantico("Classe já foi declarada: " + "'" + classe.getId() + "'");
+            erroSemantico("Identificador já foi declarado: " + "'" + classe.getId() + "'");
         } else {
             tabelaDeSimbolos.addClasse(classe);
         }
@@ -1285,7 +1285,7 @@ public class AnalisadorSemantico {
     private void addMetodo(Metodo metodo)
     {
         if(jaFoiDeclaradoNoEscopo(metodo.getId())) {
-            erroSemantico("Classe já foi declarada: " + "'" + metodo.getId() + "'");
+            erroSemantico("Identificador já foi declarado: " + "'" + metodo.getId() + "'");
         } else {
             tabelaDeSimbolos.addMetodo(metodo);
         }
