@@ -5,8 +5,11 @@
 
 package compilador.tabeladesimbolos;
 
-import compilador.tabeladesimbolos.Simbolo.TipoDado;
-import compilador.tabeladesimbolos.Simbolo.TipoSimbolo;
+import compilador.tabeladesimbolos.simbolos.Classe;
+import compilador.tabeladesimbolos.simbolos.Constante;
+import compilador.tabeladesimbolos.simbolos.Metodo;
+import compilador.tabeladesimbolos.simbolos.Simbolo;
+import compilador.tabeladesimbolos.simbolos.Variavel;
 import compilador.token.TokenType;
 import java.util.HashMap;
 
@@ -29,14 +32,18 @@ public class TabelaDeSimbolos {
         inicializarPalavrasChave();
     }
 
-
-//---------------- MÉTODOS RELACIONADOS A ESCOPOS ------------------------------
-
-    
-
-    public void empilharNovoEscopo()
+    public Simbolo getSimbolo(String id)
     {
-        arvoreDeEscopo.empilharNovoEscopo();
+        return arvoreDeEscopo.getSimbolo(id);
+    }
+
+
+//---------------- MÉTODOS RELACIONADOS A ESCOPO ------------------------------
+   
+
+    public void empilharNovoEscopo(Escopo escopo)
+    {
+        arvoreDeEscopo.empilharNovoEscopo(escopo);
     }
 
     public void desempilharEscopo()
@@ -57,80 +64,29 @@ public class TabelaDeSimbolos {
 //------------------------ ADICIONAR SIMBOLOS DECLARADOS -----------------------
 
 
-    public void addConstante(String id, String tipoDado)
+    public void addConstante(Constante con)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CONSTANTE, getTipoDado(tipoDado));
-        addSimbolo(simbolo);
+        arvoreDeEscopo.addConstante(con);
     }
 
-    public void addVariavel(String id, String tipoDado)
+    public void addVariavel(Variavel var)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.VARIAVEL, getTipoDado(tipoDado));
-        addSimbolo(simbolo);
+        arvoreDeEscopo.addVariavel(var);
     }
 
-    public void addClasse(String id)
+    public void addClasse(Classe classe)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.CLASSE, null);
-        addSimbolo(simbolo);
+        arvoreDeEscopo.addClasse(classe);
     }
 
-    public void addMetodo(String id, String tipoDado)
+    public void addMetodo(Metodo metodo)
     {
-        Simbolo simbolo = new Simbolo(id, TipoSimbolo.METODO, getTipoDado(tipoDado));
-        addSimbolo(simbolo);
-    }
-
-    private void addSimbolo(Simbolo simbolo)
-    {
-        arvoreDeEscopo.addSimbolo(simbolo);
+        arvoreDeEscopo.addMetodo(metodo);
     }
     
-
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
 
-    private TipoDado getTipoDado(String tipo)
-    {
-        if(tipo.equals("inteiro")) return TipoDado.INTEIRO;
-        if(tipo.equals("real")) return TipoDado.REAL;
-        if(tipo.equals("logico")) return TipoDado.LOGICO;
-        if(tipo.equals("cadeia")) return TipoDado.CADEIA;
-        if(tipo.equals("caractere")) return TipoDado.CARACTERE;
-        else throw new IllegalArgumentException("A String não corresponde a um tipo de dado!");
-    }
-
-
-    public boolean ehConstante(String id)
-    {
-        if(jaFoiDeclaradoNoEscopo(id)) {
-            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CONSTANTE;
-        }
-        return false;
-    }
-
-    public boolean ehVariavel(String id)
-    {
-        if(jaFoiDeclaradoNoEscopo(id)) {
-            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.VARIAVEL;
-        }
-        return false;
-    }
-
-    public boolean ehMetodo(String id)
-    {
-        if(jaFoiDeclaradoNoEscopo(id)) {
-            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.METODO;
-        }
-        return false;
-    }
-
-    public boolean ehClasse(String id)
-    {
-        if(jaFoiDeclaradoNoEscopo(id)) {
-            return arvoreDeEscopo.getSimbolo(id).getTipoSimbolo() == TipoSimbolo.CLASSE;
-        }
-        return false;
-    }
+ 
 
 //--------------------------- PALAVRAS CHAVE -----------------------------------
 

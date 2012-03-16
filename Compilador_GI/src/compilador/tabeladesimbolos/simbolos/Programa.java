@@ -26,6 +26,24 @@ public class Programa extends Escopo {
 
     public Programa()
     {
-        super(null);
+        super("$programa","$programa");
     }
+
+    public void addConstante(Constante con)
+    {
+        constantes.put(con.getId(),con);
+    }
+
+    public void addVariavel(Variavel var)
+    {
+        variaveis.put(var.getId(),var);
+    }
+
+    public void addClasse(Classe classe)
+    {
+        classe.setEscopoPai(this);
+        addSimbolo(classe);
+        classes.put(classe.getId(),classe);
+    }
+
 }

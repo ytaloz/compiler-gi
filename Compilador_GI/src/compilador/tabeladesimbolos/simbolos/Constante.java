@@ -9,6 +9,10 @@ package compilador.tabeladesimbolos.simbolos;
  *
  * @author Gabriel
  */
-public class Constante {
+public class Constante extends Simbolo {
 
+    public Constante(String id, String tipoDado)
+    {
+        super(id, tipoDado);
+    }
 }
