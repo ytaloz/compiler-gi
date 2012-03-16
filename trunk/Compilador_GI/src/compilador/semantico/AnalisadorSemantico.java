@@ -236,6 +236,7 @@ public class AnalisadorSemantico {
             }
             else if(tokenAtual.getTipo() == TokenType.ID) {
                 match(TokenType.ID);
+                checarSeClasseFoiDefinida(tokens.get(ponteiro-1).getLexema()); //metodo semantico
                 match(TokenType.ID);
                 complemento_variavel_instanciar_obj();
                 match(TokenType.PONTOVIRGULA);
@@ -1327,6 +1328,15 @@ public class AnalisadorSemantico {
         else if(!(simbolo instanceof Variavel || simbolo instanceof Constante || simbolo instanceof Metodo)) {
             erroSemantico("indentificador '" + id + "' não declarado");
         }
+    }
+
+    private void checarSeClasseFoiDefinida(String classeID)
+    {
+        Simbolo simbolo = tabelaDeSimbolos.getSimbolo(classeID);
+        if(simbolo!=null) {
+            if(!(simbolo instanceof Classe)) erroSemantico("classe '" + classeID + "' não declarada");
+        }
+        else erroSemantico("classe '" + classeID + "' não declarada");
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)
