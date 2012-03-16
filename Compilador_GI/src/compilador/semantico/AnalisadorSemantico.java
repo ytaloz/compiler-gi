@@ -420,19 +420,20 @@ public class AnalisadorSemantico {
     {
         try {
             match(TokenType.ID);
+            
             Metodo metodo = new Metodo(tokens.get(ponteiro-1).getLexema(),tipo);
             addMetodo(metodo); //método semantico
             tabelaDeSimbolos.empilharNovoEscopo(metodo); //método semantico
             
             match(TokenType.ABREPAR);
-            parametros_formais();
+            parametros_formais(metodo);
             match(TokenType.FECHAPAR);
             match(TokenType.ABRECHAVE);
             dec_var_metodo();
             comandos();
             match(TokenType.FECHACHAVE);
 
-            tabelaDeSimbolos.desempilharEscopo();
+            tabelaDeSimbolos.desempilharEscopo(); //método semantico
         }
          catch(ErroSintaticoException ex) {
             panico(conjuntoSequencia.getConjunto(DECLARACAO_METODO));
@@ -489,7 +490,7 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void parametros_formais()
+    private void parametros_formais(Metodo metodo)
     {
         if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
              tokenAtual.getTipo() == TokenType.REAL ||
@@ -497,8 +498,8 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.CARACTERE ||
              tokenAtual.getTipo() == TokenType.CADEIA ) {
 
-            parametros_mesmo_tipo();
-            complemento_parametros_mesmo_tipo();
+            parametros_mesmo_tipo(metodo);
+            complemento_parametros_mesmo_tipo(metodo);
         }
         else if (tokenAtual.getTipo() == TokenType.VAZIO) {
              match(TokenType.VAZIO);
@@ -506,15 +507,15 @@ public class AnalisadorSemantico {
         else throw new ErroSintaticoException();
     }
 
-    private void complemento_parametros_mesmo_tipo()
+    private void complemento_parametros_mesmo_tipo(Metodo metodo)
     {
         if ( tokenAtual.getTipo() == TokenType.PONTOVIRGULA ) {
             match(TokenType.PONTOVIRGULA);
-            loop_parametros_mesmo_tipo();
+            loop_parametros_mesmo_tipo(metodo);
         }
     }
 
-    private void loop_parametros_mesmo_tipo()
+    private void loop_parametros_mesmo_tipo(Metodo metodo)
     {
         if ( tokenAtual.getTipo() == TokenType.INTEIRO ||
              tokenAtual.getTipo() == TokenType.REAL ||
@@ -523,16 +524,16 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.VAZIO ||
              tokenAtual.getTipo() == TokenType.CADEIA ) {
 
-            parametros_formais();
+            parametros_formais(metodo);
         }
         else throw new ErroSintaticoException();
     }
 
-    private void parametros_mesmo_tipo()
+    private void parametros_mesmo_tipo(Metodo metodo)
     {
         try {
-            tipo_variavel();
-            lista_parametros();
+            String tipo = tipo_variavel();
+            lista_parametros(metodo, tipo);
         }
         catch(ErroSintaticoException ex) {
             panico(conjuntoSequencia.getConjunto(PARAMETROS_MESMO_TIPO));
@@ -540,17 +541,21 @@ public class AnalisadorSemantico {
 
     }
 
-    private void lista_parametros()
+    private void lista_parametros(Metodo metodo, String tipo)
     {
         match(TokenType.ID);
-        loop_lista_parametros();
+
+        Variavel param = new Variavel(tokens.get(ponteiro-1).getLexema(),tipo); //método semantico
+        addParametro(param); //método semantico
+
+        loop_lista_parametros(metodo, tipo);
     }
 
-    private void loop_lista_parametros()
+    private void loop_lista_parametros(Metodo metodo, String tipo)
     {
         if (tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
-            lista_parametros();
+            lista_parametros(metodo, tipo);
         }
     }
 
@@ -1298,6 +1303,15 @@ public class AnalisadorSemantico {
         } else {
             tabelaDeSimbolos.addMetodo(metodo);
             tabelaDeSimbolos.setMetodoPrincipal(true);
+        }
+    }
+
+    private void addParametro(Variavel param)
+    {
+        if(jaFoiDeclaradoNoEscopo(param.getId())) {
+            erroSemantico("Identificador já foi declarado: " + "'" + param.getId() + "'");
+        } else {
+            tabelaDeSimbolos.addParametro(param);
         }
     }
 

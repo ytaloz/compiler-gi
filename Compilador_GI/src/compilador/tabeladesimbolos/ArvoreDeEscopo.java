@@ -111,9 +111,20 @@ public class ArvoreDeEscopo {
             Classe classe = (Classe) escopoAtual;
             classe.addMetodo(met);
         }
-        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de classe");
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de método");
 
         escopoAtual.addSimbolo(met);
+    }
+
+    public void addParametro(Variavel param)
+    {
+        if(escopoAtual instanceof Metodo) {
+            Metodo metodo = (Metodo) escopoAtual;
+            metodo.addParametro(param);
+        }
+        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de parâmetro");
+
+        escopoAtual.addSimbolo(param);
     }
 
     public Escopo getEscopoAtual()
