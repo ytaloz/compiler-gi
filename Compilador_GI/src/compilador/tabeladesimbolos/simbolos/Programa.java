@@ -46,4 +46,9 @@ public class Programa extends Escopo {
         classes.put(classe.getId(),classe);
     }
 
+    public Classe getClasse(String id)
+    {
+        return classes.get(id);
+    }
+
 }

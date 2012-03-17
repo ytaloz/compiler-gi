@@ -52,4 +52,19 @@ public class Classe extends Escopo {
         metodos.put(met.getId(),met);
     }
 
+    public Constante getConstante(String id)
+    {
+        return constantes.get(id);
+    }
+
+    public Variavel getVariavel(String id)
+    {
+        return variaveis.get(id);
+    }
+
+    public Metodo getMetodo(String id)
+    {
+        return metodos.get(id);
+    }
+
 }

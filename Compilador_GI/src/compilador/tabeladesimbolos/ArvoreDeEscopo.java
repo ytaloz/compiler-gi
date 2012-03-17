@@ -59,6 +59,12 @@ public class ArvoreDeEscopo {
         }
     }
 
+    public Classe getClasse(String id)
+    {
+        Programa programa = (Programa) raiz;
+        return programa.getClasse(id);
+    }
+
     public void addConstante(Constante con)
     {
         if(escopoAtual instanceof Programa) {
