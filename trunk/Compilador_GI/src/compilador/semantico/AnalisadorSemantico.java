@@ -1077,6 +1077,8 @@ public class AnalisadorSemantico {
             parametros_reais();
             match(TokenType.FECHAPAR);
         }
+        else checarSeIdentificadorAtualEhVariavel(objAtual); //método semântico
+
     }
 
     private void parametros_reais()
@@ -1407,7 +1409,7 @@ public class AnalisadorSemantico {
 //            if (classe.getConstante(propriedade) != null) return classe.getConstante(propriedade);
 //            if (classe.getVariavel(propriedade) != null) return classe.getVariavel(propriedade);
 //            if (classe.getMetodo(propriedade) != null) return classe.getMetodo(propriedade);
-            erroSemantico("A classe '" + classe.getId() + "' não possui a propriedade '" + propriedade + "'");
+            //erroSemantico("A classe '" + classe.getId() + "' não possui a propriedade '" + propriedade + "'");
             return null;
         } 
         else
@@ -1449,6 +1451,7 @@ public class AnalisadorSemantico {
                 erroSemantico("método '" + idAtual.getId() + "' não declarado;");
             }
         }
+        else erroSemantico("método '" + tokens.get(ponteiro-1).getLexema() + "' não declarado;");
     }
 
     //para chamada de métodos através de objetos
@@ -1459,6 +1462,7 @@ public class AnalisadorSemantico {
                 erroSemantico("atributo ou constante '" + idAtual.getId() + "' não declarada;");
             }
         }
+        else erroSemantico("atributo ou constante '" + tokens.get(ponteiro-1).getLexema() + "' não declarada;");
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)
