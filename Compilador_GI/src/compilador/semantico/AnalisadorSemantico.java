@@ -1044,7 +1044,7 @@ public class AnalisadorSemantico {
             loop_acesso_objeto(propriedadeSimb);
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+            checarSeMetodoFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
             match(TokenType.ABREPAR);
             parametros_reais();
             match(TokenType.FECHAPAR);
@@ -1059,6 +1059,7 @@ public class AnalisadorSemantico {
             acesso_objeto(classe);
         }
          else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
             parametros_reais();
             match(TokenType.FECHAPAR);
@@ -1347,6 +1348,17 @@ public class AnalisadorSemantico {
         }
     }
 
+    private void checarSeMetodoFoiDeclarado(String id)
+    {
+        Simbolo simbolo = tabelaDeSimbolos.getSimbolo(id);
+        if (simbolo == null) {
+            erroSemantico("método '" + id + "' não declarado");
+        }
+        else if(!(simbolo instanceof Metodo)) {
+            erroSemantico("método '" + id + "' não declarado");
+        }
+    }
+
     private Classe checarSeClasseFoiDefinida(String classeID)
     {
         Simbolo simbolo = tabelaDeSimbolos.getSimbolo(classeID);
@@ -1397,6 +1409,16 @@ public class AnalisadorSemantico {
             }
         }
         else return null;
+    }
+
+    //para chamada de métodos através de objetos
+    private void checarSeIdentificadorAtualEhMetodo(Simbolo idAtual)
+    {
+        if(idAtual != null) {
+            if(!(idAtual instanceof Metodo)) {
+                erroSemantico("método '" + idAtual.getId() + "' não declarado;");
+            }
+        }
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)
