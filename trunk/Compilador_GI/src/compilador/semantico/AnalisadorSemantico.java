@@ -1020,7 +1020,9 @@ public class AnalisadorSemantico {
     private void complemento_referencia_variavel()
     {
         if( tokenAtual.getTipo() == TokenType.PONTO || tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            acesso_objeto();
+            Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
+            Classe classeAcessada = checarClasseDoObjetoAtual(objAtual);
+            acesso_objeto(classeAcessada);
         }
         else if( tokenAtual.getTipo() == TokenType.ABRECOLCH ) {
             match(TokenType.ABRECOLCH);
@@ -1030,12 +1032,16 @@ public class AnalisadorSemantico {
         else checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
     }
 
-    private void acesso_objeto()
+    private void acesso_objeto(Classe classeAcessada)
     {
         if( tokenAtual.getTipo() == TokenType.PONTO ) {
             match(TokenType.PONTO);
             match(TokenType.ID);
-            loop_acesso_objeto();
+
+            String propriedade = tokens.get(ponteiro-1).getLexema();
+            Simbolo propriedadeSimb = checarSeClassePossuiPropriedade(classeAcessada,propriedade); //método semantico
+
+            loop_acesso_objeto(propriedadeSimb);
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
@@ -1046,10 +1052,11 @@ public class AnalisadorSemantico {
         else throw new ErroSintaticoException();
     }
 
-    private void loop_acesso_objeto()
+    private void loop_acesso_objeto(Simbolo objAtual)
     {
          if( tokenAtual.getTipo() == TokenType.PONTO ) {
-            acesso_objeto();
+            Classe classe = checarClasseDoObjetoAtual(objAtual);
+            acesso_objeto(classe);
         }
          else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             match(TokenType.ABREPAR);
@@ -1349,6 +1356,47 @@ public class AnalisadorSemantico {
         }
         else erroSemantico("classe '" + classeID + "' não declarada");
         return null;
+    }
+
+    private Simbolo checarSeClassePossuiPropriedade(Classe classe, String propriedade)
+    {
+        if (classe != null)
+        {
+            if (classe.getConstante(propriedade) != null) return classe.getConstante(propriedade);
+            if (classe.getVariavel(propriedade) != null) return classe.getVariavel(propriedade);
+            if (classe.getMetodo(propriedade) != null) return classe.getMetodo(propriedade);
+            erroSemantico("A classe '" + classe.getId() + "' não possui a propriedade '" + propriedade + "'");
+            return null;
+        } 
+        else
+        {
+            erroSemantico("A variável '" + tokens.get(ponteiro-3).getLexema() + "' não é uma classe");
+            return null;
+        }
+    }
+
+    //para acesso de objetos pelo operador ponto
+    private Classe checarClasseDoObjetoAtual(Simbolo objAtual)
+    {
+        if(objAtual!=null)
+        {
+            if(objAtual instanceof Variavel)
+            {
+                Variavel var = (Variavel) objAtual;
+                String tipo = var.getTipoDado();
+                
+                if(tipo.equals("inteiro") || tipo.equals("real") || tipo.equals("cadeia") || tipo.equals("caractere") || tipo.equals("logico")) {
+                    erroSemantico("identificador '" + tokens.get(ponteiro-1).getLexema() + "' não é objeto; operador ponto não permitido");
+                    return null;
+                }
+                return tabelaDeSimbolos.getClasse(tipo);
+            }
+            else {
+                erroSemantico("identificador '" + tokens.get(ponteiro-1).getLexema() + "' não é objeto; operador ponto não permitido");
+                return null;
+            }
+        }
+        else return null;
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)

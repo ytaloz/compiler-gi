@@ -38,6 +38,11 @@ public class TabelaDeSimbolos {
     {
         return arvoreDeEscopo.getSimbolo(id);
     }
+    
+    public Classe getClasse(String id)
+    {
+        return arvoreDeEscopo.getClasse(id);
+    }
 
 
 //---------------- MÉTODOS RELACIONADOS A ESCOPO ------------------------------
