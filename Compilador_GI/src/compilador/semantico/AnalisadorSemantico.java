@@ -686,7 +686,9 @@ public class AnalisadorSemantico {
         switch(tokenAtual.getTipo())
         {
             case PONTO: {
-                acesso_objeto_comando();
+                Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
+                Classe classeAcessada = checarClasseDoObjetoAtual(objAtual); //método semantico
+                acesso_objeto_comando(classeAcessada);
                 break;
             }
             case ABRECOLCH: {
@@ -720,26 +722,33 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void acesso_objeto_comando()
+    private void acesso_objeto_comando(Classe classeAcessada)
     {
         if ( tokenAtual.getTipo() == TokenType.PONTO ) {
             match(TokenType.PONTO);
             match(TokenType.ID);
-            loop_acesso_objeto_comando();
+
+            String propriedade = tokens.get(ponteiro-1).getLexema();
+            Simbolo propriedadeSimb = checarSeClassePossuiPropriedade(classeAcessada,propriedade); //método semantico
+
+            loop_acesso_objeto_comando(propriedadeSimb);
         }
     }
 
-    private void loop_acesso_objeto_comando()
+    private void loop_acesso_objeto_comando(Simbolo objAtual)
     {
         if ( tokenAtual.getTipo() == TokenType.PONTO  ) {
-            acesso_objeto_comando();
+            Classe classe = checarClasseDoObjetoAtual(objAtual);
+            acesso_objeto_comando(classe);
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
+            checarSeIdentificadorAtualEhMetodo(objAtual);
             match( TokenType.ABREPAR );
             parametros_reais();
             match( TokenType.FECHAPAR );
         }
         else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
+            checarSeIdentificadorAtualEhVariavel(objAtual);
             match( TokenType.ATRIB );
             segundo_membro_atribuicao();
         }
@@ -1045,7 +1054,7 @@ public class AnalisadorSemantico {
             String propriedade = tokens.get(ponteiro-1).getLexema();
             Simbolo propriedadeSimb = checarSeClassePossuiPropriedade(classeAcessada,propriedade); //método semantico
 
-            loop_acesso_objeto(propriedadeSimb);
+            loop_acesso_objeto(propriedadeSimb); 
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             checarSeMetodoFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
@@ -1438,6 +1447,16 @@ public class AnalisadorSemantico {
         if(idAtual != null) {
             if(!(idAtual instanceof Metodo)) {
                 erroSemantico("método '" + idAtual.getId() + "' não declarado;");
+            }
+        }
+    }
+
+    //para chamada de métodos através de objetos
+    private void checarSeIdentificadorAtualEhVariavel(Simbolo idAtual)
+    {
+        if(idAtual != null) {
+            if(!(idAtual instanceof Constante || idAtual instanceof Variavel)) {
+                erroSemantico("atributo ou constante '" + idAtual.getId() + "' não declarada;");
             }
         }
     }
