@@ -683,10 +683,11 @@ public class AnalisadorSemantico {
 
     private void complemento_variavel_comando()
     {
+        Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
+
         switch(tokenAtual.getTipo())
         {
-            case PONTO: {
-                Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
+            case PONTO: {         
                 Classe classeAcessada = checarClasseDoObjetoAtual(objAtual); //método semantico
                 acesso_objeto_comando(classeAcessada);
                 break;
@@ -705,8 +706,9 @@ public class AnalisadorSemantico {
                 break;
             }
             case ABREPAR: {
+                Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
                 match(TokenType.ABREPAR);
-                parametros_reais();
+                parametros_reais(metodo);
                 match(TokenType.FECHAPAR);
                 break;
             }
@@ -742,9 +744,9 @@ public class AnalisadorSemantico {
             acesso_objeto_comando(classe);
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            checarSeIdentificadorAtualEhMetodo(objAtual);
+            Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual); 
             match( TokenType.ABREPAR );
-            parametros_reais();
+            parametros_reais(metodo);
             match( TokenType.FECHAPAR );
         }
         else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
@@ -1057,9 +1059,11 @@ public class AnalisadorSemantico {
             loop_acesso_objeto(propriedadeSimb); 
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            checarSeMetodoFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+            //checarSeMetodoFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+            Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
+            Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
-            parametros_reais();
+            parametros_reais(metodo);
             match(TokenType.FECHAPAR);
         }
         else throw new ErroSintaticoException();
@@ -1072,28 +1076,28 @@ public class AnalisadorSemantico {
             acesso_objeto(classe);
         }
          else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            checarSeIdentificadorAtualEhMetodo(objAtual);
+            Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
-            parametros_reais();
+            parametros_reais(metodo);
             match(TokenType.FECHAPAR);
         }
         else checarSeIdentificadorAtualEhVariavel(objAtual); //método semântico
 
     }
 
-    private void parametros_reais()
+    private void parametros_reais(Metodo metodo)
     {
         if (primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
             parametro_real();
-            loop_parametros_reais();
+            loop_parametros_reais(metodo);
         }
     }
 
-    private void loop_parametros_reais()
+    private void loop_parametros_reais(Metodo metodo)
     {
         if ( tokenAtual.getTipo() == TokenType.VIRGULA ) {
             match(TokenType.VIRGULA);
-            parametros_reais();
+            parametros_reais(metodo);
         }
     }
 
@@ -1406,10 +1410,6 @@ public class AnalisadorSemantico {
         if (classe != null)
         {
             if (classe.getSimbolo(propriedade) != null) return classe.getSimbolo(propriedade);
-//            if (classe.getConstante(propriedade) != null) return classe.getConstante(propriedade);
-//            if (classe.getVariavel(propriedade) != null) return classe.getVariavel(propriedade);
-//            if (classe.getMetodo(propriedade) != null) return classe.getMetodo(propriedade);
-            //erroSemantico("A classe '" + classe.getId() + "' não possui a propriedade '" + propriedade + "'");
             return null;
         } 
         else
@@ -1444,14 +1444,19 @@ public class AnalisadorSemantico {
     }
 
     //para chamada de métodos através de objetos
-    private void checarSeIdentificadorAtualEhMetodo(Simbolo idAtual)
+    private Metodo checarSeIdentificadorAtualEhMetodo(Simbolo idAtual)
     {
         if(idAtual != null) {
             if(!(idAtual instanceof Metodo)) {
                 erroSemantico("método '" + idAtual.getId() + "' não declarado;");
+                return null;
             }
+            else return (Metodo) idAtual;
         }
-        else erroSemantico("método '" + tokens.get(ponteiro-1).getLexema() + "' não declarado;");
+        else {
+            erroSemantico("método '" + tokens.get(ponteiro-1).getLexema() + "' não declarado;");
+            return null;
+        }
     }
 
     //para chamada de métodos através de objetos
