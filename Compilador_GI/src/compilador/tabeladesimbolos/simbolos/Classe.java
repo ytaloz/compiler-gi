@@ -6,7 +6,9 @@
 package compilador.tabeladesimbolos.simbolos;
 
 import compilador.tabeladesimbolos.Escopo;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -21,7 +23,10 @@ public class Classe extends Escopo {
     private HashMap<String,Variavel> variaveis = new HashMap<String,Variavel>();
 
     //classes do programa
-    private HashMap<String,Metodo> metodos = new HashMap<String,Metodo>();
+    private List<Metodo> metodos = new ArrayList<Metodo>();
+
+    //construtor da classe
+    private Metodo construtor ;
 
 
     public Classe(String id)
@@ -49,7 +54,12 @@ public class Classe extends Escopo {
     {
         met.setEscopoPai(this);
         addSimbolo(met);
-        metodos.put(met.getId(),met);
+        metodos.add(met);
+    }
+
+    public void addConstrutor(Metodo construtor)
+    {
+        this.construtor = construtor;
     }
 
     public Constante getConstante(String id)
@@ -62,9 +72,17 @@ public class Classe extends Escopo {
         return variaveis.get(id);
     }
 
-    public Metodo getMetodo(String id)
+    public boolean possuiMetodo(Metodo met)
     {
-        return metodos.get(id);
+        for (Metodo metodo : metodos) {
+            if(metodo.equals(met)) return true;
+        }
+        return false;
+    }
+
+    public Metodo getConstrutor()
+    {
+        return this.construtor;
     }
 
 }

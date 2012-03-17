@@ -65,6 +65,20 @@ public class ArvoreDeEscopo {
         return programa.getClasse(id);
     }
 
+    public Classe getClasseAtual()
+    {
+        if(escopoAtual instanceof Classe) return (Classe)escopoAtual;
+
+        Escopo pai = escopoAtual.getEscopoPai();
+            if (pai != null) {
+                while (!(pai instanceof Classe) && pai.getEscopoPai() != null) {
+                    pai = pai.getEscopoPai();
+                }
+                return (Classe)pai;
+            }
+            else return null;
+    }
+
     public void addConstante(Constante con)
     {
         if(escopoAtual instanceof Programa) {
@@ -113,13 +127,33 @@ public class ArvoreDeEscopo {
 
     public void addMetodo(Metodo met)
     {
-        if(escopoAtual instanceof Classe) {
-            Classe classe = (Classe) escopoAtual;
-            classe.addMetodo(met);
-        }
-        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de método");
+//        if(escopoAtual instanceof Classe) {
+//            Classe classe = (Classe) escopoAtual;
+//            classe.addMetodo(met);
+//        }
+//        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de método");
+//
+//        escopoAtual.addSimbolo(met);
+
+
+        Classe classe = getClasseAtual();
+        classe.addMetodo(met);
 
         escopoAtual.addSimbolo(met);
+    }
+
+    public void addConstrutor(Metodo construtor)
+    {
+//        if(escopoAtual instanceof Classe) {
+//            Classe classe = (Classe) escopoAtual;
+//            classe.addConstrutor(construtor);
+//        }
+//        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de construtor");
+
+        Classe classe = getClasseAtual();
+        classe.addConstrutor(construtor);
+
+        escopoAtual.addSimbolo(construtor);
     }
 
     public void addParametro(Variavel param)
