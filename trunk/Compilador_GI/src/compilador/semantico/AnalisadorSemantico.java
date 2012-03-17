@@ -238,14 +238,14 @@ public class AnalisadorSemantico {
             else if(tokenAtual.getTipo() == TokenType.ID) {
                 match(TokenType.ID);
 
-                checarSeClasseFoiDefinida(tokens.get(ponteiro-1).getLexema()); //metodo semantico
+                Classe classe = checarSeClasseFoiDefinida(tokens.get(ponteiro-1).getLexema()); //metodo semantico
 
                 match(TokenType.ID);
 
                 Variavel obj = new Variavel(tokens.get(ponteiro-1).getLexema(),tokens.get(ponteiro-2).getLexema()); //método semantico
                 addVariavel(obj); //método semantico
 
-                complemento_variavel_instanciar_obj();
+                complemento_variavel_instanciar_obj(classe);
                 match(TokenType.PONTOVIRGULA);
             }
             else throw new ErroSintaticoException();
@@ -576,26 +576,26 @@ public class AnalisadorSemantico {
 
  // ------------------- DECLARAÇÃO DE OBJETOS ----------------------------------
 
-    private void complemento_variavel_instanciar_obj()
+    private void complemento_variavel_instanciar_obj(Classe classe)
     {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
            match(TokenType.ABREPAR);
-           parametros_reais_instanciar_obj();
+           parametros_reais_instanciar_obj(classe);
            match(TokenType.FECHAPAR);
         }
     }
 
-    private void parametros_reais_instanciar_obj()
+    private void parametros_reais_instanciar_obj(Classe classe)
     {
-        parametro_real();
-        loop_parametros_reais_instanciar_obj();
+        parametro_real(classe.getConstrutor());
+        loop_parametros_reais_instanciar_obj(classe);
     }
 
-    private void loop_parametros_reais_instanciar_obj()
+    private void loop_parametros_reais_instanciar_obj(Classe classe)
     {
         if(tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
-            parametros_reais_instanciar_obj();
+            parametros_reais_instanciar_obj(classe);
         }
     }
 
@@ -1088,7 +1088,7 @@ public class AnalisadorSemantico {
     private void parametros_reais(Metodo metodo)
     {
         if (primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
-            parametro_real();
+            parametro_real(metodo);
             loop_parametros_reais(metodo);
         }
     }
@@ -1101,7 +1101,7 @@ public class AnalisadorSemantico {
         }
     }
 
-     private void parametro_real()
+     private void parametro_real(Metodo metodo)
     {
         if ( tokenAtual.getTipo() == TokenType.ID ||
              tokenAtual.getTipo() == TokenType.NUM ||
