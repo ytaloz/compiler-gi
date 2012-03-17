@@ -6,7 +6,9 @@
 package compilador.tabeladesimbolos.simbolos;
 
 import compilador.tabeladesimbolos.Escopo;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -21,7 +23,7 @@ public class Metodo extends Escopo {
     private HashMap<String,Variavel> variaveis = new HashMap<String,Variavel>();
 
     //parametros do método
-    private HashMap<String,Variavel> parametros = new HashMap<String,Variavel>();
+    private List<Variavel> parametros = new ArrayList<Variavel>();
 
 
 
@@ -42,6 +44,40 @@ public class Metodo extends Escopo {
 
     public void addParametro(Variavel param)
     {
-        parametros.put(param.getId(),param);
+        parametros.add(param);
+    }
+
+    public Variavel getParametro(String id)
+    {
+        for (Variavel param : parametros) {
+            if(param.id.equals(id)) return param;
+        }
+        return null;
+    }
+
+
+    @Override
+    public boolean equals(Object object)
+    {
+        if(!(object instanceof Metodo)) return false;
+        Metodo outro = (Metodo) object;
+
+        if( (outro.id.equals(this.id)) && (outro.tipoDado.equals(this.tipoDado)) && (outro.parametros.size()==this.parametros.size()))
+        {
+            for (int i = 0; i < parametros.size(); i++) {
+                if( !(outro.parametros.get(i).getTipoDado().equals(this.parametros.get(i).getTipoDado())) ) return false;
+            }
+            return true;
+        }
+        else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.constantes != null ? this.constantes.hashCode() : 0);
+        hash = 67 * hash + (this.variaveis != null ? this.variaveis.hashCode() : 0);
+        hash = 67 * hash + (this.parametros != null ? this.parametros.hashCode() : 0);
+        return hash;
     }
 }

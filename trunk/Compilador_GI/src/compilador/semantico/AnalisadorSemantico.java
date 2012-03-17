@@ -12,6 +12,7 @@ import compilador.gui.Janela;
 import compilador.sintatico.ConjuntoPrimeiro;
 import compilador.sintatico.ConjuntoSequencia;
 import compilador.tabeladesimbolos.ArvoreDeEscopo;
+import compilador.tabeladesimbolos.Escopo;
 import compilador.tabeladesimbolos.TabelaDeSimbolos;
 import compilador.tabeladesimbolos.simbolos.Classe;
 import compilador.tabeladesimbolos.simbolos.Constante;
@@ -433,12 +434,15 @@ public class AnalisadorSemantico {
             match(TokenType.ID);
             
             Metodo metodo = new Metodo(tokens.get(ponteiro-1).getLexema(),tipo);
-            addMetodo(metodo); //método semantico
+            //addMetodo(metodo); //método semantico
             tabelaDeSimbolos.empilharNovoEscopo(metodo); //método semantico
             
             match(TokenType.ABREPAR);
             parametros_formais(metodo);
             match(TokenType.FECHAPAR);
+
+            addMetodo(metodo); //método semantico
+
             match(TokenType.ABRECHAVE);
             dec_var_metodo();
             comandos();
@@ -1308,11 +1312,27 @@ public class AnalisadorSemantico {
 
     private void addMetodo(Metodo metodo)
     {
-        if(jaFoiDeclaradoNoEscopo(metodo.getId())) {
-            erroSemantico("Identificador já foi declarado: " + "'" + metodo.getId() + "'");
-        } else {
-            tabelaDeSimbolos.addMetodo(metodo);
+        Classe classe = tabelaDeSimbolos.getClasseAtual();
+        if(!classe.possuiMetodo(metodo)) {
+            if(classe.getConstante(metodo.getId())==null && classe.getVariavel(metodo.getId())==null) {
+                if(ehConstrutor(metodo)) {
+                    tabelaDeSimbolos.addConstrutor(metodo);
+                } else {
+                    tabelaDeSimbolos.addMetodo(metodo);
+                }
+            }
+            else erroSemantico("identificador '" + metodo.getId() + "' já foi declarado na classe");
         }
+        else erroSemantico("o método '" + metodo.getId() + "' já foi declarado.");
+    }
+
+    private boolean ehConstrutor(Metodo metodo)
+    {
+        Classe atual = tabelaDeSimbolos.getClasseAtual();
+        if (atual.getId().equals(metodo.getId()) && metodo.getTipoDado().equals("vazio")) {
+            return true;
+        }
+        return false;
     }
 
     private void addMetodoPrincipal(Metodo metodo)
@@ -1374,9 +1394,10 @@ public class AnalisadorSemantico {
     {
         if (classe != null)
         {
-            if (classe.getConstante(propriedade) != null) return classe.getConstante(propriedade);
-            if (classe.getVariavel(propriedade) != null) return classe.getVariavel(propriedade);
-            if (classe.getMetodo(propriedade) != null) return classe.getMetodo(propriedade);
+            if (classe.getSimbolo(propriedade) != null) return classe.getSimbolo(propriedade);
+//            if (classe.getConstante(propriedade) != null) return classe.getConstante(propriedade);
+//            if (classe.getVariavel(propriedade) != null) return classe.getVariavel(propriedade);
+//            if (classe.getMetodo(propriedade) != null) return classe.getMetodo(propriedade);
             erroSemantico("A classe '" + classe.getId() + "' não possui a propriedade '" + propriedade + "'");
             return null;
         } 

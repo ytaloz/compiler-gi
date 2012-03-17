@@ -44,6 +44,15 @@ public class TabelaDeSimbolos {
         return arvoreDeEscopo.getClasse(id);
     }
 
+    public Classe getClasseAtual()
+    {
+        return arvoreDeEscopo.getClasseAtual();
+    }
+
+    public Escopo getEscopoAtual()
+    {
+        return arvoreDeEscopo.getEscopoAtual();
+    }
 
 //---------------- MÉTODOS RELACIONADOS A ESCOPO ------------------------------
    
@@ -94,6 +103,11 @@ public class TabelaDeSimbolos {
     public void addParametro(Variavel param)
     {
         arvoreDeEscopo.addParametro(param);
+    }
+
+    public void addConstrutor(Metodo construtor)
+    {
+        arvoreDeEscopo.addConstrutor(construtor);
     }
     
 //--------------------------- MÉTODOS AUXILIARES -------------------------------
