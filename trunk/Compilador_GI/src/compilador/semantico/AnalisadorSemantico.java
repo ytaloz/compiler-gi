@@ -713,7 +713,11 @@ public class AnalisadorSemantico {
             }
             case ATRIB: {
                 match(TokenType.ATRIB);
-                segundo_membro_atribuicao();
+                Simbolo ultimoId = checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-2).getLexema());
+                String tipoAtribuicao = segundo_membro_atribuicao();
+                if(ultimoId!=null) {
+                checarTipoAtribuicao(ultimoId.getTipoDado(), tipoAtribuicao);
+                }
                 break;
             }
             case ABREPAR: {
@@ -817,18 +821,26 @@ public class AnalisadorSemantico {
         match(TokenType.FECHACHAVE);
     }
 
-    private void condicao_comandos()
+    private String condicao_comandos()
     {
+        String tipo = "erro";
+
         if (primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
-            expressao_relacional();
-            prox_trecho_expl();
+            String tipoOp1 = expressao_relacional();
+            tipo = prox_trecho_expl(tipoOp1);
         }
         else if(tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
             expressao_booleana();
             op_relacional_igualdade();
             match(TokenType.ID);
+            Simbolo ultimoId = checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema());
+            if(ultimoId != null) {
+                if(ultimoId.getTipoDado().equals("logico")) tipo = "logico";
+            }
         }
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
     private void comando_escreva()
@@ -923,38 +935,58 @@ public class AnalisadorSemantico {
 
 // ------------------- EXPRESSÕES ----------------------------------------------
 
-    private void expressao()
+    private String expressao()
     {
+        String tipo = "erro";
+
         if (primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
-            expressao_aritmetica();
-            complemento_exp_aritmetica();
+            String tipoExpAritm = expressao_aritmetica();
+            tipo = complemento_exp_aritmetica(tipoExpAritm);
         }
         else if (tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
             expressao_booleana();
-            prox_trecho_expl();
+            tipo = prox_trecho_expl("logico"); //se entrou nessa parte, necessariamente expressao_booleana retorna o tipo "logico"
         }
+
+        return tipo;
     }
 
-    private void complemento_exp_aritmetica()
+    private String complemento_exp_aritmetica(String tipoOperandoRel1)
     {
+        String tipo = tipoOperandoRel1;
+
         if (tokenAtual.getTipo() == TokenType.MAIOR ||
             tokenAtual.getTipo() == TokenType.MENOR ||
             tokenAtual.getTipo() == TokenType.MAIORIGUAL ||
             tokenAtual.getTipo() == TokenType.MENORIGUAL ||
             tokenAtual.getTipo() == TokenType.IGUAL ||
             tokenAtual.getTipo() == TokenType.DIF) {
+
             operador_relacional();
-            expressao_aritmetica();
-            prox_trecho_expl();
+            String tipoOperandoRel2 = expressao_aritmetica();
+
+            if( (tipoOperandoRel1.equals("inteiro") || tipoOperandoRel1.equals("real")) && (tipoOperandoRel2.equals("inteiro") || tipoOperandoRel2.equals("real"))  )
+            tipo = "logico";
+
+            tipo = prox_trecho_expl(tipo);
         }
+
+        return tipo;
     }
 
-    private void prox_trecho_expl()
+    private String prox_trecho_expl(String tipoOp1)
     {
+        String tipo = tipoOp1;
+
         if ( tokenAtual.getTipo() == TokenType.OU || tokenAtual.getTipo() == TokenType.E  ) {
              operador_logico();
-             termo_l();
+             String tipoOp2 = termo_l();
+
+             if(tipoOp1.equals("logico") && tipoOp2.equals("logico")) tipo = "logico";
+             else tipo = "erro";
         }
+
+        return tipo;
     }
 
     private void operador_logico()
@@ -963,24 +995,35 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.E  ) proxToken();
     }
 
-    private void termo_l()
+    private String termo_l()
     {
+        String tipo = "erro";
+
          if (primeiro(EXPRESSAO_ARITMETICA).contains(tokenAtual.getTipo())) {
-            expressao_relacional();
-            prox_trecho_expl();
+            String tipoOp1 = expressao_relacional();
+            tipo = prox_trecho_expl(tipoOp1);
         }
         else if (tokenAtual.getTipo() == TokenType.VERDADEIRO || tokenAtual.getTipo() == TokenType.FALSO) {
             expressao_booleana();
-            prox_trecho_expl();
+            tipo = prox_trecho_expl("logico");
         }
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
-    private void expressao_relacional()
+    private String expressao_relacional()
     {
-        expressao_aritmetica();
+        String tipo = "erro";
+
+        String tipoOp1 = expressao_aritmetica();
         operador_relacional();
-        expressao_aritmetica();
+        String tipoOp2 = expressao_aritmetica();
+
+        if( (tipoOp1.equals("inteiro") || tipoOp1.equals("real")) && (tipoOp2.equals("inteiro") || tipoOp2.equals("real"))  )
+            tipo = "logico";
+
+        return tipo;
     }
 
     private void operador_relacional()
@@ -1003,63 +1046,86 @@ public class AnalisadorSemantico {
         else throw new ErroSintaticoException();
     }
 
-    private void expressao_aritmetica()
+    private String expressao_aritmetica()
     {
-        termo_aritm();
-        prox_trecho_exp_aritm();
+        String tipo = "erro";
+
+        String tipoTermoAritm = termo_aritm();
+        tipo = prox_trecho_exp_aritm(tipoTermoAritm);
+
+        return tipo;
     }
 
-    private void termo_aritm()
+    private String termo_aritm()
     {
+        String tipo = "erro";
         if ( tokenAtual.getTipo() == TokenType.ID || tokenAtual.getTipo() == TokenType.NUM || tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            fator();
-            complemento_fator();
+            String tipoFator = fator();
+            tipo = complemento_fator(tipoFator);
         }
         else throw new ErroSintaticoException();
+        return tipo;
     }
 
-    private void fator()
+    private String fator()
     {
+        String tipo = "erro";
+        
         if ( tokenAtual.getTipo() == TokenType.ID ) {
             match( TokenType.ID );
-            complemento_referencia_variavel();
+            tipo = complemento_referencia_variavel();
         }
         else if ( tokenAtual.getTipo() == TokenType.NUM ) {
+            tipo = tipoDadoToken(tokenAtual); //checagem de tipo
             match( TokenType.NUM );
         }
         else if ( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             match( TokenType.ABREPAR );
-            expressao_aritmetica();
+            tipo = expressao_aritmetica();
             match( TokenType.FECHAPAR );
         }
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
-    private void complemento_fator()
+    private String complemento_fator(String tipoFator)
     {
+        String tipo = tipoFator;
         if ( tokenAtual.getTipo() == TokenType.MULT || tokenAtual.getTipo() == TokenType.DIV ) {
+            String operador = tokenAtual.getLexema();
             operador_multiplicacao();
-            termo_aritm();
+            String tipoTermoAritm = termo_aritm();
+            tipo = verificarTipoOperacaoAritmetica(tipoFator, tipoTermoAritm, operador);
         }
+        return tipo;
     }
 
-    private void complemento_referencia_variavel()
+    private String complemento_referencia_variavel()
     {
+        String tipo = "erro";
+
         if( tokenAtual.getTipo() == TokenType.PONTO || tokenAtual.getTipo() == TokenType.ABREPAR ) {
             Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
             Classe classeAcessada = checarClasseDoObjetoAtual(objAtual);
-            acesso_objeto(classeAcessada);
+            tipo = acesso_objeto(classeAcessada);
         }
         else if( tokenAtual.getTipo() == TokenType.ABRECOLCH ) {
             match(TokenType.ABRECOLCH);
             expressao_aritmetica();
             match(TokenType.FECHACOLCH);
         }
-        else checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+        else {
+            checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+            tipo = tipoDadoToken(tokens.get(ponteiro-1));
+        }
+
+        return tipo;
     }
 
-    private void acesso_objeto(Classe classeAcessada)
+    private String acesso_objeto(Classe classeAcessada)
     {
+        String tipo = "erro";
         if( tokenAtual.getTipo() == TokenType.PONTO ) {
             match(TokenType.PONTO);
             match(TokenType.ID);
@@ -1070,7 +1136,6 @@ public class AnalisadorSemantico {
             loop_acesso_objeto(propriedadeSimb); 
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            //checarSeMetodoFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
             Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
             Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
@@ -1078,22 +1143,31 @@ public class AnalisadorSemantico {
             match(TokenType.FECHAPAR);
         }
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
-    private void loop_acesso_objeto(Simbolo objAtual)
+    private String loop_acesso_objeto(Simbolo objAtual)
     {
+        String tipo = "erro";
+        
          if( tokenAtual.getTipo() == TokenType.PONTO ) {
             Classe classe = checarClasseDoObjetoAtual(objAtual);
-            acesso_objeto(classe);
+            tipo = acesso_objeto(classe);
         }
          else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
+            if(metodo!=null) tipo = metodo.getTipoDado();
             match(TokenType.ABREPAR);
             parametros_reais(metodo, -1);
             match(TokenType.FECHAPAR);
         }
-        else checarSeIdentificadorAtualEhVariavel(objAtual); //método semântico
+        else {
+             checarSeIdentificadorAtualEhVariavel(objAtual); //método semântico
+             if(objAtual != null) tipo = objAtual.getTipoDado();
+        }
 
+        return tipo;
     }
 
     private void parametros_reais(Metodo metodo, int index)
@@ -1103,13 +1177,15 @@ public class AnalisadorSemantico {
             parametro_real(metodo, index);
             loop_parametros_reais(metodo, index);
         }
-        else if(metodo.getTotalParametros() > index+1) {
-            String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
-            for (int i = 0; i < metodo.getTotalParametros(); i++) {
-                msgErro += metodo.getParametro(i).getTipoDado() + ", ";
-            }
-            erroSemantico(msgErro);
-        }
+        else if(metodo!=null) {
+            if(metodo.getTotalParametros() > index+1) {
+                String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
+                for (int i = 0; i < metodo.getTotalParametros(); i++) {
+                    msgErro += metodo.getParametro(i).getTipoDado() + ", ";
+                }
+                erroSemantico(msgErro);
+             }
+         }
     }
 
     private void loop_parametros_reais(Metodo metodo, int index)
@@ -1158,12 +1234,16 @@ public class AnalisadorSemantico {
         else throw new ErroSintaticoException();
     }
 
-    private void prox_trecho_exp_aritm()
+    private String prox_trecho_exp_aritm(String tipoTermoAritm)
     {
+        String tipo = tipoTermoAritm;
         if ( tokenAtual.getTipo() == TokenType.ADICAO || tokenAtual.getTipo() == TokenType.SUB ) {
+            String operador = tokenAtual.getLexema();
             operador_soma();
-            expressao_aritmetica();
+            String tipoExpAritm = expressao_aritmetica();
+            tipo = verificarTipoOperacaoAritmetica(tipoTermoAritm, tipoExpAritm, operador);
         }
+        return tipo;
     }
 
     private void operador_soma()
@@ -1250,23 +1330,29 @@ public class AnalisadorSemantico {
         loop_acesso_atributo_obj();
     }
 
-    private void segundo_membro_atribuicao()
+    private String segundo_membro_atribuicao()
     {
+        String tipo = "erro";
+
           if(tokenAtual.getTipo() == TokenType.ABREPAR ||
            tokenAtual.getTipo() == TokenType.ID ||
            tokenAtual.getTipo() == TokenType.NUM ||
            tokenAtual.getTipo() == TokenType.VERDADEIRO ||
            tokenAtual.getTipo() == TokenType.FALSO)  {
-              expressao();
+              tipo = expressao();
           }
           else if( tokenAtual.getTipo() == TokenType.CARACTER || tokenAtual.getTipo() == TokenType.LITERAL ) {
+              tipo = tipoDadoToken(tokenAtual); 
               proxToken();
           }
           else if(tokenAtual.getTipo() == TokenType.INCR || tokenAtual.getTipo() == TokenType.DECR) {
               incremento_decremento();
               match(TokenType.ID);
+              tipo = tipoDadoToken(tokens.get(ponteiro-1));
           }
           else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
     private void atribuicao_constante(String tipo)
@@ -1275,7 +1361,8 @@ public class AnalisadorSemantico {
         Constante constante = new Constante(tokens.get(ponteiro-1).getLexema(), tipo);
         addConstante(constante); //método semântico
         match(TokenType.ATRIB);
-        segundo_membro_atribuicao();
+        String tipoAtrib = segundo_membro_atribuicao();
+        checarTipoAtribuicao(constante.getTipoDado(), tipoAtrib);
     }
 
 //-------- MÉTODO QUE RETORNA O CONJUNTO PRIMEIRO DE UMA DADA PRODUÇÃO ---------
@@ -1510,12 +1597,43 @@ public class AnalisadorSemantico {
         else erroSemantico("atributo ou constante '" + tokens.get(ponteiro-1).getLexema() + "' não declarada;");
     }
 
+//--------------------- MÉTODOS DE VERIFICAÇÃO DE TIPOS ------------------------
+
+   private String verificarTipoOperacaoAritmetica(String tipoOp1, String tipoOp2, String operador)
+   {
+       if(!tipoOp1.equals("erro") && !tipoOp2.equals("erro"))
+       {
+           if(tipoOp1.equals("inteiro") && tipoOp2.equals("inteiro")) return "inteiro";
+           if(tipoOp1.equals("real") && tipoOp2.equals("real")) return "real";
+
+           erroSemantico("operador " + operador + "não pode ser aplicado aos tipos: " + tipoOp1 + ", " + tipoOp2);
+
+           return "erro";
+       }
+       else return "erro";
+   }
+
+   private void checarTipoAtribuicao(String tipoPrimeiroMembro, String tipoSegundoMembro)
+   {
+       if(!tipoPrimeiroMembro.equals(tipoSegundoMembro)) {
+           erroSemantico("incompatibilidade de tipos na atribuição: esperava " + tipoPrimeiroMembro + ", obteve: " + tipoSegundoMembro);
+       }
+   }
+
+//   private void teste()
+//   {
+//       String s = "oi";
+//       Metodo c;
+//       boolean a = s;
+//   }
+
+
 //---------------------------- MÉTODOS AUXILIARES ------------------------------
 
     private String tipoDadoToken(Token token)
     {
-        if(token.getTipo()==TokenType.LITERAL) return "cadeia"; //DÚVIDA: uma string é do tipo 'CADEIA' ou 'LITERAL'?? a checagem do conjunto primeiro está errada em parametros_formais??
-        if(token.getTipo()==TokenType.CARACTER) return "caracter";
+        if(token.getTipo()==TokenType.LITERAL) return "cadeia"; 
+        if(token.getTipo()==TokenType.CARACTER) return "caractere";
         if(token.getTipo()==TokenType.VERDADEIRO || token.getTipo()==TokenType.FALSO) return "logico";
         if(token.getTipo()==TokenType.NUM) {
             if ( token.getLexema().indexOf(".")!=-1 ) return "real";
