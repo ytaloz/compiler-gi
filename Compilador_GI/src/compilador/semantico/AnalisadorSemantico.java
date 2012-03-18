@@ -580,22 +580,23 @@ public class AnalisadorSemantico {
     {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
            match(TokenType.ABREPAR);
-           parametros_reais_instanciar_obj(classe);
+           parametros_reais_instanciar_obj(classe, -1);
            match(TokenType.FECHAPAR);
         }
     }
 
-    private void parametros_reais_instanciar_obj(Classe classe)
+    private void parametros_reais_instanciar_obj(Classe classe, int index)
     {
-        parametro_real(classe.getConstrutor());
-        loop_parametros_reais_instanciar_obj(classe);
+        index++; //índice do parametro a ser checado o tipo
+        parametro_real(classe.getConstrutor(), index);
+        loop_parametros_reais_instanciar_obj(classe, index);
     }
 
-    private void loop_parametros_reais_instanciar_obj(Classe classe)
+    private void loop_parametros_reais_instanciar_obj(Classe classe, int index)
     {
         if(tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
-            parametros_reais_instanciar_obj(classe);
+            parametros_reais_instanciar_obj(classe, index);
         }
     }
 
@@ -708,7 +709,7 @@ public class AnalisadorSemantico {
             case ABREPAR: {
                 Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
                 match(TokenType.ABREPAR);
-                parametros_reais(metodo);
+                parametros_reais(metodo, -1);
                 match(TokenType.FECHAPAR);
                 break;
             }
@@ -744,9 +745,9 @@ public class AnalisadorSemantico {
             acesso_objeto_comando(classe);
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual); 
+            Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match( TokenType.ABREPAR );
-            parametros_reais(metodo);
+            parametros_reais(metodo, -1);
             match( TokenType.FECHAPAR );
         }
         else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
@@ -1063,7 +1064,7 @@ public class AnalisadorSemantico {
             Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
             Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
-            parametros_reais(metodo);
+            parametros_reais(metodo, -1);
             match(TokenType.FECHAPAR);
         }
         else throw new ErroSintaticoException();
@@ -1078,30 +1079,45 @@ public class AnalisadorSemantico {
          else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match(TokenType.ABREPAR);
-            parametros_reais(metodo);
+            parametros_reais(metodo, -1);
             match(TokenType.FECHAPAR);
         }
         else checarSeIdentificadorAtualEhVariavel(objAtual); //método semântico
 
     }
 
-    private void parametros_reais(Metodo metodo)
+    private void parametros_reais(Metodo metodo, int index)
     {
+        index++; //índice do parametro a ser checado o tipo
         if (primeiro(PARAMETRO_REAL).contains(tokenAtual.getTipo())) {
-            parametro_real(metodo);
-            loop_parametros_reais(metodo);
+            parametro_real(metodo, index);
+            loop_parametros_reais(metodo, index);
+        }
+        else if(metodo.getTotalParametros() > index+1) {
+            String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
+            for (int i = 0; i < metodo.getTotalParametros(); i++) {
+                msgErro += metodo.getParametro(i).getTipoDado() + ", ";
+            }
+            erroSemantico(msgErro);
         }
     }
 
-    private void loop_parametros_reais(Metodo metodo)
+    private void loop_parametros_reais(Metodo metodo, int index)
     {
         if ( tokenAtual.getTipo() == TokenType.VIRGULA ) {
             match(TokenType.VIRGULA);
-            parametros_reais(metodo);
+            parametros_reais(metodo, index);
+        }
+         else if(metodo.getTotalParametros() > index+1) {
+            String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
+            for (int i = 0; i < metodo.getTotalParametros(); i++) {
+                msgErro += metodo.getParametro(i).getTipoDado() + ", ";
+            }
+            erroSemantico(msgErro);
         }
     }
 
-     private void parametro_real(Metodo metodo)
+     private void parametro_real(Metodo metodo, int index)
     {
         if ( tokenAtual.getTipo() == TokenType.ID ||
              tokenAtual.getTipo() == TokenType.NUM ||
@@ -1111,6 +1127,12 @@ public class AnalisadorSemantico {
              tokenAtual.getTipo() == TokenType.FALSO  ) proxToken();
 
         else throw new ErroSintaticoException();
+
+        String tipoParametro = tipoDadoToken(tokens.get(ponteiro-1));
+        if( !(tipoParametro.equals(metodo.getParametro(index).getTipoDado())) && !tipoParametro.equals("erro") ) {
+            erroSemantico("parametro '" + tokens.get(ponteiro-1).getLexema() + "' é do tipo " + tipoParametro + ", esperava um parametro do tipo " + metodo.getParametro(index).getTipoDado());
+        }
+
     }
 
     private void operador_multiplicacao()
@@ -1372,15 +1394,18 @@ public class AnalisadorSemantico {
 
 //------------------- CHECAGEM DE IDENTIFICADORES ------------------------------
 
-    private void checarSeIdentificadorFoiDeclarado(String id)
+    private Simbolo checarSeIdentificadorFoiDeclarado(String id)
     {
         Simbolo simbolo = tabelaDeSimbolos.getSimbolo(id);
         if (simbolo == null) {
             erroSemantico("indentificador '" + id + "' não declarado");
+            return null;
         }
         else if(!(simbolo instanceof Variavel || simbolo instanceof Constante || simbolo instanceof Metodo)) {
             erroSemantico("indentificador '" + id + "' não declarado");
+            return null;
         }
+        else return simbolo;
     }
 
     private void checarSeMetodoFoiDeclarado(String id)
@@ -1468,6 +1493,26 @@ public class AnalisadorSemantico {
             }
         }
         else erroSemantico("atributo ou constante '" + tokens.get(ponteiro-1).getLexema() + "' não declarada;");
+    }
+
+//---------------------------- MÉTODOS AUXILIARES ------------------------------
+
+    private String tipoDadoToken(Token token)
+    {
+        if(token.getTipo()==TokenType.LITERAL) return "cadeia"; //DÚVIDA: uma string é do tipo 'CADEIA' ou 'LITERAL'?? a checagem do conjunto primeiro está errada em parametros_formais??
+        if(token.getTipo()==TokenType.CARACTER) return "caracter";
+        if(token.getTipo()==TokenType.VERDADEIRO || token.getTipo()==TokenType.FALSO) return "logico";
+        if(token.getTipo()==TokenType.NUM) {
+            if ( token.getLexema().indexOf(".")!=-1 ) return "real";
+            else return "inteiro";
+        }
+        if(token.getTipo()==TokenType.ID) {
+            Simbolo var = checarSeIdentificadorFoiDeclarado(token.getLexema());
+            if(var!=null) {
+                return var.getTipoDado();
+            } else return "erro";
+        }
+        return "erro";
     }
 
     private boolean jaFoiDeclaradoNoEscopo(String id)

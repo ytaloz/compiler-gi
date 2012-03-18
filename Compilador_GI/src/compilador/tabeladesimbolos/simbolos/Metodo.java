@@ -55,6 +55,16 @@ public class Metodo extends Escopo {
         return null;
     }
 
+    public Variavel getParametro(int i)
+    {
+        return parametros.get(i);
+    }
+
+    public int getTotalParametros()
+    {
+        return parametros.size();
+    }
+
 
     @Override
     public boolean equals(Object object)
