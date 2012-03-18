@@ -581,6 +581,7 @@ public class AnalisadorSemantico {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
            match(TokenType.ABREPAR);
            parametros_reais_instanciar_obj(classe, -1);
+           if(classe.getConstrutor()==null && classe!=null) erroSemantico("construtor da classe '" + classe.getId() + "' não foi definido");
            match(TokenType.FECHAPAR);
         }
     }
@@ -597,6 +598,15 @@ public class AnalisadorSemantico {
         if(tokenAtual.getTipo() == TokenType.VIRGULA) {
             match(TokenType.VIRGULA);
             parametros_reais_instanciar_obj(classe, index);
+        }
+        else if(classe.getConstrutor()!=null) {
+            if(classe.getConstrutor().getTotalParametros() > index+1) {
+                String msgErro = "construtor '" + classe.getConstrutor().getId() + "()' exige parametros: ";
+                for (int i = 0; i < classe.getConstrutor().getTotalParametros(); i++) {
+                    msgErro += classe.getConstrutor().getParametro(i).getTipoDado() + ", ";
+                }
+                erroSemantico(msgErro);
+            }
         }
     }
 
@@ -1129,10 +1139,15 @@ public class AnalisadorSemantico {
         else throw new ErroSintaticoException();
 
         String tipoParametro = tipoDadoToken(tokens.get(ponteiro-1));
-        if( !(tipoParametro.equals(metodo.getParametro(index).getTipoDado())) && !tipoParametro.equals("erro") ) {
-            erroSemantico("parametro '" + tokens.get(ponteiro-1).getLexema() + "' é do tipo " + tipoParametro + ", esperava um parametro do tipo " + metodo.getParametro(index).getTipoDado());
+        if(metodo!=null) {
+            if(index < metodo.getTotalParametros()) {
+                if( !(tipoParametro.equals(metodo.getParametro(index).getTipoDado())) && !tipoParametro.equals("erro") ) {
+                    erroSemantico("parametro '" + tokens.get(ponteiro-1).getLexema() + "' é do tipo " + tipoParametro + ", esperava um parametro do tipo " + metodo.getParametro(index).getTipoDado());
+                }
+            }
+            else erroSemantico("método ou construtor '" + metodo.getId() + "' nao possui um " + (index+1) + "º parametro");
         }
-
+        //else erroSemantico("");
     }
 
     private void operador_multiplicacao()
