@@ -38,4 +38,9 @@ public abstract class Simbolo {
         return this.tipoDado;
     }
 
+    public boolean ehVetor()
+    {
+        return tipoDado.substring(tipoDado.length()-2).equals("[]");
+    }
+
 }
