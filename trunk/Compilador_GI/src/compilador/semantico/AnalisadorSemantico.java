@@ -1138,7 +1138,7 @@ public class AnalisadorSemantico {
             match(TokenType.FECHACOLCH);
         }
         else {
-            checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
+            //checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema()); //método semântico
             tipo = tipoDadoToken(tokens.get(ponteiro-1));
         }
 
