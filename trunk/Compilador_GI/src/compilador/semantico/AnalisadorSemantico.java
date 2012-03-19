@@ -746,8 +746,9 @@ public class AnalisadorSemantico {
         }
     }
 
-    private void acesso_objeto_comando(Classe classeAcessada)
+    private String acesso_objeto_comando(Classe classeAcessada)
     {
+        String tipo = "erro";
         if ( tokenAtual.getTipo() == TokenType.PONTO ) {
             match(TokenType.PONTO);
             match(TokenType.ID);
@@ -757,26 +758,33 @@ public class AnalisadorSemantico {
 
             loop_acesso_objeto_comando(propriedadeSimb);
         }
+        return tipo;
     }
 
-    private void loop_acesso_objeto_comando(Simbolo objAtual)
+    private String loop_acesso_objeto_comando(Simbolo objAtual)
     {
+        String tipo = "erro";
+
         if ( tokenAtual.getTipo() == TokenType.PONTO  ) {
             Classe classe = checarClasseDoObjetoAtual(objAtual);
-            acesso_objeto_comando(classe);
+            tipo = acesso_objeto_comando(classe);
          }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             Metodo metodo = checarSeIdentificadorAtualEhMetodo(objAtual);
             match( TokenType.ABREPAR );
             parametros_reais(metodo, -1);
             match( TokenType.FECHAPAR );
+            tipo = metodo.getTipoDado();
         }
         else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
             checarSeIdentificadorAtualEhVariavel(objAtual);
             match( TokenType.ATRIB );
-            segundo_membro_atribuicao();
+            String tipoAtrib = segundo_membro_atribuicao();
+            if(objAtual != null) checarTipoAtribuicao(objAtual.getTipoDado(), tipoAtrib);
         }
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
     private void comando_se()
@@ -1170,7 +1178,7 @@ public class AnalisadorSemantico {
         return tipo;
     }
 
-    private String loop_acesso_objeto(Simbolo objAtual)
+    private String loop_acesso_objeto(Simbolo objAtual) 
     {
         String tipo = "erro";
         
