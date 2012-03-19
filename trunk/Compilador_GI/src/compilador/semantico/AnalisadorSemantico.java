@@ -1216,12 +1216,14 @@ public class AnalisadorSemantico {
             match(TokenType.VIRGULA);
             parametros_reais(metodo, index);
         }
-         else if(metodo.getTotalParametros() > index+1) {
-            String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
-            for (int i = 0; i < metodo.getTotalParametros(); i++) {
-                msgErro += metodo.getParametro(i).getTipoDado() + ", ";
+        else if(metodo!=null) {
+            if(metodo.getTotalParametros() > index+1) {
+                String msgErro = "método '" + metodo.getId() + "()' exige parametros: ";
+                for (int i = 0; i < metodo.getTotalParametros(); i++) {
+                    msgErro += metodo.getParametro(i).getTipoDado() + ", ";
+                }
+                erroSemantico(msgErro);
             }
-            erroSemantico(msgErro);
         }
     }
 
