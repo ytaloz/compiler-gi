@@ -436,7 +436,7 @@ public class AnalisadorSemantico {
             match(TokenType.ID);
             
             Metodo metodo = new Metodo(tokens.get(ponteiro-1).getLexema(),tipo);
-            //addMetodo(metodo); //método semantico
+      
             tabelaDeSimbolos.empilharNovoEscopo(metodo); //método semantico
             
             match(TokenType.ABREPAR);
@@ -450,6 +450,7 @@ public class AnalisadorSemantico {
             comandos();
             match(TokenType.FECHACHAVE);
 
+            if(!metodo.getTipoDado().equals("vazio") && !metodo.temComandoRetorno()) erroSemantico("faltando comando de retorno no método '" + metodo.getId() + "()'");
             tabelaDeSimbolos.desempilharEscopo(); //método semantico
         }
          catch(ErroSintaticoException ex) {
@@ -913,23 +914,36 @@ public class AnalisadorSemantico {
     {
         match(TokenType.RETORNO);
         match(TokenType.ABREPAR);
-        param_retorno();
+        String tipoRetorno = param_retorno();
+        Metodo metodoAtual = (Metodo) tabelaDeSimbolos.getEscopoAtual();
+        metodoAtual.setComandoRetorno(true);
+        String tipoMetodoAtual = metodoAtual.getTipoDado();
+        if( !tipoMetodoAtual.equals(tipoRetorno)) {
+            erroSemantico("tipo incompatível no retorno; esperava " + tipoMetodoAtual + ", obteve " + tipoRetorno);
+        }
         match(TokenType.FECHAPAR);
     }
 
-    private void param_retorno()
+    private String param_retorno()
     {
+        String tipo = "erro";
+
         if( tokenAtual.getTipo() == TokenType.ID ||
             tokenAtual.getTipo() == TokenType.NUM ||
             tokenAtual.getTipo() == TokenType.VERDADEIRO ||
             tokenAtual.getTipo() == TokenType.FALSO ||
             tokenAtual.getTipo() == TokenType.ABREPAR ) {
-            expressao();
+            tipo = expressao();
         }
         else if (  tokenAtual.getTipo() == TokenType.LITERAL ||
-                   tokenAtual.getTipo() == TokenType.CARACTER  ) proxToken();
+                   tokenAtual.getTipo() == TokenType.CARACTER  ) {
+            proxToken();
+            tipo = tipoDadoToken(tokens.get(ponteiro-1));
+        }
 
         else throw new ErroSintaticoException();
+
+        return tipo;
     }
 
     private void incremento_decremento()
@@ -1643,11 +1657,11 @@ public class AnalisadorSemantico {
        }
    }
 
-//   private void teste()
+//   private String teste()
 //   {
 //       String s = "oi";
 //       int[] a = new int[10];
-//       a = 2;
+//       //return 2;
 //   }
 
 

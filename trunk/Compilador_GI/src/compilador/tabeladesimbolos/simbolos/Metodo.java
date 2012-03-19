@@ -25,6 +25,9 @@ public class Metodo extends Escopo {
     //parametros do método
     private List<Variavel> parametros = new ArrayList<Variavel>();
 
+    //flag para saber se tem comando de retorno
+    private boolean temComandoRetorno = false;
+
 
 
     public Metodo(String id, String tipo)
@@ -63,6 +66,16 @@ public class Metodo extends Escopo {
     public int getTotalParametros()
     {
         return parametros.size();
+    }
+
+    public boolean temComandoRetorno()
+    {
+        return temComandoRetorno;
+    }
+
+    public void setComandoRetorno(boolean flag)
+    {
+        this.temComandoRetorno = flag;
     }
 
 
