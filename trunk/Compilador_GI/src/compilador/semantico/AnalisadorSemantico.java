@@ -366,6 +366,7 @@ public class AnalisadorSemantico {
              blocos_classe();
              match(TokenType.FECHACHAVE);
              tabelaDeSimbolos.desempilharEscopo();
+             //tabelaDeSimbolos.desempilharEscopo();
          }
          else throw new ErroSintaticoException();
     }
@@ -562,7 +563,9 @@ public class AnalisadorSemantico {
     private void lista_parametros(Metodo metodo, String tipo)
     {
         match(TokenType.ID);
-
+        Classe classe = (Classe) tabelaDeSimbolos.getEscopoAtual().getEscopoPai();
+        String atributo = tokens.get(ponteiro-1).getLexema();
+        if(classe.getVariavel(atributo)!=null) erroSemantico("identificador '" + atributo + "' já foi declarado como atributo" );
         Variavel param = new Variavel(tokens.get(ponteiro-1).getLexema(),tipo); //método semantico
         addParametro(param); //método semantico
 
@@ -1236,7 +1239,7 @@ public class AnalisadorSemantico {
         }
     }
 
-     private void parametro_real(Metodo metodo, int index)
+     private void parametro_real(Metodo metodo, int index) 
     {
         if ( tokenAtual.getTipo() == TokenType.ID ||
              tokenAtual.getTipo() == TokenType.NUM ||

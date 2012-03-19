@@ -34,12 +34,16 @@ public class ArvoreDeEscopo {
     public void empilharNovoEscopo(Escopo sub)
     {
         escopoAtual.addSubEscopo(sub);
+        sub.setEscopoPai(escopoAtual);
         escopoAtual = sub;
     }
 
     public void desempilharEscopo()
     {
-        escopoAtual = escopoAtual.getEscopoPai();
+        if(escopoAtual instanceof Classe) {
+            escopoAtual = raiz;
+        }
+        else escopoAtual = escopoAtual.getEscopoPai();
     }
 
     //retorna o simbolo se ele foi declarado no escopo atual, ou null se ele não foi declarado no escopo
