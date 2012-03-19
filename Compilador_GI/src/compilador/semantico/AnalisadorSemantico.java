@@ -1155,7 +1155,7 @@ public class AnalisadorSemantico {
             String propriedade = tokens.get(ponteiro-1).getLexema();
             Simbolo propriedadeSimb = checarSeClassePossuiPropriedade(classeAcessada,propriedade); //método semantico
 
-            loop_acesso_objeto(propriedadeSimb); 
+            tipo = loop_acesso_objeto(propriedadeSimb); 
         }
         else if( tokenAtual.getTipo() == TokenType.ABREPAR ) {
             Simbolo objAtual = tabelaDeSimbolos.getSimbolo(tokens.get(ponteiro-1).getLexema());
@@ -1163,6 +1163,7 @@ public class AnalisadorSemantico {
             match(TokenType.ABREPAR);
             parametros_reais(metodo, -1);
             match(TokenType.FECHAPAR);
+            tipo = metodo.getTipoDado();
         }
         else throw new ErroSintaticoException();
 
@@ -1510,7 +1511,7 @@ public class AnalisadorSemantico {
 
     private void addParametro(Variavel param)
     {
-        if(jaFoiDeclaradoNoEscopo(param.getId())) {
+        if(jaFoiDeclaradoNoBlocoAtual(param.getId())) {
             erroSemantico("Identificador já foi declarado: " + "'" + param.getId() + "'");
         } else {
             tabelaDeSimbolos.addParametro(param);
