@@ -289,6 +289,8 @@ public class AnalisadorSemantico {
                 break;
             }
             case ABRECOLCH: {
+                Variavel variavel = new Variavel(tokens.get(ponteiro-1).getLexema(), tipo + "[]");
+                addVariavel(variavel);//método semântico
                 match(TokenType.ABRECOLCH);
                 expressao_aritmetica();
                 match(TokenType.FECHACOLCH);
@@ -664,7 +666,7 @@ public class AnalisadorSemantico {
                 break;
             }
             case ID: {
-                checarSeIdentificadorFoiDeclarado(tokenAtual.getLexema()); //método semântico
+                //checarSeIdentificadorFoiDeclarado(tokenAtual.getLexema()); //método semântico
                 match(TokenType.ID);
                 complemento_variavel_comando();
                 break;
@@ -703,12 +705,16 @@ public class AnalisadorSemantico {
                 acesso_objeto_comando(classeAcessada);
                 break;
             }
-            case ABRECOLCH: {
+            case ABRECOLCH: { 
+                Simbolo ultimoId = checarSeVetorFoiDeclarado(tokens.get(ponteiro-1).getLexema());
                 match(TokenType.ABRECOLCH);
                 expressao_aritmetica();
                 match(TokenType.FECHACOLCH);
                 match(TokenType.ATRIB);
-                segundo_membro_atribuicao();
+                String tipoAtribuicao = segundo_membro_atribuicao();
+                if(ultimoId!=null) {
+                     checarTipoAtribuicao(ultimoId.getTipoDado().substring(0, ultimoId.getTipoDado().length()-2), tipoAtribuicao);
+                }
                 break;
             }
             case ATRIB: {
@@ -716,7 +722,7 @@ public class AnalisadorSemantico {
                 Simbolo ultimoId = checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-2).getLexema());
                 String tipoAtribuicao = segundo_membro_atribuicao();
                 if(ultimoId!=null) {
-                checarTipoAtribuicao(ultimoId.getTipoDado(), tipoAtribuicao);
+                     checarTipoAtribuicao(ultimoId.getTipoDado(), tipoAtribuicao);
                 }
                 break;
             }
@@ -1111,6 +1117,8 @@ public class AnalisadorSemantico {
             tipo = acesso_objeto(classeAcessada);
         }
         else if( tokenAtual.getTipo() == TokenType.ABRECOLCH ) {
+            Simbolo ultimoId = checarSeIdentificadorFoiDeclarado(tokens.get(ponteiro-1).getLexema());
+            if(ultimoId!=null) tipo = ultimoId.getTipoDado();
             match(TokenType.ABRECOLCH);
             expressao_aritmetica();
             match(TokenType.FECHACOLCH);
@@ -1503,12 +1511,27 @@ public class AnalisadorSemantico {
             erroSemantico("indentificador '" + id + "' não declarado");
             return null;
         }
-        else if(!(simbolo instanceof Variavel || simbolo instanceof Constante || simbolo instanceof Metodo)) {
+        else if(!(simbolo instanceof Variavel || simbolo instanceof Constante || simbolo instanceof Metodo) || simbolo.ehVetor()) {
             erroSemantico("indentificador '" + id + "' não declarado");
             return null;
         }
         else return simbolo;
     }
+
+    private Simbolo checarSeVetorFoiDeclarado(String id)
+    {
+        Simbolo simbolo = tabelaDeSimbolos.getSimbolo(id);
+        if (simbolo == null) {
+            erroSemantico("vetor '" + id + "' não declarado");
+            return null;
+        }
+        else if(!(simbolo instanceof Variavel) || !simbolo.ehVetor()) {
+            erroSemantico("vetor '" + id + "' não declarado");
+            return null;
+        }
+        else return simbolo;
+    }
+    
 
     private void checarSeMetodoFoiDeclarado(String id)
     {
@@ -1623,8 +1646,8 @@ public class AnalisadorSemantico {
 //   private void teste()
 //   {
 //       String s = "oi";
-//       Metodo c;
-//       boolean a = s;
+//       int[] a = new int[10];
+//       a = 2;
 //   }
 
 
