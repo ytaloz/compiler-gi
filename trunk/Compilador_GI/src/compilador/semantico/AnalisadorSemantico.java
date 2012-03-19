@@ -284,7 +284,8 @@ public class AnalisadorSemantico {
                 Variavel variavel = new Variavel(tokens.get(ponteiro-1).getLexema(), tipo);
                 addVariavel(variavel);//método semântico
                 match(TokenType.ATRIB);
-                segundo_membro_atribuicao();
+                String tipoAtrib = segundo_membro_atribuicao();
+                checarTipoAtribuicao(tipo, tipoAtrib);
                 prox_trecho_lista_decl_variaveis(tipo);
                 break;
             }
@@ -563,7 +564,8 @@ public class AnalisadorSemantico {
     private void lista_parametros(Metodo metodo, String tipo)
     {
         match(TokenType.ID);
-        Classe classe = (Classe) tabelaDeSimbolos.getEscopoAtual().getEscopoPai();
+
+        Classe classe = (Classe) tabelaDeSimbolos.getClasseAtual();
         String atributo = tokens.get(ponteiro-1).getLexema();
         if(classe.getVariavel(atributo)!=null) erroSemantico("identificador '" + atributo + "' já foi declarado como atributo" );
         Variavel param = new Variavel(tokens.get(ponteiro-1).getLexema(),tipo); //método semantico
@@ -587,7 +589,9 @@ public class AnalisadorSemantico {
         if(tokenAtual.getTipo() == TokenType.ABREPAR) {
            match(TokenType.ABREPAR);
            parametros_reais_instanciar_obj(classe, -1);
-           if(classe.getConstrutor()==null && classe!=null) erroSemantico("construtor da classe '" + classe.getId() + "' não foi definido");
+           if(classe!=null) {
+                if(classe.getConstrutor()==null) erroSemantico("construtor da classe '" + classe.getId() + "' não foi definido");
+           }
            match(TokenType.FECHAPAR);
         }
     }
@@ -595,7 +599,9 @@ public class AnalisadorSemantico {
     private void parametros_reais_instanciar_obj(Classe classe, int index)
     {
         index++; //índice do parametro a ser checado o tipo
-        parametro_real(classe.getConstrutor(), index);
+        Metodo construtor = null;
+        if(classe!=null) construtor = classe.getConstrutor();
+        parametro_real(construtor, index);
         loop_parametros_reais_instanciar_obj(classe, index);
     }
 
@@ -605,13 +611,15 @@ public class AnalisadorSemantico {
             match(TokenType.VIRGULA);
             parametros_reais_instanciar_obj(classe, index);
         }
-        else if(classe.getConstrutor()!=null) {
-            if(classe.getConstrutor().getTotalParametros() > index+1) {
-                String msgErro = "construtor '" + classe.getConstrutor().getId() + "()' exige parametros: ";
-                for (int i = 0; i < classe.getConstrutor().getTotalParametros(); i++) {
-                    msgErro += classe.getConstrutor().getParametro(i).getTipoDado() + ", ";
+        else if(classe!=null) {
+            if(classe.getConstrutor()!=null) {
+                if(classe.getConstrutor().getTotalParametros() > index+1) {
+                    String msgErro = "construtor '" + classe.getConstrutor().getId() + "()' exige parametros: ";
+                    for (int i = 0; i < classe.getConstrutor().getTotalParametros(); i++) {
+                        msgErro += classe.getConstrutor().getParametro(i).getTipoDado() + ", ";
+                    }
+                    erroSemantico(msgErro);
                 }
-                erroSemantico(msgErro);
             }
         }
     }
@@ -777,7 +785,7 @@ public class AnalisadorSemantico {
             match( TokenType.ABREPAR );
             parametros_reais(metodo, -1);
             match( TokenType.FECHAPAR );
-            tipo = metodo.getTipoDado();
+            if(metodo!=null) tipo = metodo.getTipoDado();
         }
         else if( tokenAtual.getTipo() == TokenType.ATRIB ) {
             checarSeIdentificadorAtualEhVariavel(objAtual);
@@ -929,7 +937,7 @@ public class AnalisadorSemantico {
         Metodo metodoAtual = (Metodo) tabelaDeSimbolos.getEscopoAtual();
         metodoAtual.setComandoRetorno(true);
         String tipoMetodoAtual = metodoAtual.getTipoDado();
-        if( !tipoMetodoAtual.equals(tipoRetorno)) {
+        if( !tipoMetodoAtual.equals(tipoRetorno) && !tipoMetodoAtual.equals("erro") && !tipoRetorno.equals("erro")) {
             erroSemantico("tipo incompatível no retorno; esperava " + tipoMetodoAtual + ", obteve " + tipoRetorno);
         }
         match(TokenType.FECHAPAR);
@@ -1174,7 +1182,8 @@ public class AnalisadorSemantico {
             match(TokenType.ABREPAR);
             parametros_reais(metodo, -1);
             match(TokenType.FECHAPAR);
-            tipo = metodo.getTipoDado();
+            if(metodo!=null) tipo = metodo.getTipoDado();
+            
         }
         else throw new ErroSintaticoException();
 
@@ -1572,14 +1581,25 @@ public class AnalisadorSemantico {
         }
     }
 
+//    private Classe checarSeClasseFoiDefinida(String classeID)
+//    {
+//        Simbolo simbolo = tabelaDeSimbolos.getSimbolo(classeID);
+//        if(simbolo!=null) {
+//            if(!(simbolo instanceof Classe)) erroSemantico("classe '" + classeID + "' não declarada");
+//            else return (Classe) simbolo;
+//        }
+//        else erroSemantico("classe '" + classeID + "' não declarada");
+//        return null;
+//    }
+
     private Classe checarSeClasseFoiDefinida(String classeID)
     {
-        Simbolo simbolo = tabelaDeSimbolos.getSimbolo(classeID);
-        if(simbolo!=null) {
-            if(!(simbolo instanceof Classe)) erroSemantico("classe '" + classeID + "' não declarada");
-            else return (Classe) simbolo;
+        Classe classe = tabelaDeSimbolos.getClasse(classeID);
+        if(classe==null) {
+            erroSemantico("classe '" + classeID + "' não declarada");
+
         }
-        else erroSemantico("classe '" + classeID + "' não declarada");
+        else return classe;
         return null;
     }
 
@@ -1613,10 +1633,11 @@ public class AnalisadorSemantico {
                 }
                 return tabelaDeSimbolos.getClasse(tipo);
             }
-            else {
+            else if(!(objAtual instanceof Metodo)){
                 erroSemantico("identificador '" + tokens.get(ponteiro-1).getLexema() + "' não é objeto; operador ponto não permitido");
                 return null;
             }
+            return null;
         }
         else return null;
     }
@@ -1657,7 +1678,7 @@ public class AnalisadorSemantico {
            if(tipoOp1.equals("inteiro") && tipoOp2.equals("inteiro")) return "inteiro";
            if(tipoOp1.equals("real") && tipoOp2.equals("real")) return "real";
 
-           erroSemantico("operador " + operador + "não pode ser aplicado aos tipos: " + tipoOp1 + ", " + tipoOp2);
+           erroSemantico("operador '" + operador + "' não pode ser aplicado aos tipos: " + tipoOp1 + ", " + tipoOp2);
 
            return "erro";
        }
@@ -1666,9 +1687,10 @@ public class AnalisadorSemantico {
 
    private void checarTipoAtribuicao(String tipoPrimeiroMembro, String tipoSegundoMembro)
    {
-       if(!tipoPrimeiroMembro.equals(tipoSegundoMembro)) {
-           erroSemantico("incompatibilidade de tipos na atribuição: esperava " + tipoPrimeiroMembro + ", obteve: " + tipoSegundoMembro);
-       }
+       if(!tipoPrimeiroMembro.equals("erro") && !tipoSegundoMembro.equals("erro"))
+           if(!tipoPrimeiroMembro.equals(tipoSegundoMembro)) {
+               erroSemantico("incompatibilidade de tipos na atribuição: esperava " + tipoPrimeiroMembro + ", obteve: " + tipoSegundoMembro);
+           }
    }
 
 //   private String teste()

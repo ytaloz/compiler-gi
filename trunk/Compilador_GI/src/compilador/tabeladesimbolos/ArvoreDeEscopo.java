@@ -93,7 +93,7 @@ public class ArvoreDeEscopo {
             Classe classe = (Classe) escopoAtual;
             classe.addConstante(con);
         }
-        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de constante");
+        //else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de constante");
 
         escopoAtual.addSimbolo(con);
     }
@@ -113,7 +113,7 @@ public class ArvoreDeEscopo {
             Metodo metodo = (Metodo) escopoAtual;
             metodo.addVariavel(var);
         }
-        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de variável");
+        //else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de variável");
 
         escopoAtual.addSimbolo(var);
     }
@@ -124,7 +124,7 @@ public class ArvoreDeEscopo {
             Programa programa = (Programa) escopoAtual;
             programa.addClasse(classe);
         }
-        else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de classe");
+        //else throw new RuntimeException("O escopo atual '" + escopoAtual.getId() + "' não permite declaração de classe");
 
         escopoAtual.addSimbolo(classe);
     }
